@@ -142,31 +142,31 @@ public class BundlePathLoader {
             IllegalAccessException {
         synchronized (BundlePathLoader.class) {
             Field jlrField = findField(instance, fieldName);
-            jlrField.set(instance, extraElements);
 
-//            Object[] original = (Object[]) jlrField.get(instance);
-//            Object[] combined = (Object[]) Array.newInstance(
-//                    original.getClass().getComponentType(), original.length + extraElements.length);
-//            if(isHotFix) {
-//                System.arraycopy(extraElements, 0, combined, 0, extraElements.length);
-//                System.arraycopy(original, 0, combined, extraElements.length, original.length);
-//            }else {
-//                System.arraycopy(original, 0, combined, 0, original.length);
-//                System.arraycopy(extraElements, 0, combined, original.length, extraElements.length);
-//            }
-//
-//
+
+            Object[] original = (Object[]) jlrField.get(instance);
+            Object[] combined = (Object[]) Array.newInstance(
+                    original.getClass().getComponentType(), original.length + extraElements.length);
+            if(isHotFix) {
+                System.arraycopy(extraElements, 0, combined, 0, extraElements.length);
+                System.arraycopy(original, 0, combined, extraElements.length, original.length);
+            }else {
+                System.arraycopy(original, 0, combined, 0, original.length);
+                System.arraycopy(extraElements, 0, combined, original.length, extraElements.length);
+            }
+
+
             Log.i("nuwa","檢查順序!!");
-            int allLength = Array.getLength(extraElements);
+            int allLength = Array.getLength(combined);
             for (int k = 0; k < allLength; ++k) {
-                Object element = Array.get(extraElements,k);
+                Object element = Array.get(combined,k);
                 Log.i("nuwa","element:" + element);
                 // load error:No field file in class Ldalvik/system/DexPathList$Element; (declaration of 'dalvik.system.DexPathList$Element' appears in /system/framework/core-libart.jar)
                 Object dexFile = ReflectionUtils.getField(element, element.getClass(), "file");
                 Log.i("nuwa","dexFile:" + dexFile.toString());
             }
-//
-//            jlrField.set(instance, combined);
+
+            jlrField.set(instance, combined);
         }
     }
 

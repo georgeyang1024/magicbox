@@ -2,7 +2,7 @@ apply plugin: 'com.android.application'
 
 android {
     compileSdkVersion 23
-    buildToolsVersion "23.0.2"
+    buildToolsVersion "23.0.1"
 
     defaultConfig {
         applicationId "cn.georgeyang.magicbox"
@@ -23,16 +23,53 @@ android {
 //    }
 }
 
-//task('processWithJavassist') << {
+
+gradle.taskGraph.beforeTask { Task task ->
+//    println '================'
+//    println 'Pname:' + task.project.name
+//    println 'Tname:' + task.name
+    if ("app".equals(task.project.name) && task.name.startsWith('transformClassesWith')) {
+        println '================'
+        task.doLast {
+//            exec {
+//                commandLine 'echo hhhh >> $rootDir/test.txt'
+//            }
+//            javaexec {
+//                classpath "$rootDir/ClassComputer.jar"
+//                main = 'io.github.bunnyblue.droidfix.classcomputer.ClassComputer'
+//                args "injectCode", projectDir.getAbsolutePath(), "debugDroidFix"
+//            }
+        }
+    }
+}
+task('processWithJavassist') << {
 //    String classPath = file('build/intermediates/classes/debug')//项目编译class所在目录
 //    dodola.patch.PatchClass.process(classPath, project(':hackdex').buildDir
 //            .absolutePath + '/intermediates/classes/debug')//第二个参数是hackdex的class所在目录
+
+//    println '$$$$$$$$$$$$$$'
+//    commandLine 'echo hhhh >> ${projectDir}/test.txt'
+
+}
+
+
 //
+//task buildNative(type: Exec, description: 'CompileJNI source via NDK') {
+//    if(project.gradle.ndkDir == null) //看看有没有指定ndk.dir路径
+//        println "CANNOT Build NDK"
+//    else{
+//        commandLine "/${project.gradle.ndkDir}/ndk-build",
+//                '-C', file('jni').absolutePath,
+//                '-j', Runtime.runtime.availableProcessors(),
+//                'all', 'NDK_DEBUG=0'
+//    }
+//}
+//tasks.withType(JavaCompile) {
+//    compileTask -> compileTask.dependsOn buildNative
 //}
 
 
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
     testCompile 'junit:junit:4.12'
-    compile 'com.android.support:appcompat-v7:23.2.1'
 }

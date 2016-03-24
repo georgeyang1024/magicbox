@@ -31,27 +31,30 @@ public class App extends Application {
 //        Nuwa.loadPatch(this, Environment.getExternalStorageDirectory().getAbsolutePath().concat("/hack_dex.jar"));
 //        Nuwa.loadPatch(this,"debug.apk");
 //
-        File dexDir = new File(base.getFilesDir(), DEX_DIR);
-        dexDir.mkdir();
 
-        String dexPath = "debug.apk";
-        try {
-            dexPath = AssetUtils.copyAsset(base, dexPath, dexDir);
-        } catch (IOException e) {
-            Log.e(TAG, "copy " + dexPath + " failed:" + e.getMessage());
-            e.printStackTrace();
-        }
 
-        List<File> files = new ArrayList<>();
-        files.add(new File(dexPath));
-        try {
-            Log.e(TAG, "start load");
-            BundlePathLoader.installBundleDexs(getClassLoader(),dexDir,files,true);
-            Log.e(TAG, "load success");
-        } catch (Exception e) {
-            Log.e(TAG, "load error:" + e.getLocalizedMessage());
-            e.printStackTrace();
-        }
+//        File dexDir = new File(base.getFilesDir(), DEX_DIR);
+//        dexDir.mkdir();
+//
+//        String dexPath = "debug.apk";
+//        try {
+//            dexPath = AssetUtils.copyAsset(base, dexPath, dexDir);
+//        } catch (IOException e) {
+//            Log.e(TAG, "copy " + dexPath + " failed:" + e.getMessage());
+//            e.printStackTrace();
+//        }
+//
+//
+//        List<File> files = new ArrayList<>();
+//        files.add(new File(dexPath));
+//        try {
+//            Log.e(TAG, "start load");
+//            BundlePathLoader.installBundleDexs(getClassLoader(),dexDir,files,true);
+//            Log.e(TAG, "load success");
+//        } catch (Exception e) {
+//            Log.e(TAG, "load error:" + e.getLocalizedMessage());
+//            e.printStackTrace();
+//        }
 
 
 

@@ -1,12 +1,11 @@
 package cn.georgeyang.magicbox;
 
-import android.support.v7.app.AppCompatActivity;
+import android.app.Activity;
 import android.os.Bundle;
 import android.widget.TextView;
 
-import com.georgeyang.magicbox.R;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends Activity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -15,5 +14,8 @@ public class MainActivity extends AppCompatActivity {
 
         TextView tv = (TextView) findViewById(R.id.textView);
         tv.setText(new Test().call());
+        //Class ref in pre-verified class resolved to unexpected implementation
+        //不能有接口,其实是冲突
+
     }
 }
