@@ -5,69 +5,49 @@ import android.content.Context;
 import android.util.Log;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import cn.jiajixin.nuwa.util.AssetUtils;
-import ctrip.android.bundle.loader.BundlePathLoader;
+import cn.georgeyang.loader.AssetUtils;
+import cn.georgeyang.loader.BundlePathLoader;
 
 /**
  * Created by george.yang on 2016-3-24.
  */
 public class App extends Application {
-    private static final String TAG = "nuwa";
-
-    private static final String DEX_DIR = "nuwa";
-    private static final String DEX_OPT_DIR = "nuwaopt";
+    private static final String TAG = App.class.getName();
 
     @Override
     protected void attachBaseContext(Context base) {
         super.attachBaseContext(base);
 
-        Log.e(TAG, "copy " +        this.getClass().getSuperclass().getName());
-
-
-//        Nuwa.loadPatch(this, Environment.getExternalStorageDirectory().getAbsolutePath().concat("/AntilazyLoad_dex.jar.jar"));
-//        Nuwa.loadPatch(this,"AntilazyLoad_dex.jar");
-
-
-        File dexDir = new File(base.getFilesDir(), DEX_DIR);
+        File dexDir = new File(base.getFilesDir(), "dexOut");
         dexDir.mkdir();
 
-        String dexPath = "AntilazyLoad_dex.jar";
         try {
-            dexPath = AssetUtils.copyAsset(base, dexPath, dexDir);
-        } catch (IOException e) {
-            Log.e(TAG, "copy " + dexPath + " failed:" + e.getMessage());
-            e.printStackTrace();
-        }
+            List<File> dexFiles = new ArrayList<>();
 
-        String fixPath = "debug.apk";
-        try {
-            fixPath = AssetUtils.copyAsset(base, fixPath, dexDir);
-        } catch (IOException e) {
-            Log.e(TAG, "copy " + fixPath + " failed:" + e.getMessage());
-            e.printStackTrace();
-        }
+            String baseDexPath = "AntilazyLoad_dex.jar";
+            baseDexPath = AssetUtils.copyAsset(base, baseDexPath, dexDir);
+            dexFiles.add(new File(baseDexPath));
 
-        List<File> files = new ArrayList<>();
-        files.add(new File(fixPath));
-        files.add(new File(dexPath));
-        try {
+
+            try {
+                String fixDexPath = "debug2.apk";
+                fixDexPath = AssetUtils.copyAsset(base, fixDexPath, dexDir);
+                dexFiles.add(new File(fixDexPath));
+            } catch (Exception e) {
+                Log.e(TAG, "copy failed:" + e.getMessage());
+                e.printStackTrace();
+            }
+
             Log.e(TAG, "start load");
-            BundlePathLoader.installBundleDexs(this,getClassLoader(),dexDir,files,"AntilazyLoad",true);
+            BundlePathLoader.installBundleDexs(this,getClassLoader(),dexDir,dexFiles,"AntilazyLoad",true);
             Log.e(TAG, "load success");
         } catch (Exception e) {
             Log.e(TAG, "load error:" + e.getLocalizedMessage());
             e.printStackTrace();
         }
-
-
-
-
-
-
     }
 
 }

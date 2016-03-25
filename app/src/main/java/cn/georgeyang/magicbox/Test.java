@@ -5,6 +5,6 @@ package cn.georgeyang.magicbox;
  */
 public class Test {
     public String call() {
-        return "Hello main";
+        return "Hello main:this bug fix 000000";
     }
 }

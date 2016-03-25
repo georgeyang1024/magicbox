@@ -1,33 +1,5 @@
 apply plugin: 'com.android.application'
 
-task('processWithJavassist') << {
-    println '-----------開始往class插入代碼-----------------'
-
-    String classPath = project(':app').buildDir.absolutePath + '/intermediates/classes/debug'//项目编译class所在目录
-    String libPath = "$rootDir/transformClasses" //AntilazyLoad.class所在目錄
-    String igonre = "cn.jiajixin.nuwa.*;cn.georgeyang.magicbox.App;*.BuildConfig"
-    println classPath
-    println libPath
-    println igonre
-
-    javaexec {
-        classpath "$rootDir/transformClasses/transformClasses.jar"
-        main = 'cn.georgeyang.TransformClasses'
-        args classPath,libPath,igonre
-    }
-
-
-    ////    String classPath = file('build/intermediates/classes/debug')//项目编译class所在目录
-////    dodola.patch.PatchClass.process(classPath, project(':hackdex').buildDir
-////            .absolutePath + '/intermediates/classes/debug')//第二个参数是hackdex的class所在目录
-//
-////    println '$$$$$$$$$$$$$$'
-////    commandLine 'echo hhhh >> ${projectDir}/test.txt'
-
-}
-
-
-
 android {
     compileSdkVersion 23
     buildToolsVersion "23.0.1"
@@ -39,67 +11,51 @@ android {
         versionCode 1
         versionName "1.0"
     }
+
+    signingConfigs {
+        debug {
+            storeFile file("skilltemp.jks")
+            storePassword "123456"
+            keyAlias "skilltemp_demo"
+            keyPassword "123456"
+        }
+        release {
+            storeFile file("skilltemp.jks")
+            storePassword "123456"
+            keyAlias "skilltemp"
+            keyPassword "123456"
+        }
+    }
+
+
     buildTypes {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
-    }
 
-    applicationVariants.all { variant ->
-        variant.dex.dependsOn << processWithJavassist //在执行dx命令之前将代码打入到class中
+        applicationVariants.all { variant ->
+            println 'variant:' + variant.buildType.name
+
+            if (variant.buildType.isDebuggable()) {
+                //在执行dx命令之前将代码打入到class中
+                String classPath = project(':app').buildDir.absolutePath + '/intermediates/classes/debug'
+                //项目编译class所在目录
+                String libPath = "$rootDir/transformClasses" //AntilazyLoad.class所在目錄
+                String igonre = "cn.georgeyang.loader.*;cn.georgeyang.magicbox.App;*.BuildConfig"
+                println classPath
+                println libPath
+                println igonre
+
+                javaexec {
+                    classpath "$rootDir/transformClasses/transformClasses.jar"
+                    main = 'cn.georgeyang.TransformClasses'
+                    args classPath, libPath, igonre
+                }
+            }
+        }
     }
 }
 
-//
-//gradle.taskGraph.beforeTask { Task task ->
-////    println '================'
-////    println 'Pname:' + task.project.name
-////    println 'Tname:' + task.name
-//    if ("app".equals(task.project.name) && task.name.startsWith('transformClassesWith')) {
-//        println '================'
-//        task.doLast {
-////            exec {
-////                commandLine 'echo hhhh >> $rootDir/test.txt'
-////            }
-////            javaexec {
-////                classpath "$rootDir/ClassComputer.jar"
-////                main = 'io.github.bunnyblue.droidfix.classcomputer.ClassComputer'
-////                args "injectCode", projectDir.getAbsolutePath(), "debugDroidFix"
-////            }
-//        }
-//    }
-//}
-//task('processWithJavassist') << {
-////    String classPath = file('build/intermediates/classes/debug')//项目编译class所在目录
-////    dodola.patch.PatchClass.process(classPath, project(':hackdex').buildDir
-////            .absolutePath + '/intermediates/classes/debug')//第二个参数是hackdex的class所在目录
-//
-////    println '$$$$$$$$$$$$$$'
-////    commandLine 'echo hhhh >> ${projectDir}/test.txt'
-//
-//}
-
-
-//
-//task buildNative(type: Exec, description: 'CompileJNI source via NDK') {
-//    if(project.gradle.ndkDir == null) //看看有没有指定ndk.dir路径
-//        println "CANNOT Build NDK"
-//    else{
-//        commandLine "/${project.gradle.ndkDir}/ndk-build",
-//                '-C', file('jni').absolutePath,
-//                '-j', Runtime.runtime.availableProcessors(),
-//                'all', 'NDK_DEBUG=0'
-//    }
-//}
-//tasks.withType(JavaCompile) {
-//    compileTask -> compileTask.dependsOn buildNative
-//}
-
-
 dependencies {
-    compile fileTree(include: ['*.jar'], dir: 'libs')
-    testCompile 'junit:junit:4.12'
-    compile files('libs/javassist.jar')
-    compile files('src/main/libs/javassist-3.0.jar')
 }
