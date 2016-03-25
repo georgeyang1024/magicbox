@@ -5,6 +5,7 @@
       <module fileurl="file://$PROJECT_DIR$/MagicBox.iml" filepath="$PROJECT_DIR$/MagicBox.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
       <module fileurl="file://$PROJECT_DIR$/fixapplication/fixapplication.iml" filepath="$PROJECT_DIR$/fixapplication/fixapplication.iml" />
+      <module fileurl="file://$PROJECT_DIR$/mylibrary/mylibrary.iml" filepath="$PROJECT_DIR$/mylibrary/mylibrary.iml" />
     </modules>
   </component>
 </project>

@@ -24,6 +24,7 @@ public class Nuwa {
 
 
     public static void loadPatch(Context context, String dexPath) {
+        Log.d(TAG,"loadPatch:" + dexPath);
         if (context == null) {
             Log.e(TAG, "context is null");
             return;
@@ -39,6 +40,7 @@ public class Nuwa {
             dexDir.mkdir();
 
             try {
+                Log.e(TAG, "copyAsset:" + dexDir + ">" + dexPath);
                 dexPath = AssetUtils.copyAsset(context, dexPath, dexDir);
             } catch (IOException e) {
                 Log.e(TAG, "copy " + dexPath + " failed:" + e.getMessage());

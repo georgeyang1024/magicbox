@@ -1,5 +1,33 @@
 apply plugin: 'com.android.application'
 
+task('processWithJavassist') << {
+    println '-----------開始往class插入代碼-----------------'
+
+    String classPath = project(':app').buildDir.absolutePath + '/intermediates/classes/debug'//项目编译class所在目录
+    String libPath = "$rootDir/transformClasses" //AntilazyLoad.class所在目錄
+    String igonre = "cn.jiajixin.nuwa.*;cn.georgeyang.magicbox.App;*.BuildConfig"
+    println classPath
+    println libPath
+    println igonre
+
+    javaexec {
+        classpath "$rootDir/transformClasses/transformClasses.jar"
+        main = 'cn.georgeyang.TransformClasses'
+        args classPath,libPath,igonre
+    }
+
+
+    ////    String classPath = file('build/intermediates/classes/debug')//项目编译class所在目录
+////    dodola.patch.PatchClass.process(classPath, project(':hackdex').buildDir
+////            .absolutePath + '/intermediates/classes/debug')//第二个参数是hackdex的class所在目录
+//
+////    println '$$$$$$$$$$$$$$'
+////    commandLine 'echo hhhh >> ${projectDir}/test.txt'
+
+}
+
+
+
 android {
     compileSdkVersion 23
     buildToolsVersion "23.0.1"
@@ -18,39 +46,39 @@ android {
         }
     }
 
-//    applicationVariants.all { variant ->
-//        variant.dex.dependsOn << processWithJavassist //在执行dx命令之前将代码打入到class中
-//    }
-}
-
-
-gradle.taskGraph.beforeTask { Task task ->
-//    println '================'
-//    println 'Pname:' + task.project.name
-//    println 'Tname:' + task.name
-    if ("app".equals(task.project.name) && task.name.startsWith('transformClassesWith')) {
-        println '================'
-        task.doLast {
-//            exec {
-//                commandLine 'echo hhhh >> $rootDir/test.txt'
-//            }
-//            javaexec {
-//                classpath "$rootDir/ClassComputer.jar"
-//                main = 'io.github.bunnyblue.droidfix.classcomputer.ClassComputer'
-//                args "injectCode", projectDir.getAbsolutePath(), "debugDroidFix"
-//            }
-        }
+    applicationVariants.all { variant ->
+        variant.dex.dependsOn << processWithJavassist //在执行dx命令之前将代码打入到class中
     }
 }
-task('processWithJavassist') << {
-//    String classPath = file('build/intermediates/classes/debug')//项目编译class所在目录
-//    dodola.patch.PatchClass.process(classPath, project(':hackdex').buildDir
-//            .absolutePath + '/intermediates/classes/debug')//第二个参数是hackdex的class所在目录
 
-//    println '$$$$$$$$$$$$$$'
-//    commandLine 'echo hhhh >> ${projectDir}/test.txt'
-
-}
+//
+//gradle.taskGraph.beforeTask { Task task ->
+////    println '================'
+////    println 'Pname:' + task.project.name
+////    println 'Tname:' + task.name
+//    if ("app".equals(task.project.name) && task.name.startsWith('transformClassesWith')) {
+//        println '================'
+//        task.doLast {
+////            exec {
+////                commandLine 'echo hhhh >> $rootDir/test.txt'
+////            }
+////            javaexec {
+////                classpath "$rootDir/ClassComputer.jar"
+////                main = 'io.github.bunnyblue.droidfix.classcomputer.ClassComputer'
+////                args "injectCode", projectDir.getAbsolutePath(), "debugDroidFix"
+////            }
+//        }
+//    }
+//}
+//task('processWithJavassist') << {
+////    String classPath = file('build/intermediates/classes/debug')//项目编译class所在目录
+////    dodola.patch.PatchClass.process(classPath, project(':hackdex').buildDir
+////            .absolutePath + '/intermediates/classes/debug')//第二个参数是hackdex的class所在目录
+//
+////    println '$$$$$$$$$$$$$$'
+////    commandLine 'echo hhhh >> ${projectDir}/test.txt'
+//
+//}
 
 
 //
@@ -70,6 +98,8 @@ task('processWithJavassist') << {
 
 
 dependencies {
-    compile fileTree(dir: 'libs', include: ['*.jar'])
+    compile fileTree(include: ['*.jar'], dir: 'libs')
     testCompile 'junit:junit:4.12'
+    compile files('libs/javassist.jar')
+    compile files('src/main/libs/javassist-3.0.jar')
 }

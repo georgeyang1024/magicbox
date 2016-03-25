@@ -2,16 +2,13 @@ package cn.georgeyang.magicbox;
 
 import android.app.Application;
 import android.content.Context;
-import android.os.Environment;
 import android.util.Log;
 
 import java.io.File;
 import java.io.IOException;
-import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
 
-import cn.jiajixin.nuwa.Nuwa;
 import cn.jiajixin.nuwa.util.AssetUtils;
 import ctrip.android.bundle.loader.BundlePathLoader;
 
@@ -28,33 +25,46 @@ public class App extends Application {
     protected void attachBaseContext(Context base) {
         super.attachBaseContext(base);
 
-//        Nuwa.loadPatch(this, Environment.getExternalStorageDirectory().getAbsolutePath().concat("/hack_dex.jar"));
-//        Nuwa.loadPatch(this,"debug.apk");
-//
+        Log.e(TAG, "copy " +        this.getClass().getSuperclass().getName());
 
 
-//        File dexDir = new File(base.getFilesDir(), DEX_DIR);
-//        dexDir.mkdir();
-//
-//        String dexPath = "debug.apk";
-//        try {
-//            dexPath = AssetUtils.copyAsset(base, dexPath, dexDir);
-//        } catch (IOException e) {
-//            Log.e(TAG, "copy " + dexPath + " failed:" + e.getMessage());
-//            e.printStackTrace();
-//        }
-//
-//
-//        List<File> files = new ArrayList<>();
-//        files.add(new File(dexPath));
-//        try {
-//            Log.e(TAG, "start load");
-//            BundlePathLoader.installBundleDexs(getClassLoader(),dexDir,files,true);
-//            Log.e(TAG, "load success");
-//        } catch (Exception e) {
-//            Log.e(TAG, "load error:" + e.getLocalizedMessage());
-//            e.printStackTrace();
-//        }
+//        Nuwa.loadPatch(this, Environment.getExternalStorageDirectory().getAbsolutePath().concat("/AntilazyLoad_dex.jar.jar"));
+//        Nuwa.loadPatch(this,"AntilazyLoad_dex.jar");
+
+
+        File dexDir = new File(base.getFilesDir(), DEX_DIR);
+        dexDir.mkdir();
+
+        String dexPath = "AntilazyLoad_dex.jar";
+        try {
+            dexPath = AssetUtils.copyAsset(base, dexPath, dexDir);
+        } catch (IOException e) {
+            Log.e(TAG, "copy " + dexPath + " failed:" + e.getMessage());
+            e.printStackTrace();
+        }
+
+        String fixPath = "debug.apk";
+        try {
+            fixPath = AssetUtils.copyAsset(base, fixPath, dexDir);
+        } catch (IOException e) {
+            Log.e(TAG, "copy " + fixPath + " failed:" + e.getMessage());
+            e.printStackTrace();
+        }
+
+        List<File> files = new ArrayList<>();
+        files.add(new File(fixPath));
+        files.add(new File(dexPath));
+        try {
+            Log.e(TAG, "start load");
+            BundlePathLoader.installBundleDexs(getClassLoader(),dexDir,files,true);
+            Log.e(TAG, "load success");
+        } catch (Exception e) {
+            Log.e(TAG, "load error:" + e.getLocalizedMessage());
+            e.printStackTrace();
+        }
+
+
+
 
 
 
