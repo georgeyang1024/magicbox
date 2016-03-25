@@ -56,7 +56,7 @@ public class App extends Application {
         files.add(new File(dexPath));
         try {
             Log.e(TAG, "start load");
-            BundlePathLoader.installBundleDexs(getClassLoader(),dexDir,files,true);
+            BundlePathLoader.installBundleDexs(this,getClassLoader(),dexDir,files,"AntilazyLoad",true);
             Log.e(TAG, "load success");
         } catch (Exception e) {
             Log.e(TAG, "load error:" + e.getLocalizedMessage());
