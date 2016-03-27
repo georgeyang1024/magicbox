@@ -58,4 +58,5 @@ android {
 }
 
 dependencies {
+    compile files('src/main/libs/host.jar')
 }
