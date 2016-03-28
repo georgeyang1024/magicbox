@@ -11,16 +11,16 @@ import dalvik.system.DexClassLoader;
  * Created by george.yang on 15/11/19.
  */
 public class PlugClassLoder extends DexClassLoader {
-    public String packageName;
+//    public String packageName;
     public String dexPath;
     public static final String TAG = "PlugManger";
 
     private static final HashMap<String, PlugClassLoder> plugLoderMap = new HashMap<>();
 
-    public PlugClassLoder(String dexPath, String packageName, String optimizedDirectory, String libraryPath, ClassLoader parent) {
+    public PlugClassLoder(String dexPath, String optimizedDirectory, String libraryPath, ClassLoader parent) {
         super(dexPath, optimizedDirectory, libraryPath, parent);
         this.dexPath = dexPath;
-        this.packageName = packageName;
+//        this.packageName = packageName;
         if (!plugLoderMap.containsKey(dexPath)) {
             plugLoderMap.put(dexPath, this);
         }
@@ -40,18 +40,18 @@ public class PlugClassLoder extends DexClassLoader {
     @Override
     protected Class<?> loadClass(String className, boolean resolve)
             throws ClassNotFoundException {
-        int RIndex = className.indexOf(".R$");
-            if (RIndex>0) {
-                className = packageName+"."+className.substring(RIndex+1,className.length());
-                Log.i(TAG,className);
-            }
+//        int RIndex = className.indexOf(".R$");
+//            if (RIndex>0) {
+//                className = packageName+"."+className.substring(RIndex+1,className.length());
+//                Log.i(TAG,className);
+//            }
 
         Class<?> clazz = findLoadedClass(className);
         if (clazz != null)
             return clazz;
         try {
             clazz = getParent().loadClass(className);
-        } catch (ClassNotFoundException e) {
+        } catch (Exception e) {
         }
         if (clazz != null)
             return clazz;

@@ -21,7 +21,7 @@ public class PlugManger {
 
 ////            String path = Environment.getExternalStorageDirectory() + "/test.apk";
             String path = Environment.getExternalStorageDirectory() + "/code2.jar";
-            PlugClassLoder cl = new PlugClassLoder(path,context.getPackageName(),
+            PlugClassLoder cl = new PlugClassLoder(path,
                     dexOutputDir.getAbsolutePath(), null,
                         context.getClassLoader());
             Log.i(TAG,"loder:" + cl);
@@ -31,7 +31,7 @@ public class PlugManger {
 
             String libpath = Environment.getExternalStorageDirectory() + "/lib2.jar";
             Log.i(TAG,"jar exist?" + new File(libpath).exists());
-            PlugClassLoder libcl = new PlugClassLoder(libpath,context.getPackageName(),
+            PlugClassLoder libcl = new PlugClassLoder(libpath,
                     dexOutputDir.getAbsolutePath(), null,
                     context.getClassLoader());
 //            DexClassLoader dexClassLoader = new DexClassLoader(libpath,dexOutputDir.getAbsolutePath(),null,context.getClassLoader());

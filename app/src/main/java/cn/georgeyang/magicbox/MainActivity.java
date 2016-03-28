@@ -1,10 +1,14 @@
 package cn.georgeyang.magicbox;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 
 import com.mingle.widget.LoadingView;
 
+
+import java.lang.reflect.Field;
 
 import cn.georgeyang.lib.HttpUtil;
 import cn.georgeyang.lib.UiThread;
@@ -22,7 +26,7 @@ public class MainActivity extends Activity {
         //Class ref in pre-verified class resolved to unexpected implementation
         //不能有接口,其实是冲突
 
-        UiThread.init(this).start(new UiThread.UIThreadEvent() {
+        UiThread.init(this).setCallBackDelay(3000).start(new UiThread.UIThreadEvent() {
             @Override
             public Object runInThread(String flag, Object obj, UiThread.Publisher publisher) {
                 return HttpUtil.get("http://georgeyang.cn:8080/ptool/getip");
@@ -31,6 +35,22 @@ public class MainActivity extends Activity {
             @Override
             public void runInUi(String flag, Object obj, boolean ispublish, float progress) {
                 loadingView.setLoadingText(obj.toString());
+
+
+                try {
+                    Field field = getFragmentManager().getClass().getDeclaredField("mAdded");
+                    field.setAccessible(true);
+                    Log.i("ping", field.get(getFragmentManager()).toString());
+
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    Log.i("ping",Log.getStackTraceString(e));
+                }
+
+
+                startActivity(new Intent(MainActivity.this,ProxyActivity.class));
+
+                finish();
             }
         });
     }

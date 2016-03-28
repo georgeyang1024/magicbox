@@ -7,7 +7,6 @@ import android.content.res.AssetManager;
 import android.content.res.Resources;
 import android.content.res.Resources.Theme;
 import android.graphics.drawable.Drawable;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 
@@ -18,7 +17,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.lang.reflect.Method;
-import java.util.HashMap;
 
 import cn.georgeyang.magicbox.R;
 
@@ -28,14 +26,12 @@ import cn.georgeyang.magicbox.R;
  * @time 2015-4-16 上午11:03:47
  */
 public class PluginProxyContext extends ContextWrapper {
-
+	
+//	private Context context;
 	private AssetManager mAssetManager = null;
 	private Resources mResources = null;
 	private LayoutInflater mLayoutInflater = null;
 	private Theme mTheme = null;
-	private static final HashMap<String, PluginProxyContext> plugLoderContent = new HashMap<>();
-	private PlugClassLoder mClassLoder = null;
-
 	private String packageName = null;
 	
 	// *****************资源ID类型*******************
@@ -47,35 +43,11 @@ public class PluginProxyContext extends ContextWrapper {
     public static final String COLOR = "color";
     public static final String DIMEN = "dimen";
 
-	public PluginProxyContext(Context base,String pluginPath) {
+	private static final HashMap<String, PluginProxyContext> pluginContextMap = new HashMap<>();
+
+	public PluginProxyContext(Context base) {
 		super(base);
-
-		try {
-			File outFile = new File(pluginPath);
-			AssetManager assetManager = AssetManager.class.newInstance();
-			Method addAssetPath = assetManager.getClass().getMethod(
-					"addAssetPath", String.class);
-			addAssetPath.invoke(assetManager, outFile.getPath());
-			mAssetManager = assetManager;
-		} catch (Exception e) {
-			Log.d("demo",Log.getStackTraceString(e).toString());
-			e.printStackTrace();
-		}
-		Resources superRes = super.getResources();
-		mResources = new Resources(mAssetManager, superRes.getDisplayMetrics(),
-				superRes.getConfiguration());
-
-
-//		this.packageName = mResources.getResourcePackageName(R.string.app_name);//获取插件包名
-//		packageName = getString("app_name");
-		this.packageName = mResources.getResourcePackageName(2131099648);
-		Log.d("demo","packageName:" + packageName);
-//		this.packageName = "pName";
-
-		mClassLoder = new PlugClassLoder(base.getFilesDir() + "/dexOut",pluginPath,null,base.getClassLoader());
-		getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-
-		plugLoderContent.put(new File(pluginPath).getName(),this);
+		this.context = base;
 	}
 	
 	/**
@@ -93,17 +65,31 @@ public class PluginProxyContext extends ContextWrapper {
 		}
 		return proxyContext;
 	}*/
-//	/**
-//	 * 加载插件中的资源
-//	 *
-//	 * @param pluginPackageName 资源插件的包名
-//	 * @param testModel 是否为测试模式。 如果是测试模式每次都会拷贝assets插件到项目文件目录中，保存插件每次都是最新的，上线时请关闭
-//	 * @author 小姜
-//	 * @time 2015-4-16 上午11:31:36
-//	 */
-//	public void loadResources(String resPluginName, boolean testModel) {
-//
-//	}
+	/**
+	 * 加载插件中的资源
+	 *
+	 * @param pluginPackageName 资源插件的包名
+	 * @param testModel 是否为测试模式。 如果是测试模式每次都会拷贝assets插件到项目文件目录中，保存插件每次都是最新的，上线时请关闭
+	 * @author 小姜
+	 * @time 2015-4-16 上午11:31:36
+	 */
+	public void loadResources(String resPluginName, boolean testModel) {
+		try {
+			File outFile = copy(resPluginName,testModel);
+			AssetManager assetManager = AssetManager.class.newInstance();
+			Method addAssetPath = assetManager.getClass().getMethod(
+					"addAssetPath", String.class);
+			addAssetPath.invoke(assetManager, outFile.getPath());
+			mAssetManager = assetManager;
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		Resources superRes = super.getResources();
+		mResources = new Resources(mAssetManager, superRes.getDisplayMetrics(),
+				superRes.getConfiguration());
+		this.packageName = mResources.getResourcePackageName(R.string.app_name);//获取插件包名
+		getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+	}
 
 	
 	/**
@@ -118,9 +104,6 @@ public class PluginProxyContext extends ContextWrapper {
 	public int getIdentifier(String type, String name){
 		return mResources.getIdentifier(name, type, packageName);
 	}
-
-
-
 	public int getId(String name){
 		return mResources.getIdentifier(name, ID, packageName);
 	}
@@ -189,7 +172,7 @@ public class PluginProxyContext extends ContextWrapper {
 	
 	@Override
 	public ClassLoader getClassLoader() {
-		return mClassLoder;
+		return context.getClassLoader();
 	}
 	
 	@Override
@@ -208,5 +191,42 @@ public class PluginProxyContext extends ContextWrapper {
 	}
 	
 
-
+	/**
+	 * 将assets目录下文件拷贝到项目文件夹中
+	 * 
+	 * @param is
+	 * @param outputFile
+	 * @throws IOException
+	 */
+	private File copy(String fileName, boolean testModel) {
+		OutputStream os = null;
+		InputStream is = null;
+		File outFile = null;
+		try {
+			outFile = new File(context.getFilesDir(), fileName);
+			//如果文件已经存在（以拷贝），并且是测试模式的话就就不需在拷贝了
+			if(outFile.exists()){
+				return outFile;
+			}
+			is = context.getResources().getAssets().open(fileName);
+			os = new BufferedOutputStream(new FileOutputStream(outFile),
+					4096);
+			byte[] b = new byte[4096];
+			int len = 0;
+			while ((len = is.read(b)) != -1)
+				os.write(b, 0, len);
+		} catch(Exception e){
+			e.printStackTrace();
+		}finally {
+			try {
+				if (is != null)
+					is.close();
+				if (os != null)
+					os.close();
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+		return outFile;
+	}
 }

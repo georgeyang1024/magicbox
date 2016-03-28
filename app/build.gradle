@@ -41,8 +41,8 @@ android {
                 //在执行dx命令之前将代码打入到class中
                 String classPath = project(':app').buildDir.absolutePath + '/intermediates/classes/debug'
                 //项目编译class所在目录
-                String libPath = "$rootDir/transformClasses" //AntilazyLoad.class所在目錄
-                String igonre = "cn.georgeyang.loader.*;cn.georgeyang.magicbox.App;*.BuildConfig"
+                String libPath = "$rootDir/transformClasses;C:/android_class" //AntilazyLoad.class所在目錄
+                String igonre = "cn.georgeyang.loader.*;android.*;cn.georgeyang.magicbox.App;*.BuildConfig"
                 println classPath
                 println libPath
                 println igonre
