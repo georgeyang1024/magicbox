@@ -7,6 +7,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.res.AssetManager;
 import android.content.res.Resources;
+import android.content.res.TypedArray;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
@@ -20,26 +21,40 @@ import android.widget.Toast;
 import java.io.File;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
-import java.util.ArrayList;
 import java.util.HashMap;
-
-import cn.georgeyang.lib.AnimType;
-import cn.georgeyang.lib.FragmentOnlySupportActivity;
-import cn.georgeyang.lib.PluginResources;
 import cn.georgeyang.loader.AssetUtils;
 import cn.georgeyang.loader.PlugClassLoder;
 
 /**
  * Created by george.yang on 2016-3-29.
  */
-public class ProxyActivity extends FragmentOnlySupportActivity {
+public class ProxyActivity extends Activity {
     private PluginData mPluginData = null;
     private String packageName = null,action = null;
     private static final HashMap<String, PluginData> pluginChahe = new HashMap<>();
 
+    @Override
+    public void finish() {
+        super.finish();
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+//        setTheme(R.style.Anim_fade);
+
+        String animType = null;
+        try {
+           animType = getIntent().getData().getQueryParameter("animType");
+        } catch (Exception e) {
+            Log.d("demo",Log.getStackTraceString(e));
+        }
+
+        if (TextUtils.isEmpty(animType)) {
+            overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right);
+        }
+
+
+
         super.onCreate(savedInstanceState);
 
         Intent intent = getIntent();
@@ -72,35 +87,40 @@ public class ProxyActivity extends FragmentOnlySupportActivity {
                     ViewGroup.LayoutParams.MATCH_PARENT));
             rootView.setBackgroundColor(Color.GRAY);
             rootView.setId(android.R.id.content);
+
             setContentView(rootView);
 
             initWithApkPathAndPackName(pluginPath,packageName);
 
 
 
-            rootView.postDelayed(new Runnable() {
-                @Override
-                public void run() {
+//            rootView.postDelayed(new Runnable() {
+//                @Override
+//                public void run() {
+//
+//                    try {
+//                        Class pluginActivityClass = mPluginData.classLoder.loadClass(String.format("%s.%s",new Object[]{packageName,action}));
+//                        Constructor<?> localConstructor = pluginActivityClass.getConstructor(new Class[] {});
+//                        Fragment fragment = (Fragment) localConstructor.newInstance();
+//
+//                        loadFragment(fragment,AnimType.NONE);
+//
+//
+//                    } catch (Exception e) {
+//
+//                    }
+//
+//                }
+//            },2000);
 
-                    try {
-                        Class pluginActivityClass = mPluginData.classLoder.loadClass(String.format("%s.%s",new Object[]{packageName,action}));
-                        Constructor<?> localConstructor = pluginActivityClass.getConstructor(new Class[] {});
-                        Fragment fragment = (Fragment) localConstructor.newInstance();
 
-                        loadFragment(fragment);
+            Class pluginActivityClass = mPluginData.classLoder.loadClass(String.format("%s.%s",new Object[]{packageName,action}));
+            Constructor<?> localConstructor = pluginActivityClass.getConstructor(new Class[] {});
+            Fragment fragment = (Fragment) localConstructor.newInstance();
 
-
-                    } catch (Exception e) {
-
-                    }
-
-                }
-            },2000);
-
-
-//            FragmentTransaction ft =  getFragmentManager().beginTransaction();
-//            ft.add(android.R.id.background,fragment,"main");
-//            ft.commit();
+            FragmentTransaction ft =  getFragmentManager().beginTransaction();
+            ft.add(android.R.id.content,fragment,"main");
+            ft.commit();
 
         } catch (Exception e) {
             Log.d("demo",Log.getStackTraceString(e).toString());
@@ -132,14 +152,14 @@ public class ProxyActivity extends FragmentOnlySupportActivity {
                 addAssetPath.invoke(assetManager, outFile.getPath());
                 mPluginData.assetManager = assetManager;
 
-
                 Resources superRes = super.getResources();
-                PluginResources resources = new PluginResources(assetManager, superRes);
+//                PluginResources resources = new PluginResources(assetManager, superRes);
+            Resources resources = new Resources(assetManager, superRes.getDisplayMetrics(),superRes.getConfiguration());
                 mPluginData.resources = resources;
 
 
                 Resources.Theme theme = super.getResources().newTheme();
-                theme.applyStyle(android.R.style.Theme_Light,true);
+                theme.applyStyle(android.R.style.Theme_Light_NoTitleBar,true);
                 mPluginData.theme = theme;
 
                 PlugClassLoder loader = new PlugClassLoder(pluginPath,getCacheDir().getAbsolutePath(),null,getClass().getClassLoader());
@@ -209,8 +229,5 @@ public class ProxyActivity extends FragmentOnlySupportActivity {
         return packageName==null?super.getPackageName():packageName;
     }
 
-    @Override
-    public int getContainerId() {
-        return android.R.id.content;
-    }
+
 }

@@ -46,10 +46,11 @@ public class MainActivity extends Activity {
                     Log.i("ping",Log.getStackTraceString(e));
                 }
 
-                Uri uri = Uri.parse("magicbox://plugin?packageName=cn.georgeyang.magicbox.lib&action=MainFragment");
+                Uri uri = Uri.parse("magicbox://plugin?packageName=cn.georgeyang.magicbox.lib&action=MainFragment&animType=LeftInRightOut");
                 Intent intent = new Intent("magicbox.plugin");
                 intent.setData(uri);
                 startActivity(intent);
+//                overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right);
 
 //                try {
 //                    String plugPath = AssetUtils.copyAsset(MainActivity.this, "plug.apk", getFilesDir());

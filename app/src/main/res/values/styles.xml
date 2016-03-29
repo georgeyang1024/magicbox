@@ -5,4 +5,24 @@
         <item name="android:windowIsTranslucent">true</item>
     </style>
 
+    <style name="Anim_fade" parent="android:Theme.Light">
+        <item name="android:windowAnimationStyle">@style/default_animation2</item>
+    </style>
+
+    <!-- 默认Activity跳转动画 -->
+    <style name="default_animation" parent="@android:style/Animation.Activity">
+        <item name="android:activityOpenEnterAnimation">@anim/fade_in</item>
+        <item name="android:activityOpenExitAnimation">@anim/fade_out</item>
+        <item name="android:activityCloseEnterAnimation">@anim/fade_in</item>
+        <item name="android:activityCloseExitAnimation">@anim/fade_out</item>
+    </style>
+
+    <!-- 默认Activity跳转动画 -->
+    <style name="default_animation2" parent="@android:style/Animation.Activity">
+        <item name="android:activityOpenEnterAnimation">@anim/slide_in_left</item>
+        <item name="android:activityOpenExitAnimation">@anim/slide_out_right</item>
+        <item name="android:activityCloseEnterAnimation">@anim/slide_in_left</item>
+        <item name="android:activityCloseExitAnimation">@anim/slide_out_right</item>
+    </style>
+
 </resources>
