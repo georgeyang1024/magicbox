@@ -1,44 +1,36 @@
 package cn.georgeyang.magicbox.lib;
 
+import android.app.Activity;
+import android.app.Fragment;
 import android.app.FragmentTransaction;
+import android.content.Intent;
 import android.graphics.Color;
+import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
+import android.text.TextUtils;
+import android.util.Log;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
+import android.widget.Toast;
 
-public class MainActivity extends PlugActivity  {
+import java.lang.reflect.Constructor;
+import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
-
-
+public class MainActivity extends Activity {
+    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        LayoutInflater inflater = (LayoutInflater) getSystemService(LAYOUT_INFLATER_SERVICE);
-        setContentView(createView(inflater,savedInstanceState));
+
+        startActivity(ProxyActivity.buildIntent(MainFragment.class,null));
+
+        finish();
+
     }
-
-    @Override
-    public View createView(LayoutInflater inf, Bundle bundle) {
-        FrameLayout rootView = new FrameLayout(inf.getContext());
-        rootView.setLayoutParams(new ViewGroup.LayoutParams(
-                ViewGroup.LayoutParams.MATCH_PARENT,
-                ViewGroup.LayoutParams.MATCH_PARENT));
-        rootView.setBackgroundColor(Color.GRAY);
-        rootView.setId(android.R.id.background);
-
-        rootView.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-               FragmentTransaction ft =  getFragmentManager().beginTransaction();
-                ft.add(android.R.id.background,new MainFragment(),"main");
-                ft.commit();
-            }
-        },2000);
-
-
-        return rootView;
-//        return inf.inflate(R.layout.activity_main,null);
-    }
-
 }

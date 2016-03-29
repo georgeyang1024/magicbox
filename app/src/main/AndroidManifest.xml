@@ -27,7 +27,7 @@
 
             android:name=".ProxyActivity">
             <intent-filter>
-                <action android:name="magicbox.plugin" />
+                <action android:name="cn.magicbox.plugin" />
                 <category android:name="android.intent.category.BROWSABLE"/>
                 <category android:name="android.intent.category.DEFAULT" />
                 <data
