@@ -20,15 +20,19 @@ import android.widget.Toast;
 import java.io.File;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
+import java.util.ArrayList;
 import java.util.HashMap;
 
+import cn.georgeyang.lib.AnimType;
+import cn.georgeyang.lib.FragmentOnlySupportActivity;
+import cn.georgeyang.lib.PluginResources;
 import cn.georgeyang.loader.AssetUtils;
 import cn.georgeyang.loader.PlugClassLoder;
 
 /**
  * Created by george.yang on 2016-3-29.
  */
-public class ProxyActivity extends Activity {
+public class ProxyActivity extends FragmentOnlySupportActivity {
     private PluginData mPluginData = null;
     private String packageName = null,action = null;
     private static final HashMap<String, PluginData> pluginChahe = new HashMap<>();
@@ -66,20 +70,37 @@ public class ProxyActivity extends Activity {
             rootView.setLayoutParams(new ViewGroup.LayoutParams(
                     ViewGroup.LayoutParams.MATCH_PARENT,
                     ViewGroup.LayoutParams.MATCH_PARENT));
-            rootView.setBackgroundColor(Color.RED);
-            rootView.setId(android.R.id.background);
+            rootView.setBackgroundColor(Color.GRAY);
+            rootView.setId(android.R.id.content);
             setContentView(rootView);
 
             initWithApkPathAndPackName(pluginPath,packageName);
 
 
-            Class pluginActivityClass = mPluginData.classLoder.loadClass(String.format("%s.%s",new Object[]{packageName,action}));
-            Constructor<?> localConstructor = pluginActivityClass.getConstructor(new Class[] {});
-            Fragment fragment = (Fragment) localConstructor.newInstance();
 
-            FragmentTransaction ft =  getFragmentManager().beginTransaction();
-            ft.add(android.R.id.background,fragment,"main");
-            ft.commit();
+            rootView.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+
+                    try {
+                        Class pluginActivityClass = mPluginData.classLoder.loadClass(String.format("%s.%s",new Object[]{packageName,action}));
+                        Constructor<?> localConstructor = pluginActivityClass.getConstructor(new Class[] {});
+                        Fragment fragment = (Fragment) localConstructor.newInstance();
+
+                        loadFragment(fragment);
+
+
+                    } catch (Exception e) {
+
+                    }
+
+                }
+            },2000);
+
+
+//            FragmentTransaction ft =  getFragmentManager().beginTransaction();
+//            ft.add(android.R.id.background,fragment,"main");
+//            ft.commit();
 
         } catch (Exception e) {
             Log.d("demo",Log.getStackTraceString(e).toString());
@@ -113,8 +134,7 @@ public class ProxyActivity extends Activity {
 
 
                 Resources superRes = super.getResources();
-                Resources resources = new Resources(assetManager, superRes.getDisplayMetrics(),
-                        superRes.getConfiguration());
+                PluginResources resources = new PluginResources(assetManager, superRes);
                 mPluginData.resources = resources;
 
 
@@ -187,5 +207,10 @@ public class ProxyActivity extends Activity {
     @Override
     public String getPackageName() {
         return packageName==null?super.getPackageName():packageName;
+    }
+
+    @Override
+    public int getContainerId() {
+        return android.R.id.content;
     }
 }

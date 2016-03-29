@@ -58,5 +58,7 @@ android {
 }
 
 dependencies {
-    compile files('src/main/libs/host.jar')
+    //    compile files('src/main/libs/host.jar')
+    //    compile files('src/main/jni/fastjson-1.1.37-leancloud.jar')
+//    compile 'com.alibaba:fastjson:1.2.8'
 }

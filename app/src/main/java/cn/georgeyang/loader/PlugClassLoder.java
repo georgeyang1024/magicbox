@@ -46,6 +46,8 @@ public class PlugClassLoder extends DexClassLoader {
 //                Log.i(TAG,className);
 //            }
 
+//        Log.i("demo","load:" + className);
+
         Class<?> clazz = findLoadedClass(className);
         if (clazz != null)
             return clazz;
