@@ -22,7 +22,17 @@
 
         <activity
             android:theme="@android:style/Theme.Holo.Light.NoActionBar"
-            android:name=".ProxyActivity"/>
+            android:name=".ProxyActivity">
+            <intent-filter>
+                <action android:name="magicbox.plugin" />
+                <category android:name="android.intent.category.BROWSABLE"/>
+                <category android:name="android.intent.category.DEFAULT" />
+                <data
+                    android:scheme="magicbox"
+                    android:host="plugin" />
+            </intent-filter>
+
+        </activity>
     </application>
 
 </manifest>

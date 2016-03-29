@@ -2,12 +2,11 @@ package cn.georgeyang.magicbox;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 
 import com.mingle.widget.LoadingView;
-
-
 import java.lang.reflect.Field;
 
 import cn.georgeyang.lib.HttpUtil;
@@ -34,24 +33,41 @@ public class MainActivity extends Activity {
 
             @Override
             public void runInUi(String flag, Object obj, boolean ispublish, float progress) {
-                loadingView.setLoadingText(obj.toString());
+//                loadingView.setLoadingText(obj.toString());
 
 
                 try {
                     Field field = getFragmentManager().getClass().getDeclaredField("mAdded");
                     field.setAccessible(true);
-                    Log.i("ping", field.get(getFragmentManager()).toString());
+//                    Log.i("ping", field.get(getFragmentManager()).toString());
 
                 } catch (Exception e) {
                     e.printStackTrace();
                     Log.i("ping",Log.getStackTraceString(e));
                 }
 
+                Uri uri = Uri.parse("magicbox://plugin?packageName=cn.georgeyang.magicbox.lib&action=MainFragment");
+                Intent intent = new Intent("magicbox.plugin");
+                intent.setData(uri);
+                startActivity(intent);
 
-                startActivity(new Intent(MainActivity.this,ProxyActivity.class));
+//                try {
+//                    String plugPath = AssetUtils.copyAsset(MainActivity.this, "plug.apk", getFilesDir());
+//                    PluginProxyContext pluginProxyContext = new PluginProxyContext(MainActivity.this,plugPath);
+//                    ClassLoader loader = initClassLoader(plugPath);
+//
+//                    //动态加载插件Activity
+//                    Class pluginActivityClass = loader.loadClass("cn.georgeyang.magicbox.ProxyActivity");
+//                    startActivity(new Intent(pluginProxyContext,pluginActivityClass));
+//
+//                } catch (Exception e) {
+//                    e.printStackTrace();
+//                    Log.i("demo", "load activity error:"+ Log.getStackTraceString(e));
+//                }
 
-                finish();
+//                finish();
             }
         });
     }
+
 }

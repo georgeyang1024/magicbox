@@ -1,4 +1,4 @@
-package cn.georgeyang.lib;
+package cn.georgeyang.magicbox.lib;
 
 import android.app.Activity;
 import android.app.Fragment;
@@ -8,12 +8,11 @@ import android.content.Intent;
 import android.os.Build;
 import android.util.Log;
 
+import com.alibaba.fastjson.JSONObject;
+
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
-
-import cn.georgeyang.magicbox.lib.PlugActivity;
-import cn.georgeyang.magicbox.lib.R;
 
 /**
  * 让activity只支持一个
@@ -99,12 +98,12 @@ public abstract class FragmentOnlySupportActivity extends PlugActivity {
                 //動畫
                 if (animType==AnimType.ZoomShow) {
                     mFragmentTransaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
-                } else if (animType== AnimType.LeftInRightOut) {
-                    mFragmentTransaction.setCustomAnimations(R.anim.push_left_in, R.anim.push_left_out,R.anim.back_left_in,R.anim.back_right_out);
-                } else if (animType== AnimType.BottomInTopOut) {
-                    mFragmentTransaction.setCustomAnimations(R.anim.push_bottom_in,R.anim.push_top_out,R.anim.push_bottom_in,R.anim.push_top_out);
+                } else if (animType==AnimType.NONE) {
+                    //none
                 } else {
-                    //NONE
+                    //自定義
+                    int[] anims = AnimType.getAnimRes(animType);
+                    mFragmentTransaction.setCustomAnimations(anims[0], anims[1],anims[2],anims[3]);
                 }
 
                 List<Fragment> fragmentlist = getFragments(getFragmentManager());
@@ -131,12 +130,12 @@ public abstract class FragmentOnlySupportActivity extends PlugActivity {
     }
 
     public void pushMsgToSubFragments (boolean needShow,int pushCode,Intent pushData) {
-        pushMsgToSubFragments(getSupportFragmentManager(), needShow,pushCode, Activity.RESULT_OK, pushData);
+        pushMsgToSubFragments(getFragmentManager(), needShow,pushCode, Activity.RESULT_OK, pushData);
     }
 
 
-    public void pushMsgToSubFragments (@NonNull FragmentManager fragmentManager,boolean needShow,int requestCode,int resultCode, Intent data) {
-        List<Fragment> fragmentlist =  fragmentManager.getFragments();
+    public void pushMsgToSubFragments (FragmentManager fragmentManager,boolean needShow,int requestCode,int resultCode, Intent data) {
+        List<Fragment> fragmentlist = getFragments(fragmentManager);
         if (fragmentlist!=null)
             for (Fragment fragment:fragmentlist) {
                 if (fragment==null) {
