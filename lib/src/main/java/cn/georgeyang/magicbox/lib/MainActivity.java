@@ -28,9 +28,10 @@ public class MainActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        startActivity(ProxyActivity.buildIntent(MainFragment.class,null));
+        ProxyActivity.init("cn.georgeyang.magicbox.lib","magicbox");
+        Intent intent = ProxyActivity.buildIntent(MainFragment.class);
+        startActivity(intent);
 
         finish();
-
     }
 }

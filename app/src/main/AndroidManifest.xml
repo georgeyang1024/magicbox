@@ -31,8 +31,7 @@
                 <category android:name="android.intent.category.BROWSABLE"/>
                 <category android:name="android.intent.category.DEFAULT" />
                 <data
-                    android:scheme="magicbox"
-                    android:host="plugin" />
+                    android:scheme="magicbox" />
             </intent-filter>
 
         </activity>

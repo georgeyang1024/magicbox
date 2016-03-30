@@ -29,7 +29,9 @@ public class MainFragment extends PluginFragment {
 //                Intent intent = new Intent("lib");
 //                intent.setData(uri);
 //                startActivity(intent);
-                loadFragment(TestFragment.class);
+                loadFragment(TestFragment.class,PluginConfig.ZoomShow);
+//                Intent intent = buildIntent(TestFragment.class,PluginConfig.ZoomShow);
+//                startActivity(intent);
             }
         });
         return view;

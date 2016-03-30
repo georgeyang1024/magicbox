@@ -21,28 +21,40 @@ import java.util.List;
 import java.util.Map;
 
 public class ProxyActivity extends Activity {
-    public static final String ACTION = "cn.georgeyang.magicbox.lib";
-    public static final String SCHEME = "magicbox";
+    private static String ACTION = "cn.magicbox.plugin";
+    private static String SCHEME = "magicbox";
+
+    public static void init (String action,String scheme) {
+        ProxyActivity.ACTION = action;
+        ProxyActivity.SCHEME = scheme;
+    }
+
+    public static Intent buildIntent(Class<? extends Fragment> clazz) {
+        return buildIntent(clazz.getPackage().getName(),clazz.getSimpleName(),null);
+    }
 
     public static Intent buildIntent(Class<? extends Fragment> clazz, Map<String,String> params) {
-        Uri.Builder builder = new Uri.Builder().scheme(SCHEME).path(clazz.getName());
-        String animType = (params==null || !params.containsKey("animType"))?"LeftInRightOut":params.get("animType");
+        return buildIntent(clazz.getPackage().getName(),clazz.getSimpleName(),params);
+    }
+
+    public static Intent buildIntent(String packageName,String className, Map<String,String> params) {
+        Uri.Builder builder = new Uri.Builder().scheme(SCHEME).path(packageName+"." + className);
+        String animType = (params==null || !params.containsKey("animType"))?PluginConfig.NONE:params.get("animType");
+        String version = (params==null || !params.containsKey("version"))?PluginConfig.pluginVersion:params.get("version");
         builder.appendQueryParameter("animType",animType);
-        builder.appendQueryParameter("version","1.0");
+        builder.appendQueryParameter("version",version);
         if (params!=null) {
             for (String key:params.keySet()) {
                 builder.appendQueryParameter(key,params.get(key));
             }
         }
         Uri uri = builder.build();
-
-        Log.i("test","uri:" + uri.toString());
         Intent intent = new Intent(ACTION);
         intent.setData(uri);
         return intent;
     }
 
-    private String packageName,animType=null,className = null,version=null;
+    protected String packageName,animType=null,className = null,version=null;
     public Fragment fragment;
 
 
@@ -80,94 +92,118 @@ public class ProxyActivity extends Activity {
     }
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-//        setTheme(R.style.Anim_fade);
+    public void finish() {
+        super.finish();
+        loadAnim(true);
+    }
 
-        try {
-            animType = getIntent().getData().getQueryParameter("animType");
-        } catch (Exception e) {
-            Log.d("demo",Log.getStackTraceString(e));
-        }
-
-        if (TextUtils.isEmpty(animType)) {
-            animType = "aaa";
-        }
-
+    private void loadAnim (boolean isExit) {
+//        if (isExit) {
+//            setUsePluginResources(false);
+//        }
         switch (animType) {
-            case "ww":
 
+            case PluginConfig.LeftInRightOut:
+                if (isExit) {
+                    overridePendingTransition(R.anim.right_in, R.anim.right_out);
+                } else {
+                    overridePendingTransition(R.anim.left_in, R.anim.left_out);
+                }
                 break;
+            case PluginConfig.AlphaShow:
+                overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
+                break;
+            case PluginConfig.TopOut:
+                overridePendingTransition(R.anim.push_in_down,R.anim.push_no_ani);
+                break;
+            case PluginConfig.BottomInTopOut:
+                overridePendingTransition(R.anim.push_in_down,R.anim.push_out_down);
+                break;
+            case PluginConfig.ZoomShow:
+                overridePendingTransition(R.anim.zoom_in, R.anim.zoom_out);
+                break;
+            case PluginConfig.NONE:
             default:
-                overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right);
+                overridePendingTransition(0, 0);
                 break;
-
         }
+    }
 
-
-        super.onCreate(savedInstanceState);
-        allActivity.add(this);
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        Log.d("demo","onCreate!!");
 
         try {
-
-        Intent intent = getIntent();
-        if (intent==null || intent.getData()==null) {
-            if (!"cn.georgeyang.magicbox.ProxyActivity".equals(this.getClass().getName())) {
-                intent = buildIntent(MainFragment.class,null);
-            } else {
+            Intent intent = getIntent();
+            if (intent==null || intent.getData()==null) {
                 Toast.makeText(this,"缺少参数",Toast.LENGTH_SHORT).show();
                 finish();
                 return;
             }
-        }
 
-        Uri uri = intent.getData();
+            Uri uri = intent.getData();
 
-        Log.i("test","path:" + uri.getPath());
-        String path = uri.getPath();
-        packageName = path.substring(1,path.lastIndexOf('.'));
-        Log.i("test","packageName:" + packageName);
-        if (TextUtils.isEmpty(packageName)) {
-            Toast.makeText(this,"未指定插件名",Toast.LENGTH_SHORT).show();
-            finish();
-            return;
-        }
+            String path = uri.getPath();
+            packageName = path.substring(1,path.lastIndexOf('.'));
+            Log.i("test","packageName:" + packageName);
+            if (TextUtils.isEmpty(packageName)) {
+                Toast.makeText(this,"未指定插件名",Toast.LENGTH_SHORT).show();
+                finish();
+                return;
+            }
 
-        className = path.substring(path.lastIndexOf('.')+1,path.length());
-        Log.i("test","className:" + className);
-        if (TextUtils.isEmpty(className)) {
-            className = "MainFragment";
-        }
+            className = path.substring(path.lastIndexOf('.')+1,path.length());
+            Log.i("test","className:" + className);
+            if (TextUtils.isEmpty(className)) {
+                className = "MainFragment";
+            }
 
-        String pluginPath = "";
+            version = uri.getQueryParameter("version");
+            if (TextUtils.isEmpty(version)) {
+                version = PluginConfig.pluginVersion;
+            }
 
-//            pluginPath = AssetUtils.copyAsset(this,String.format("%s_%s.apk",new Object[]{packageName,version}), getFilesDir());
+            animType = uri.getQueryParameter("animType");
+            if (TextUtils.isEmpty(animType)) {
+                animType = PluginConfig.NONE;
+            }
 
-            FrameLayout rootView = new FrameLayout(this);
-            rootView.setLayoutParams(new ViewGroup.LayoutParams(
-                    ViewGroup.LayoutParams.MATCH_PARENT,
-                    ViewGroup.LayoutParams.MATCH_PARENT));
-            rootView.setBackgroundColor(Color.GRAY);
-            rootView.setId(android.R.id.content);
-
-            setContentView(rootView);
-
+//            String pluginPath = AssetUtils.copyAsset(this,String.format("%s_%s.apk",new Object[]{packageName,version}), getFilesDir());
 //            initWithApkPathAndPackName(pluginPath,packageName);
-//            Class pluginActivityClass = mPluginData.classLoder.loadClass(String.format("%s.%s",new Object[]{packageName,action}));
+//            Class pluginActivityClass = mPluginData.classLoder.loadClass(String.format("%s.%s",new Object[]{packageName,className}));
 //            Constructor<?> localConstructor = pluginActivityClass.getConstructor(new Class[] {});
 //            fragment = (Fragment) localConstructor.newInstance();
 
             Class pluginActivityClass = Class.forName(packageName + "." + className);
             fragment = (Fragment) pluginActivityClass.newInstance();
-
-            FragmentTransaction ft =  getFragmentManager().beginTransaction();
-            ft.add(android.R.id.content,fragment,"main");
-            ft.commit();
-
         } catch (Exception e) {
             Toast.makeText(this,"加载失败:" + e.getMessage(),Toast.LENGTH_SHORT).show();
             Log.d("demo",Log.getStackTraceString(e).toString());
             e.printStackTrace();
+
+            finish();
         }
+
+        Log.d("demo","animType:" + animType);
+
+        loadAnim(false);
+
+        super.onCreate(savedInstanceState);
+
+        allActivity.add(this);
+
+        FrameLayout rootView = new FrameLayout(this);
+        rootView.setLayoutParams(new ViewGroup.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT,
+                ViewGroup.LayoutParams.MATCH_PARENT));
+        rootView.setBackgroundColor(Color.GRAY);
+        rootView.setId(android.R.id.content);
+
+        setContentView(rootView);
+
+        FragmentTransaction ft =  getFragmentManager().beginTransaction();
+        ft.add(android.R.id.content,fragment,"main");
+        ft.commit();
     }
 
 

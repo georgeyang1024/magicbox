@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.res.AssetManager;
 import android.content.res.Resources;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 
 import java.io.File;
@@ -60,15 +61,18 @@ public abstract class PluginActivity extends Activity {
         }
     }
 
+    private boolean usePluginResources = true;
+    public void setUsePluginResources (boolean usePluginResources) {
+        this.usePluginResources = usePluginResources;
+    }
+
     /**
      * 创建一个当前类的布局加载器，用于专门加载插件资源
      */
     @Override
     public Object getSystemService(String name) {
         if (LAYOUT_INFLATER_SERVICE.equals(name)) {
-            if (mPluginData==null || mPluginData.layoutInflater==null) {
-                return super.getSystemService(name);
-            } else {
+            if (!(mPluginData==null || mPluginData.layoutInflater==null || !usePluginResources)) {
                 return mPluginData.layoutInflater;
             }
         }
@@ -77,7 +81,7 @@ public abstract class PluginActivity extends Activity {
 
     @Override
     public LayoutInflater getLayoutInflater() {
-        if (!(mPluginData==null || mPluginData.layoutInflater==null)) {
+        if (!(mPluginData==null || mPluginData.layoutInflater==null || !usePluginResources)) {
             return mPluginData.layoutInflater;
         }
         return super.getLayoutInflater();
@@ -85,7 +89,7 @@ public abstract class PluginActivity extends Activity {
 
     @Override
     public AssetManager getAssets() {
-        if (!(mPluginData==null || mPluginData.assetManager==null)) {
+        if (!(mPluginData==null || mPluginData.assetManager==null || !usePluginResources)) {
             return mPluginData.assetManager;
         }
         return super.getAssets();
@@ -93,7 +97,7 @@ public abstract class PluginActivity extends Activity {
 
     @Override
     public Resources getResources() {
-        if (!(mPluginData==null || mPluginData.resources==null)) {
+        if (!(mPluginData==null || mPluginData.resources==null || !usePluginResources)) {
             return mPluginData.resources;
         }
         return super.getResources();
@@ -101,7 +105,7 @@ public abstract class PluginActivity extends Activity {
 
     @Override
     public ClassLoader getClassLoader() {
-        if (!(mPluginData==null || mPluginData.classLoder==null)) {
+        if (!(mPluginData==null || mPluginData.classLoder==null || !usePluginResources)) {
             return mPluginData.classLoder;
         }
         return super.getClassLoader();
@@ -109,7 +113,7 @@ public abstract class PluginActivity extends Activity {
 
     @Override
     public Resources.Theme getTheme() {
-        if (!(mPluginData==null || mPluginData.theme==null)) {
+        if (!(mPluginData==null || mPluginData.theme==null || !usePluginResources)) {
             return mPluginData.theme;
         }
         return super.getTheme();
@@ -117,6 +121,9 @@ public abstract class PluginActivity extends Activity {
 
     @Override
     public String getPackageName() {
-        return packageName==null?super.getPackageName():packageName;
+        if (!(TextUtils.isEmpty(packageName) || !usePluginResources)) {
+            return packageName;
+        }
+        return super.getPackageName();
     }
 }
