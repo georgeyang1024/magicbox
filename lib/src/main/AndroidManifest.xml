@@ -7,23 +7,23 @@
         android:icon="@mipmap/ic_launcher"
         android:label="app_name"
         android:supportsRtl="true"
-        android:theme="@android:style/Theme.Holo.Light">
+        android:theme="@android:style/Theme.Holo.Light.NoActionBar">
         <activity android:name=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
-
-        <activity android:name=".ProxyActivity">
+        <activity
+            android:name=".ProxyActivity"
+            android:theme="@android:style/Theme.Holo.Light.NoActionBar">
             <intent-filter>
                 <action android:name="cn.georgeyang.magicbox.lib" />
+
                 <category android:name="android.intent.category.DEFAULT" />
 
-                <data
-                    android:scheme="magicbox"></data>
-
+                <data android:scheme="magicbox" />
             </intent-filter>
         </activity>
 

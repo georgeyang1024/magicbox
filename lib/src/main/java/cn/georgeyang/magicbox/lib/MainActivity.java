@@ -8,6 +8,7 @@ import android.graphics.Color;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.KeyEvent;
@@ -28,6 +29,7 @@ public class MainActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+//        SwipeRefreshLayout
         ProxyActivity.init("cn.georgeyang.magicbox.lib","magicbox");
         Intent intent = ProxyActivity.buildIntent(MainFragment.class);
         startActivity(intent);

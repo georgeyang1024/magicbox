@@ -2,9 +2,11 @@ package cn.georgeyang.magicbox;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.ContextWrapper;
 import android.content.res.AssetManager;
 import android.content.res.Resources;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
 
 import java.io.File;
@@ -29,12 +31,13 @@ public abstract class PluginActivity extends Activity {
             mPluginData  = new PluginData();
             mPluginData.parentContext = this.getBaseContext();
 
+            this.packageName = packageName;
 
             Class<?> cls = Class
                     .forName("com.android.internal.policy.PolicyManager");
             Method m = cls.getMethod("makeNewLayoutInflater",
                     Context.class);
-            mPluginData.layoutInflater = (LayoutInflater) m.invoke(null, this);
+            mPluginData.layoutInflater = (LayoutInflater) m.invoke(null, getApplicationContext());
 
 
             File outFile = new File(pluginPath);
@@ -49,7 +52,6 @@ public abstract class PluginActivity extends Activity {
             Resources resources = new Resources(assetManager, superRes.getDisplayMetrics(),superRes.getConfiguration());
             mPluginData.resources = resources;
 
-
             Resources.Theme theme = super.getResources().newTheme();
             theme.applyStyle(android.R.style.Theme_Light_NoTitleBar,true);
             mPluginData.theme = theme;
@@ -63,14 +65,17 @@ public abstract class PluginActivity extends Activity {
 
     private boolean usePluginResources = true;
     public void setUsePluginResources (boolean usePluginResources) {
-        this.usePluginResources = usePluginResources;
+//        this.usePluginResources = usePluginResources;
     }
+
+
 
     /**
      * 创建一个当前类的布局加载器，用于专门加载插件资源
      */
     @Override
     public Object getSystemService(String name) {
+        Log.d("test","getSystemService:" + name);
         if (LAYOUT_INFLATER_SERVICE.equals(name)) {
             if (!(mPluginData==null || mPluginData.layoutInflater==null || !usePluginResources)) {
                 return mPluginData.layoutInflater;
@@ -81,6 +86,7 @@ public abstract class PluginActivity extends Activity {
 
     @Override
     public LayoutInflater getLayoutInflater() {
+        Log.d("test","getLayoutInflater!");
         if (!(mPluginData==null || mPluginData.layoutInflater==null || !usePluginResources)) {
             return mPluginData.layoutInflater;
         }
@@ -121,9 +127,6 @@ public abstract class PluginActivity extends Activity {
 
     @Override
     public String getPackageName() {
-        if (!(TextUtils.isEmpty(packageName) || !usePluginResources)) {
-            return packageName;
-        }
-        return super.getPackageName();
+        return packageName==null?super.getPackageName():packageName;
     }
 }

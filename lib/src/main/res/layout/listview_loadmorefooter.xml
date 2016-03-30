@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              xmlns:app="http://schemas.android.com/apk/res-auto"
+
+              android:padding="10dp"
+              android:orientation="horizontal"
+    android:layout_width="fill_parent"
+              android:gravity="center"
+    android:layout_height="wrap_content" >
+
+    <cn.georgeyang.widget.ProgressWheel
+        android:id="@+id/footer_progressbar"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:visibility="visible"
+        app:matProg_barColor="@android:color/holo_green_dark"
+        app:matProg_fillRadius="false"
+        app:matProg_progressIndeterminate="true" />
+
+    <TextView
+        android:layout_marginLeft="5dp"
+        android:id="@+id/xlistview_footer_hint_textview"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:visibility="visible"
+        android:text="loading" />
+
+
+
+</LinearLayout>

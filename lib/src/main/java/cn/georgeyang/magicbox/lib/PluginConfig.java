@@ -7,6 +7,7 @@ package cn.georgeyang.magicbox.lib;
 public class PluginConfig {
     //do not change line...
     public static final String NONE = "";//没有动画
+    public static final String System = "Sytem";//动画跟随系统
     public static final String LeftInRightOut = "LeftInRightOut";//左进右出
     public static final String BottomInTopOut = "BottomInTopOut";//上进，往下出
     public static final String TopOut = "TopOut";//上进，往下出

@@ -7,7 +7,9 @@ import android.net.Uri;
 import android.net.wifi.WifiEnterpriseConfig;
 import android.util.Log;
 import android.view.KeyEvent;
+import android.view.View;
 
+import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
@@ -16,6 +18,58 @@ import java.util.Map;
  * Created by george.yang on 16/3/29.
  */
 public abstract  class PluginFragment extends Fragment {
+    private Activity mProxyActivity;
+
+    public final void setProxyActivity(Activity activity) {
+        mProxyActivity = activity;
+        try {
+            Field[] fields = Fragment.class.getFields();
+            for (Field field:fields) {
+                Log.d("test",field.getName());
+            }
+            Log.d("test","==================");
+            fields = Fragment.class.getDeclaredFields();
+            for (Field field:fields) {
+                Log.d("test",field.getName());
+            }
+        } catch (Exception e){
+
+        }
+        try {
+            Field activityField = Fragment.class.getDeclaredField("mActivity");
+            activityField.setAccessible(true);
+            activityField.set(this,activity);
+            Log.d("test","success@@@");
+            return;
+        } catch (Exception e) {
+            Log.d("test",Log.getStackTraceString(e).toString());
+            e.printStackTrace();
+        }
+
+        try {
+            Field hostField = Fragment.class.getField("mHost");
+            hostField.setAccessible(true);
+            Class fragmentHostClass = hostField.getClass();
+            Field activityField = fragmentHostClass.getField("mActivity");
+            activityField.set(this,activity);
+            return;
+        } catch (Exception e) {
+            Log.d("test",Log.getStackTraceString(e).toString());
+            e.printStackTrace();
+        }
+    }
+
+    public View getLayout (String name) {
+        try {
+             Method method = getActivity().getClass().getMethod("getLayout",String.class);
+            return (View) method.invoke(getActivity(),new Object[]{name});
+        }catch (Exception e) {
+            Log.d("test",Log.getStackTraceString(e).toString());
+            e.printStackTrace();
+        }
+        return null;
+    }
+
     private static Method pushMethod;
     public final void pushMessage (int type,Object object) {
         try {
@@ -53,7 +107,7 @@ public abstract  class PluginFragment extends Fragment {
     }
 
     public final void loadFragment (Class<? extends Fragment> clazz) {
-        loadFragment(clazz,"");
+        loadFragment(clazz,PluginConfig.System);
     }
     public final void loadFragment (Class<? extends Fragment> clazz,String animType) {
         HashMap<String,String> params = new HashMap<>();
