@@ -2,14 +2,11 @@ package cn.georgeyang.magicbox;
 
 import android.app.Activity;
 import android.content.Context;
-import android.content.ContextWrapper;
 import android.content.res.AssetManager;
 import android.content.res.Resources;
-import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 
-import java.io.File;
 import java.lang.reflect.Method;
 import java.util.HashMap;
 
@@ -18,7 +15,7 @@ import cn.georgeyang.loader.PlugClassLoder;
 /**
  * Created by george.yang on 16/3/29.
  */
-public abstract class PluginActivity extends Activity {
+public abstract class PluginActivity_bak extends Activity {
     protected PluginData mPluginData = null;
     protected String packageName = null;
     protected static final HashMap<String, PluginData> pluginChahe = new HashMap<>();
@@ -39,12 +36,10 @@ public abstract class PluginActivity extends Activity {
                     Context.class);
             mPluginData.layoutInflater = (LayoutInflater) m.invoke(null, getApplicationContext());
 
-
-            File outFile = new File(pluginPath);
             AssetManager assetManager = AssetManager.class.newInstance();
             Method addAssetPath = assetManager.getClass().getMethod(
                     "addAssetPath", String.class);
-            addAssetPath.invoke(assetManager, outFile.getPath());
+            addAssetPath.invoke(assetManager, pluginPath);
             mPluginData.assetManager = assetManager;
 
             Resources superRes = super.getResources();

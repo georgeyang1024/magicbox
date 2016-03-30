@@ -3,27 +3,30 @@ package cn.georgeyang.magicbox.lib;
 import android.app.Activity;
 import android.app.Fragment;
 import android.app.FragmentTransaction;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
-import android.graphics.drawable.Drawable;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
-import android.view.KeyEvent;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.Toast;
 
+import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
 
+
+/**
+ * Created by george.yang on 2016-3-30.
+ */
 public class ProxyActivity extends Activity {
+    private String packageName,animType=null,className = null,version=null;
+    private Object viewController;
+
     private static String ACTION = "cn.magicbox.plugin";
     private static String SCHEME = "magicbox";
 
@@ -32,11 +35,11 @@ public class ProxyActivity extends Activity {
         ProxyActivity.SCHEME = scheme;
     }
 
-    public static Intent buildIntent(Class<? extends Fragment> clazz) {
+    public static Intent buildIntent(Class clazz) {
         return buildIntent(clazz.getPackage().getName(),clazz.getSimpleName(),null);
     }
 
-    public static Intent buildIntent(Class<? extends Fragment> clazz, Map<String,String> params) {
+    public static Intent buildIntent(Class clazz, Map<String,String> params) {
         return buildIntent(clazz.getPackage().getName(),clazz.getSimpleName(),params);
     }
 
@@ -57,86 +60,9 @@ public class ProxyActivity extends Activity {
         return intent;
     }
 
-    protected String packageName,animType=null,className = null,version=null;
-    public Fragment fragment;
-
-
-
-    private static final List<ProxyActivity> allActivity =new ArrayList<>();
-
-    public static void pushMessage(Integer type,Object object) {
-        Log.i("test","push:" + object);
-        for (ProxyActivity proxyActivity:allActivity) {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
-                if (proxyActivity.isDestroyed()) {
-                    Log.i("test","isDestroyed:" + proxyActivity);
-                    continue;
-                }
-            }
-            if (proxyActivity.isFinishing()) {
-                Log.i("test","isFinishing:" + proxyActivity);
-                continue;
-            }
-
-
-            Fragment fragment = proxyActivity.fragment;
-            if (fragment==null || !fragment.isAdded()) {
-                Log.i("test","null or not add:" + fragment);
-                continue;
-            }
-
-            try {
-                Method method = fragment.getClass().getMethod("onReciveMessage",new Class[]{Integer.class,Object.class});
-                method.invoke(fragment,new Object[]{type,object});
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
-    }
-
-    @Override
-    public void finish() {
-        super.finish();
-        loadAnim(true);
-    }
-
-    private void loadAnim (boolean isExit) {
-//        if (isExit) {
-//            setUsePluginResources(false);
-//        }
-        switch (animType) {
-            case PluginConfig.LeftInRightOut:
-                if (isExit) {
-                    overridePendingTransition(R.anim.right_in, R.anim.right_out);
-                } else {
-                    overridePendingTransition(R.anim.left_in, R.anim.left_out);
-                }
-                break;
-            case PluginConfig.AlphaShow:
-                overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
-                break;
-            case PluginConfig.TopOut:
-                overridePendingTransition(R.anim.push_in_down,R.anim.push_no_ani);
-                break;
-            case PluginConfig.BottomInTopOut:
-                overridePendingTransition(R.anim.push_in_down,R.anim.push_out_down);
-                break;
-            case PluginConfig.ZoomShow:
-                overridePendingTransition(R.anim.zoom_in, R.anim.zoom_out);
-                break;
-            case PluginConfig.NONE:
-                overridePendingTransition(0, 0);
-                break;
-            case PluginConfig.System:
-            default:
-                break;
-        }
-    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        Log.d("demo","onCreate!!");
-
         try {
             Intent intent = getIntent();
             if (intent==null || intent.getData()==null) {
@@ -173,16 +99,19 @@ public class ProxyActivity extends Activity {
             }
 
 //            String pluginPath = AssetUtils.copyAsset(this,String.format("%s_%s.apk",new Object[]{packageName,version}), getFilesDir());
-//            initWithApkPathAndPackName(pluginPath,packageName);
-//            Class pluginActivityClass = mPluginData.classLoder.loadClass(String.format("%s.%s",new Object[]{packageName,className}));
-//            Constructor<?> localConstructor = pluginActivityClass.getConstructor(new Class[] {});
-//            fragment = (Fragment) localConstructor.newInstance();
+////            initWithApkPathAndPackName(pluginPath,packageName);
+//            proxyContext = new PluginProxyContext(this);
+//            proxyContext.loadResources(pluginPath,packageName);
 
-            Class pluginActivityClass = Class.forName(packageName + "." + className);
-            fragment = (Fragment) pluginActivityClass.newInstance();
+            Class pluginActivityClass = this.getClassLoader().loadClass(String.format("%s.%s",new Object[]{packageName,className}));
+            Constructor<?> localConstructor = pluginActivityClass.getConstructor(new Class[] {});
+            viewController = localConstructor.newInstance();
 
-            Method method = fragment.getClass().getMethod("setProxyActivity",new Class[]{Activity.class});
-            method.invoke(fragment,new Object[]{this});
+//            Class pluginActivityClass = Class.forName(packageName + "." + className);
+//            fragment = (Fragment) pluginActivityClass.newInstance();
+
+            Method method = viewController.getClass().getMethod("setPluginContext",new Class[]{Context.class});
+            method.invoke(viewController,new Object[]{this});
         } catch (Exception e) {
             Toast.makeText(this,"加载失败:" + e.getMessage(),Toast.LENGTH_SHORT).show();
             Log.d("demo",Log.getStackTraceString(e).toString());
@@ -193,114 +122,34 @@ public class ProxyActivity extends Activity {
 
         Log.d("demo","animType:" + animType);
 
-        loadAnim(false);
+//        loadAnim(false);
 
         super.onCreate(savedInstanceState);
 
-        allActivity.add(this);
+//        allActivity.add(this);
 
-        FrameLayout rootView = new FrameLayout(this);
-        rootView.setLayoutParams(new ViewGroup.LayoutParams(
-                ViewGroup.LayoutParams.MATCH_PARENT,
-                ViewGroup.LayoutParams.MATCH_PARENT));
-        rootView.setBackgroundColor(Color.GRAY);
-        rootView.setId(android.R.id.content);
-
-        setContentView(rootView);
-
-        FragmentTransaction ft =  getFragmentManager().beginTransaction();
-        ft.add(android.R.id.content,fragment,"main");
-        ft.commit();
-    }
+//        FrameLayout rootView = new FrameLayout(this);
+//        rootView.setLayoutParams(new ViewGroup.LayoutParams(
+//                ViewGroup.LayoutParams.MATCH_PARENT,
+//                ViewGroup.LayoutParams.MATCH_PARENT));
+//        rootView.setBackgroundColor(Color.GRAY);
+//        rootView.setId(android.R.id.content);
 
 
-    private Method backPressedMethond;
-
-    /**
-     * 虚拟方法,如果fragment有boolean onBackPressed()方法，调用
-     */
-    @Override
-    public void onBackPressed() {
         try {
-            if (backPressedMethond==null) {
-                backPressedMethond = fragment.getClass().getMethod("onBackPressed",new Class[]{});
-            }
-            if (backPressedMethond!=null) {
-                boolean ret = (boolean) backPressedMethond.invoke(fragment,new Object[]{});
-                if (ret) {
-                    return;
-                }
-            }
+            Method method = viewController.getClass().getMethod("createView",new Class[]{Context.class});
+            View rootView = (View) method.invoke(viewController,new Object[]{this});
+
+            setContentView(rootView);
         } catch (Exception e) {
+            Toast.makeText(this,"加载失败:" + e.getMessage(),Toast.LENGTH_SHORT).show();
+            Log.d("demo",Log.getStackTraceString(e).toString());
+            e.printStackTrace();
+
+            finish();
         }
-        super.onBackPressed();
-    }
-
-    private Method keyDownMethond;
-    @Override
-    public boolean onKeyDown(int keyCode, KeyEvent event) {
-        try {
-            if (keyDownMethond==null) {
-                keyDownMethond = fragment.getClass().getMethod("onKeyDown",new Class[]{Integer.class,KeyEvent.class});
-            }
-            if (keyDownMethond!=null) {
-                boolean ret = (boolean) keyDownMethond.invoke(fragment,new Object[]{keyCode,event});
-                if (ret) {
-                    return true;
-                }
-            }
-        } catch (Exception e) {
-        }
-        return super.onKeyDown(keyCode, event);
-    }
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        allActivity.remove(this);
-    }
 
 
-
-    /**
-     * 获取插件资源对应的id
-     *
-     * @param type
-     * @param name
-     * @return
-     * @author 小姜
-     * @time 2015-4-16 上午11:31:56
-     */
-    public int getIdentifier(String type,String name){
-        return getResources().getIdentifier(name, type, packageName);
-    }
-    public int getId(String name){
-        return getResources().getIdentifier(name, "id", packageName);
-    }
-    /**
-     * 获取插件中的layout布局
-     *
-     * @param name
-     * @return
-     * @author 小姜
-     * @time 2015-4-16 上午11:32:12
-     */
-    public View getLayout(String name){
-        return LayoutInflater.from(this).inflate(getIdentifier("layout",name), null);
-    }
-    public String getString(String name){
-        return getResources().getString(getIdentifier("string", name));
-    }
-    public int getColor(String name){
-        return getResources().getColor(getIdentifier("color", name));
-    }
-    public Drawable getDrawable(String name){
-        return getResources().getDrawable(getIdentifier("drawable", name));
-    }
-    public int getStyle(String name){
-        return getIdentifier("style", name);
-    }
-    public float getDimen(String name){
-        return getResources().getDimension(getIdentifier("dimen", name));
+//        viewController
     }
 }

@@ -11,6 +11,7 @@ import java.lang.reflect.Field;
 
 import cn.georgeyang.lib.HttpUtil;
 import cn.georgeyang.lib.UiThread;
+import cn.georgeyang.loader.PluginProxyContext;
 
 
 public class MainActivity extends Activity {
@@ -34,11 +35,18 @@ public class MainActivity extends Activity {
             @Override
             public void runInUi(String flag, Object obj, boolean ispublish, float progress) {
                 ProxyActivity.init("cn.magicbox.plugin","magicbox");
-                Intent intent = ProxyActivity.buildIntent("cn.georgeyang.magicbox.lib","MainFragment",null);
+                Intent intent = ProxyActivity.buildIntent("cn.georgeyang.magicbox.lib","MainView",null);
+//                Intent intent = ProxyActivity.buildIntent("cn.georgeyang.minipplication","MainFragment",null);
                 startActivity(intent);
                 finish();
+
+
             }
         });
+
+//        PluginProxyContext context = new PluginProxyContext(this);
+//        context.loadResources(getFilesDir().getAbsolutePath() + "/cn.georgeyang.minipplication_1.0.apk","cn.georgeyang.minipplication" );
+//        Log.i("test","加载的string:" + context.getString("app_name"));
     }
 
 }

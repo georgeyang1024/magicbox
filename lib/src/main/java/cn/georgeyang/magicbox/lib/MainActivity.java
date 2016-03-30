@@ -31,7 +31,7 @@ public class MainActivity extends Activity {
 
 //        SwipeRefreshLayout
         ProxyActivity.init("cn.georgeyang.magicbox.lib","magicbox");
-        Intent intent = ProxyActivity.buildIntent(MainFragment.class);
+        Intent intent = ProxyActivity.buildIntent(MainView.class);
         startActivity(intent);
 
         finish();
