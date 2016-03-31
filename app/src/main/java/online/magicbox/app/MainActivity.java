@@ -6,7 +6,6 @@ import android.os.Bundle;
 
 import com.mingle.widget.LoadingView;
 
-import cn.georgeyang.magicbox.R;
 
 
 public class MainActivity extends Activity {
@@ -30,7 +29,7 @@ public class MainActivity extends Activity {
             @Override
             public void runInUi(String flag, Object obj, boolean ispublish, float progress) {
                 ProxyActivity.init("cn.magicbox.plugin","magicbox");
-                Intent intent = ProxyActivity.buildIntent("cn.georgeyang.magicbox.lib","MainView",null);
+                Intent intent = ProxyActivity.buildIntent("online.magicbox.desktop","MainSlice",null);
 //                Intent intent = ProxyActivity.buildIntent("cn.georgeyang.minipplication","MainFragment",null);
                 startActivity(intent);
                 finish();

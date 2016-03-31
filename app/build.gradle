@@ -42,7 +42,7 @@ android {
                 String classPath = project(':app').buildDir.absolutePath + '/intermediates/classes/debug'
                 //项目编译class所在目录
                 String libPath = "$rootDir/transformClasses;$rootDir/transformClasses/buildLib" //AntilazyLoad.class所在目錄
-                String igonre = "cn.georgeyang.loader.*;android.*;online.magicbox.app;*.BuildConfig"
+                String igonre = "*.BuildConfig"
                 println classPath
                 println libPath
                 println igonre

@@ -19,7 +19,7 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import cn.georgeyang.magicbox.R;
+import online.magicbox.app.R;
 
 
 /**

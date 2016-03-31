@@ -19,8 +19,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.WeakHashMap;
 
-import cn.georgeyang.magicbox.R;
-
 /**
  * Created by george.yang on 2016-3-30.
  */

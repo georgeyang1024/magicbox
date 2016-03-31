@@ -7,11 +7,19 @@ import android.content.res.AssetManager;
 import android.content.res.Resources;
 import android.content.res.Resources.Theme;
 import android.graphics.drawable.Drawable;
+import android.os.Build;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 
+import java.io.BufferedInputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.lang.reflect.Method;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipInputStream;
 
 import online.magicbox.app.PlugClassLoder;
 
@@ -106,7 +114,44 @@ public class PluginProxyContext extends ContextWrapper {
 		Log.i("test","加载的packageName:" + packageName);
 		getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
-		plugClassLoder = new PlugClassLoder(dexPath,context.getCacheDir().getAbsolutePath(),null,context.getClassLoader());
+        //释放so文件
+        String libPath = getFilesDir().getAbsolutePath() + "/lib";
+        ZipInputStream zipIn = null;
+        int readedBytes = 0;
+        byte buf[] = new byte[4096];
+        new File(libPath).mkdirs();
+        try {
+            zipIn = new ZipInputStream(new BufferedInputStream(new FileInputStream(dexPath)));
+            ZipEntry zipEntry = null;
+            while ((zipEntry = zipIn.getNextEntry()) != null) {
+                String name = zipEntry.getName();
+                if (!TextUtils.isEmpty(name)) {
+                    if (name.startsWith("lib/" + Build.CPU_ABI)) {
+                        String fileName = name.substring(name.lastIndexOf("/")+1,name.length());
+                        try {
+                            FileOutputStream fileOut = new FileOutputStream(new File(libPath,fileName));
+                            while ((readedBytes = zipIn.read(buf)) > 0) {
+                                fileOut.write(buf, 0, readedBytes);
+                            }
+                            fileOut.close();
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }
+            }
+            zipIn.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                zipIn.closeEntry();
+            } catch (Exception e) {
+             e.printStackTrace();
+            }
+        }
+
+		plugClassLoder = new PlugClassLoder(dexPath,context.getCacheDir().getAbsolutePath(),libPath,context.getClassLoader());
 	}
 
 	

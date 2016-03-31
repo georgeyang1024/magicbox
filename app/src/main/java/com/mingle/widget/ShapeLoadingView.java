@@ -12,7 +12,7 @@ import android.view.View;
 import android.view.animation.DecelerateInterpolator;
 import android.view.animation.Interpolator;
 
-import cn.georgeyang.magicbox.R;
+import online.magicbox.app.R;
 
 
 /**

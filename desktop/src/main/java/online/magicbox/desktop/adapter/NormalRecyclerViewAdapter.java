@@ -38,11 +38,13 @@ public NormalTextViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
 
 @Override
 public void onBindViewHolder(NormalTextViewHolder holder, int position) {
-    try {
-        holder.mTextView.setText(mTitles[position]);
-    } catch (Exception e) {
+    holder.itemView.setOnClickListener(new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
 
-    }
+        }
+    });
+        holder.mTextView.setText(mTitles[position]);
 }
 
 @Override

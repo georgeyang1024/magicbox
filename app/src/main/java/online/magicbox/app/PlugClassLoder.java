@@ -1,6 +1,9 @@
 package online.magicbox.app;
 
 
+import android.os.Build;
+import android.util.Log;
+
 import java.util.HashMap;
 
 import dalvik.system.DexClassLoader;
@@ -20,6 +23,11 @@ public class PlugClassLoder extends DexClassLoader {
         if (!plugLoderMap.containsKey(dexPath)) {
             plugLoderMap.put(dexPath, this);
         }
+    }
+
+    @Override
+    public String findLibrary(String name) {
+        return super.findLibrary(name);
     }
 
     @Override
