@@ -5,8 +5,8 @@ android {
     buildToolsVersion "23.0.1"
 
     defaultConfig {
-        applicationId "cn.georgeyang.magicbox"
-        minSdkVersion 15
+        applicationId "online.magicbox.app"
+        minSdkVersion 13//8主題太差
         targetSdkVersion 23
         versionCode 1
         versionName "1.0"
@@ -42,7 +42,7 @@ android {
                 String classPath = project(':app').buildDir.absolutePath + '/intermediates/classes/debug'
                 //项目编译class所在目录
                 String libPath = "$rootDir/transformClasses;$rootDir/transformClasses/buildLib" //AntilazyLoad.class所在目錄
-                String igonre = "cn.georgeyang.loader.*;android.*;cn.georgeyang.magicbox.App;*.BuildConfig"
+                String igonre = "cn.georgeyang.loader.*;android.*;online.magicbox.app;*.BuildConfig"
                 println classPath
                 println libPath
                 println igonre
