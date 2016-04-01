@@ -1,1 +1,1 @@
-include ':app',':desktop'
+include ':app', ':desktop', ':appfix'

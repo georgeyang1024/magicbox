@@ -1,4 +1,4 @@
-package online.magicbox.app;
+package online.magicbox.bugfix;
 
 import android.content.Context;
 import android.content.res.AssetManager;
@@ -14,6 +14,9 @@ import java.io.OutputStream;
  */
 public class AssetUtils {
     public static String copyAsset(Context context, String assetName, File dir) throws IOException {
+        if (!dir.exists()) {
+            dir.mkdirs();
+        }
         File outFile = new File(dir, assetName);
         if (!outFile.exists()) {
             AssetManager assetManager = context.getAssets();

@@ -35,30 +35,52 @@ android {
         }
 
         applicationVariants.all { variant ->
-            println 'variant:' + variant.buildType.name
-
-//            if (variant.buildType.isDebuggable()) {
-                //在执行dx命令之前将代码打入到class中
-                String classPath = project(':app').buildDir.absolutePath + '/intermediates/classes/debug'
-                //项目编译class所在目录
-                String libPath = "$rootDir/transformClasses;$rootDir/transformClasses/buildLib" //AntilazyLoad.class所在目錄
-                String igonre = "*.BuildConfig"
-                println classPath
-                println libPath
-                println igonre
-
-                javaexec {
-                    classpath "$rootDir/transformClasses/transformClasses.jar"
-                    main = 'cn.georgeyang.TransformClasses'
-                    args classPath, libPath, igonre
-                }
-//            }
+            variant.dex.dependsOn << processWithJavassist //在执行dx命令之前将代码打入到class中
         }
+
+//        applicationVariants.all { variant ->
+//            println 'variant:' + variant.buildType.name
+//
+//            if (variant.buildType.isDebuggable()) {
+//                //在执行dx命令之前将代码打入到class中
+//                String classPath = project(':app').buildDir.absolutePath + '/intermediates/classes/debug'
+//                //项目编译class所在目录
+//                String libPath = "$rootDir/transformClasses" //AntilazyLoad.class所在目錄
+//                String igonre = "*.BuildConfig;*.MainActivity"
+//                println classPath
+//                println libPath
+//                println igonre
+//
+//                javaexec {
+//                    classpath "$rootDir/transformClasses/transformClasses.jar"
+//                    main = 'cn.georgeyang.TransformClasses'
+//                    args classPath, libPath, igonre
+//                }
+//            }
+//        }
     }
 }
 
+task('processWithJavassist') << {
+    println '-----------開始往class插入代碼-----------------'
+
+    String classPath = project(':app').buildDir.absolutePath + '/intermediates/classes/debug'//项目编译class所在目录
+    String libPath = "$rootDir/transformClasses;$rootDir/transformClasses/buildLib" //AntilazyLoad.class所在目錄
+    String igonre = "online.magicbox.app.*;*.App;*.BuildConfig;online.magicbox.bugfix.*;online.magicbox.app.R.*;"
+    println classPath
+    println libPath
+    println igonre
+
+    javaexec {
+        classpath "$rootDir/transformClasses/transformClasses.jar"
+        main = 'cn.georgeyang.TransformClasses'
+        args classPath,libPath,igonre
+    }
+}
+
+
 gradle.taskGraph.beforeTask { Task task ->
-    println "name:" + task.name
+//    println "name:" + task.name
 }
 dependencies {
     //    compile files('src/main/libs/host.jar')

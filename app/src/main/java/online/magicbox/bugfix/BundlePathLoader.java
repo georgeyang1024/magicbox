@@ -1,4 +1,4 @@
-package online.magicbox.app;
+package online.magicbox.bugfix;
 
 import android.content.Context;
 import android.os.Build;
