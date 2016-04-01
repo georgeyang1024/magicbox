@@ -37,7 +37,7 @@ android {
         applicationVariants.all { variant ->
             println 'variant:' + variant.buildType.name
 
-            if (variant.buildType.isDebuggable()) {
+//            if (variant.buildType.isDebuggable()) {
                 //在执行dx命令之前将代码打入到class中
                 String classPath = project(':app').buildDir.absolutePath + '/intermediates/classes/debug'
                 //项目编译class所在目录
@@ -52,11 +52,14 @@ android {
                     main = 'cn.georgeyang.TransformClasses'
                     args classPath, libPath, igonre
                 }
-            }
+//            }
         }
     }
 }
 
+gradle.taskGraph.beforeTask { Task task ->
+    println "name:" + task.name
+}
 dependencies {
     //    compile files('src/main/libs/host.jar')
     //    compile files('src/main/jni/fastjson-1.1.37-leancloud.jar')
