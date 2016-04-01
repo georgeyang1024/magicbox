@@ -21,3 +21,13 @@ http://blog.csdn.net/innost/article/details/48228651
 将app-build-outputsd的app-debug.apk提取classes.dex文件，将这个文件压缩，生成一个只有代码没有资源的zip包，这个包便是补丁包，
 
 同一个项目下生成的补丁，兼容不同的签名，debug生成的补丁也可以给release版本打补丁。
+
+
+
+gradle知識:
+
+全面文檔
+http://tools.android.com/tech-docs/new-build-system/user-guide
+
+資源改名
+http://hugozhu.myalert.info/2014/08/03/50-use-gradle-to-customize-apk-build.html
