@@ -12,6 +12,8 @@
             <option value="$PROJECT_DIR$/app" />
             <option value="$PROJECT_DIR$/appfix" />
             <option value="$PROJECT_DIR$/desktop" />
+            <option value="$PROJECT_DIR$/devlibrary" />
+            <option value="$PROJECT_DIR$/flashlight" />
           </set>
         </option>
         <option name="myModules">
@@ -20,6 +22,8 @@
             <option value="$PROJECT_DIR$/app" />
             <option value="$PROJECT_DIR$/appfix" />
             <option value="$PROJECT_DIR$/desktop" />
+            <option value="$PROJECT_DIR$/devlibrary" />
+            <option value="$PROJECT_DIR$/flashlight" />
           </set>
         </option>
       </GradleProjectSettings>

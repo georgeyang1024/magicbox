@@ -1,1 +1,1 @@
-include ':app', ':desktop', ':appfix'
+include ':app', ':desktop', ':appfix', ':flashlight', ':devlibrary'
