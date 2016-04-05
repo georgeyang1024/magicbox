@@ -28,7 +28,7 @@ import online.magicbox.app.PlugClassLoder;
  * @author 小姜
  * @time 2015-4-16 上午11:03:47
  */
-public class PluginProxyContext extends ContextWrapper {
+public class PluginContext extends ContextWrapper {
 
 	//activity中使用:
 //	@Override
@@ -64,7 +64,7 @@ public class PluginProxyContext extends ContextWrapper {
     public static final String COLOR = "color";
     public static final String DIMEN = "dimen";
 
-	public PluginProxyContext(Context base) {
+	public PluginContext(Context base) {
 		super(base);
 		this.context = base;
 	}
@@ -115,7 +115,7 @@ public class PluginProxyContext extends ContextWrapper {
 		getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
         //释放so文件
-        String libPath = getFilesDir().getAbsolutePath() + "/lib";
+        String libPath = getCacheDir().getAbsolutePath() + "/lib";
         ZipInputStream zipIn = null;
         int readedBytes = 0;
         byte buf[] = new byte[4096];

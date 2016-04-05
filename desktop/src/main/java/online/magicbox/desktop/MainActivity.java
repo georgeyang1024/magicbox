@@ -6,6 +6,7 @@ import android.os.Bundle;
 
 import online.magicbox.lib.PluginActivity;
 
+
 public class MainActivity extends Activity {
 
     @Override

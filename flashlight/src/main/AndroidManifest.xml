@@ -17,7 +17,7 @@
         </activity>
 
         <activity
-            android:name="online.magicebox.lib.PluginActivity"
+            android:name="online.magicbox.lib.PluginActivity"
             android:theme="@android:style/Theme.Holo.Light.NoActionBar">
             <intent-filter>
                 <action android:name="cn.georgeyang.flashlight" />

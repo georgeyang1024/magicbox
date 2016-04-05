@@ -1,4 +1,4 @@
-package online.magicebox.lib;
+package online.magicbox.lib;
 
 import android.app.Activity;
 import android.content.Context;
@@ -36,7 +36,6 @@ public class PluginActivity extends Activity {
     public static void init(String action, String scheme) {
         PluginActivity.ACTION = action;
         PluginActivity.SCHEME = scheme;
-
     }
 
 

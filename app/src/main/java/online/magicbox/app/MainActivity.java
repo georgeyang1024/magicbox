@@ -1,46 +1,194 @@
 package online.magicbox.app;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.content.pm.PackageInfo;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.util.Log;
 
 import com.mingle.widget.LoadingView;
 
+import org.json.JSONArray;
+import org.json.JSONObject;
 
-public class MainActivity extends Activity {
+import java.io.File;
+import java.util.HashMap;
+
+
+public class MainActivity extends Activity implements UiThread.UIThreadEvent {
     private  LoadingView loadingView;
+    private static final long UpdateHotFixGap = 1000 * 60 * 60 ;//一小时更新一次
+    private static final long UpdateDesktopGap = UpdateHotFixGap * 24 * 3;//三天桌面更新一次
+    private String desktopApk,desktopVersionCode;
+    private String hotfixDex,dexVersionCode;
+    private long desktopUpdateTime,hotfixUpdateTime;
+
+    private SharedPreferences sharedPreferences;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
 
         Log.i("test","#:" + new Test().getString());
+        Log.i("test","Id:" + R.string.app_name);
 
-        loadingView = (LoadingView) findViewById(R.id.loadingView);
-        loadingView.setLoadingText("loading");
-        //Class ref in pre-verified class resolved to unexpected implementation
-        //不能有接口,其实是冲突
+        sharedPreferences= getSharedPreferences("app", Context.MODE_PRIVATE);
+        desktopApk = sharedPreferences.getString("desktopApk","");
+        desktopUpdateTime = sharedPreferences.getLong("desktopUpdateTime",0);
+        desktopVersionCode = sharedPreferences.getString("desktopVersionCode","0");
 
-        UiThread.init(this).setCallBackDelay(3000).start(new UiThread.UIThreadEvent() {
-            @Override
-            public Object runInThread(String flag, Object obj, UiThread.Publisher publisher) {
-                return HttpUtil.get("http://georgeyang.cn:8080/ptool/getip");
-            }
+        hotfixDex = sharedPreferences.getString("hotfixDex","");
+        hotfixUpdateTime = sharedPreferences.getLong("hotfixUpdateTime",0);
+        dexVersionCode = sharedPreferences.getString("dexVersionCode","0");
+        boolean needRestart = sharedPreferences.getBoolean("needRestart",false);
+        Log.i("test","desktopApk:" + desktopApk);
+        if (needRestart) {
+            setContentView(R.layout.activity_main);
+            loadingView = (LoadingView) findViewById(R.id.loadingView);
+            loadingView.setLoadingText(getString(R.string.load_resource));
+            AlertDialog dialog = new AlertDialog.Builder(MainActivity.this).setTitle(R.string.load_fail_title).setMessage(R.string.bugFix_needRestart).setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    SharedPreferences.Editor editor = sharedPreferences.edit();
+                    editor.putBoolean("needRestart",false);
+                    editor.commit();
+                    android.os.Process.killProcess(android.os.Process.myPid());
+                }
+            }).setCancelable(false).create();
+            dialog.show();
+            return;
+        }
 
-            @Override
-            public void runInUi(String flag, Object obj, boolean ispublish, float progress) {
-                ProxyActivity.init("cn.magicbox.plugin","magicbox");
-                Intent intent = ProxyActivity.buildIntent("online.magicbox.desktop","MainSlice",null);
-//                Intent intent = ProxyActivity.buildIntent("cn.georgeyang.minipplication","MainFragment",null);
-                startActivity(intent);
-                finish();
-            }
-        });
+        boolean needCheck = false;
+        needCheck = needCheck || TextUtils.isEmpty(desktopApk);
+        needCheck = needCheck || (System.currentTimeMillis() - desktopUpdateTime) > UpdateDesktopGap;
+        needCheck = needCheck || (desktopUpdateTime > System.currentTimeMillis());//系统时间变更
+        needCheck = needCheck || (!new File(getFilesDir().getAbsolutePath(),desktopApk).exists());
+        if (needCheck) {
+            setContentView(R.layout.activity_main);
+            loadingView = (LoadingView) findViewById(R.id.loadingView);
+            loadingView.setLoadingText(getString(R.string.load_resource));
 
-//        PluginProxyContext context = new PluginProxyContext(this);
-//        context.loadResources(getFilesDir().getAbsolutePath() + "/cn.georgeyang.minipplication_1.0.apk","cn.georgeyang.minipplication" );
-//        Log.i("test","加载的string:" + context.getString("app_name"));
+            SharedPreferences.Editor editor = sharedPreferences.edit();
+            editor.putString("desktopApk","");
+            editor.putLong("desktopUpdateTime",0);
+            editor.putString("desktopVersionCode","0");
+            editor.commit();
+
+            UiThread.init(this).setFlag("desktop").start(this);
+
+            return;
+        }
+
+        intoDesktop();
+
+        if ((System.currentTimeMillis() - hotfixUpdateTime) > UpdateHotFixGap || hotfixUpdateTime>System.currentTimeMillis()) {
+            UiThread.init(this).setFlag("hotFix").start(this);
+        } else {
+            Log.i("test","no need update hotfix!");
+        }
     }
 
+
+    public void intoDesktop () {
+        PluginActivity.init("online.magicbox.plugin","magicbox");
+        Intent intent = PluginActivity.buildIntent(Vars.DesktopPackageName,"MainSlice",desktopVersionCode);
+        startActivity(intent);
+        finish();
+    }
+
+    @Override
+    public Object runInThread(String flag, Object obj, UiThread.Publisher publisher) {
+        if (flag.equals("hotFix")) {
+            try {
+                HashMap<String,String> params = new HashMap<String, String>();
+                params.put("packageName",getPackageName());
+                params.put("versionCode",dexVersionCode);
+                String json = HttpUtil.post(Vars.HotFixGetterUrl,params);
+
+                Log.i("test","post result:" + json);
+
+                JSONArray jsonArray = new JSONArray(json);
+                if (jsonArray.length()>0) {
+                    JSONObject jsonObject = jsonArray.getJSONObject(0);
+                    String packageName = jsonObject.optString("packageName", "");
+                    String version = jsonObject.optInt("versionCode",1)+"";
+                    String fileName = String.format("%s_%s.dex",new Object[]{packageName,version});
+
+                    String downloadUrl = jsonObject.optString("downloadUrl");
+                    File saveFile = new File(getFilesDir().getAbsolutePath(),fileName);
+                    HttpUtil.downLoadFile(downloadUrl,saveFile);
+
+                    SharedPreferences.Editor editor = sharedPreferences.edit();
+                    editor.putString("dexVersionCode",version);
+                    editor.putString("hotfixDex",fileName);
+                    editor.putLong("hotfixUpdateTime",System.currentTimeMillis());
+                    editor.putBoolean("needRestart",true);
+                    editor.commit();
+                }
+            } catch (Exception e) {
+                Log.i("test",Log.getStackTraceString(e));
+                e.printStackTrace();
+            }
+        } else if (flag.equals("desktop")) {
+            //downLoad hotFix dex
+            try {
+                HashMap<String,String> params = new HashMap<String, String>();
+                params.put("packageName",Vars.DesktopPackageName);
+                params.put("versionCode",desktopVersionCode);
+                String json = HttpUtil.post(Vars.DesktopGetterUrl,params);
+
+                Log.i("test","post result:" + json);
+
+                JSONArray jsonArray = new JSONArray(json);
+                if (jsonArray.length()>0) {
+                    JSONObject jsonObject = jsonArray.getJSONObject(0);
+                    String packageName = jsonObject.optString("packageName","");
+                    String versionCode = jsonObject.optInt("version",1)+"";
+                    String fileName = packageName + "_" + versionCode + ".apk";
+
+                    desktopVersionCode = versionCode;
+                    desktopApk = fileName;
+
+                    String downloadUrl = jsonObject.optString("downloadUrl");
+                    File saveFile = new File(getFilesDir().getAbsolutePath(),fileName);
+                    HttpUtil.downLoadFile2(downloadUrl,saveFile);
+
+                    SharedPreferences.Editor editor = sharedPreferences.edit();
+                    editor.putString("desktopApk",desktopApk);
+                    editor.putLong("desktopUpdateTime",System.currentTimeMillis());
+                    editor.putString("desktopVersionCode",desktopVersionCode);
+                    editor.commit();
+
+                    return fileName;
+                }
+            } catch (Exception e) {
+                Log.i("test",Log.getStackTraceString(e));
+                e.printStackTrace();
+            }
+        }
+        return null;
+    }
+
+    @Override
+    public void runInUi(String flag, Object obj, boolean ispublish, float progress) {
+        if (flag.equals("desktop")) {
+            if (obj==null) {
+                AlertDialog dialog = new AlertDialog.Builder(MainActivity.this).setTitle(R.string.load_fail_title).setMessage(R.string.load_fail_content).setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        finish();
+                    }
+                }).setCancelable(false).create();
+                dialog.show();
+            } else {
+                intoDesktop();
+            }
+        }
+    }
 }

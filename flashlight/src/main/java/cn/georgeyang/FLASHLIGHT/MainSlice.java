@@ -8,7 +8,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 
-import online.magicebox.lib.Slice;
+import online.magicbox.lib.Slice;
 
 
 /**

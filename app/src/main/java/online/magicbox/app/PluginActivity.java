@@ -1,4 +1,4 @@
-package online.magicbox.lib;
+package online.magicbox.app;
 
 import android.app.Activity;
 import android.content.Context;
@@ -9,6 +9,8 @@ import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
 import android.widget.Toast;
+
+import java.io.File;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
@@ -18,8 +20,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.WeakHashMap;
 
-import online.magicbox.desktop.R;
-
+import online.magicbox.bugfix.AssetUtils;
 
 /**
  * Created by george.yang on 2016-3-30.
@@ -35,15 +36,19 @@ public class PluginActivity extends Activity {
     public static void init(String action, String scheme) {
         PluginActivity.ACTION = action;
         PluginActivity.SCHEME = scheme;
-
     }
 
-
     private Context getPluginContent() {
-//        String pluginPath = AssetUtils.copyAsset(this,String.format("%s_%s.apk",new Object[]{packageName,version}), getFilesDir());
-////            initWithApkPathAndPackName(pluginPath,packageName);
-//        proxyContext = new PluginProxyContext(this);
-//        proxyContext.loadResources(pluginPath,packageName);
+        try {
+//            String pluginPath = AssetUtils.copyAsset(this,String.format("%s_%s.apk",new Object[]{packageName,version}), getFilesDir());
+            String pluginPath = new File(getFilesDir(),String.format("%s_%s.apk",new Object[]{packageName,version})).getAbsolutePath();
+            Log.i("test","load plugin:" + pluginPath);
+            PluginContext proxyContext = new PluginContext(this);
+            proxyContext.loadResources(pluginPath,packageName);
+            return proxyContext;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         return this;
     }
 
@@ -70,7 +75,7 @@ public class PluginActivity extends Activity {
 
 
     public static Intent buildIntent(Class clazz) {
-        return buildIntent(clazz.getPackage().getName(), clazz.getSimpleName(), null);
+        return buildIntent(clazz.getPackage().getName(), clazz.getSimpleName(), "1");
     }
 
     public static Intent buildIntent(Class clazz, String animType) {
@@ -81,6 +86,13 @@ public class PluginActivity extends Activity {
 
     public static Intent buildIntent(Class clazz, Map<String, String> params) {
         return buildIntent(clazz.getPackage().getName(), clazz.getSimpleName(), params);
+    }
+
+    public static Intent buildIntent(String packageName, String className,String version) {
+        HashMap<String, String> params = new HashMap<>();
+        params.put("animType", "System");
+        params.put("version", version);
+        return buildIntent(packageName, className, params);
     }
 
     public static Intent buildIntent(String packageName, String className, Map<String, String> params) {
@@ -103,7 +115,6 @@ public class PluginActivity extends Activity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        mContext = getPluginContent();
         try {
             Intent intent = getIntent();
             if (intent == null || intent.getData() == null) {
@@ -139,6 +150,7 @@ public class PluginActivity extends Activity {
                 animType = PluginConfig.System;
             }
 
+            mContext = getPluginContent();
             Class pluginActivityClass = mContext.getClassLoader().loadClass(String.format("%s.%s", new Object[]{packageName, className}));
             Constructor<?> localConstructor = pluginActivityClass.getConstructor(new Class[]{Context.class,Object.class});
             mSlice = localConstructor.newInstance(new Object[]{mContext,PluginActivity.this});
@@ -171,10 +183,13 @@ public class PluginActivity extends Activity {
     private static Object callMethodByCache(Object receiver, String methodName, Class[] parameterTypes, Object[] args) {
         try {
             String key = receiver.getClass() + "#" + methodName + "&" + Arrays.toString(parameterTypes);
+            Log.i("test", "cache key:" + key);
             Method method = methodCache.get(key);
             if (method == null) {
                 method = receiver.getClass().getMethod(methodName, parameterTypes);
                 methodCache.put(key, method);
+            } else {
+                Log.i("test", "use cache:" + key);
             }
             return method.invoke(receiver, args);
         } catch (Exception e) {
@@ -255,7 +270,7 @@ public class PluginActivity extends Activity {
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-       callMethodByCache(mSlice, "onSaveInstanceState", new Class[]{Bundle.class}, new Object[]{outState});
+        callMethodByCache(mSlice, "onSaveInstanceState", new Class[]{Bundle.class}, new Object[]{outState});
     }
 
 

@@ -25,9 +25,9 @@
         <!--android:theme="@android:style/Theme.Holo.Light.NoActionBar"-->
         <activity
 
-            android:name=".ProxyActivity">
+            android:name=".PluginActivity">
             <intent-filter>
-                <action android:name="cn.magicbox.plugin" />
+                <action android:name="online.magicbox.plugin" />
                 <category android:name="android.intent.category.BROWSABLE"/>
                 <category android:name="android.intent.category.DEFAULT" />
                 <data

@@ -11,6 +11,7 @@ package online.magicbox.app;
         import java.lang.reflect.InvocationTargetException;
         import java.math.BigDecimal;
         import java.text.ParseException;
+        import java.util.ArrayList;
         import java.util.List;
 
         import org.json.JSONArray;
@@ -24,14 +25,29 @@ package online.magicbox.app;
  */
 public class JsonUtil {
 
+    public static List<Object> jsonToList(String jsonArrsy,Class clazz) {
+        List<Object> ret = new ArrayList<>();
+        try {
+            JSONArray jsonArray = new JSONArray(jsonArrsy);
+
+            for (int i=0;i<jsonArray.length();i++) {
+                JSONObject jsonObject = jsonArray.getJSONObject(i);
+                Object object = jsonToBean(jsonObject,clazz);
+                ret.add(object);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return ret;
+    }
+
     /**
      * JSONObject对象转JavaBean
      * @param json
      * @param cls
      * @return 转换结果（异常情况下返回null）
      */
-    public static Object jsonToBean(JSONObject json, Class cls)
-    {
+    public static Object jsonToBean(JSONObject json, Class cls) {
         Object obj = null;
 
         try

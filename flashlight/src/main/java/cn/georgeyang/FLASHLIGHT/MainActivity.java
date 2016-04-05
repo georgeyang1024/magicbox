@@ -4,7 +4,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 
-import online.magicebox.lib.PluginActivity;
+import online.magicbox.lib.PluginActivity;
 
 
 public class MainActivity extends Activity {

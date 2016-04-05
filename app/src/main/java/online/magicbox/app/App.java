@@ -2,6 +2,8 @@ package online.magicbox.app;
 
 import android.app.Application;
 import android.content.Context;
+import android.content.SharedPreferences;
+import android.text.TextUtils;
 import android.util.Log;
 
 import java.io.File;
@@ -26,13 +28,17 @@ public class App extends Application {
             baseDexPath = AssetUtils.copyAsset(base, baseDexPath, base.getFilesDir().getAbsoluteFile());
             dexFiles.add(new File(baseDexPath));
 
-            baseDexPath = "appfix.apk";
-            baseDexPath = AssetUtils.copyAsset(base, baseDexPath, base.getFilesDir().getAbsoluteFile());
-            dexFiles.add(new File(baseDexPath));
+            SharedPreferences sp = getSharedPreferences("app", Context.MODE_PRIVATE);
+            baseDexPath = sp.getString("hotfixDex","");
+            Log.d("test","bug fix file:" + baseDexPath);
+            if (!TextUtils.isEmpty(baseDexPath)) {
+                baseDexPath = AssetUtils.copyAsset(base, baseDexPath, base.getFilesDir().getAbsoluteFile());
+                dexFiles.add(new File(baseDexPath));
+            }
 
             BundlePathLoader.installBundleDexs(this,getClassLoader(),base.getCacheDir().getAbsoluteFile(),dexFiles,"AntilazyLoad",true);
 
-            Log.d("test","app had fix!!");
+            Log.d("test","app had loaded!!");
         } catch (Exception e) {
             e.printStackTrace();
             Log.d("test",Log.getStackTraceString(e));

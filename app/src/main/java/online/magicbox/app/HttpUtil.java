@@ -1,13 +1,24 @@
 package online.magicbox.app;
 
+import android.os.Environment;
+import android.os.Message;
+import android.util.Log;
+
+import java.io.BufferedInputStream;
 import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
+import java.io.RandomAccessFile;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.net.URLConnection;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.concurrent.TimeoutException;
 
 /**
  * Created by george.yang on 16/3/26.
@@ -63,8 +74,7 @@ public class HttpUtil {
         return null;
     }
 
-
-    private static String post(String urlPath, Map<String, String> params) {
+    public static String post(String urlPath, Map<String, String> params) {
         if (params == null || params.size() == 0) {
             return get(urlPath);
         }
@@ -147,5 +157,169 @@ public class HttpUtil {
             }
         }
         return result;
+    }
+
+
+//    public void downloadFile(String url,String locPath,String filename,UiThread.Publisher publisher) {
+//        HttpClient client = new DefaultHttpClient();
+//        HttpGet get = new HttpGet(url);
+//        HttpResponse response;
+//        try {
+//            response = client.execute(get);
+//
+//            HttpEntity entity = response.getEntity();
+//            float length = entity.getContentLength();
+//
+//            InputStream is = entity.getContent();
+//            FileOutputStream fileOutputStream = null;
+//            if (is != null) {
+//
+//                String sdcard = Environment.getExternalStorageDirectory().getAbsolutePath()+ "/"+locPath;
+//
+//                File dir = new File(sdcard);
+//                if (!dir.exists()) { // 不存在则创建
+//                    dir.mkdirs();
+//                }
+//
+//                File file = new File(sdcard + "/" + filename);
+//                if(file.exists()){
+//                    file.delete();
+//                }else{
+//                    file.createNewFile();
+//                }
+//                fileOutputStream = new FileOutputStream(file);
+//                byte[] buf = new byte[1024];
+//                int ch = -1;
+//                float count = 0;
+//                while ((ch = is.read(buf)) != -1) {
+//                    fileOutputStream.write(buf, 0, ch);
+//                    count += ch;
+//                    float progress = count*100f/length;
+//
+//                    //发布进度
+//                    publisher.publishProgress(progress);
+//                }
+//            }
+//
+//            //发布成功
+//            publisher.publishProgress(100f);
+//
+//            fileOutputStream.flush();
+//            if (fileOutputStream != null) {
+//                fileOutputStream.close();
+//            }
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//
+//            //发布下载失败
+//            publisher.publishProgress(-1);
+//        }
+//    }
+
+
+    private static final int BUFFER_SIZE = 1024 * 10;// 10k缓存
+    public static void downLoadFile (String urlString,File file) throws Exception {
+        // 重置开始点
+        long startPosition = file.length();
+        int filesize;
+        long curPosition = 0;
+
+        BufferedInputStream bis = null;
+        RandomAccessFile fos = null;
+        byte[] buf = new byte[BUFFER_SIZE];
+        URLConnection con = null;
+        URLConnection testcon = null;
+        URL url  = new URL(urlString);
+        File dir = file.getParentFile();
+        if (!dir.exists()) {
+            dir.mkdirs();
+        }
+            if (!file.exists()) {
+                file.createNewFile();
+            }
+
+            con = url.openConnection();
+            con.setRequestProperty("Connection", "Keep-Alive");
+             con.setRequestProperty("Charset", "UTF-8");
+        con.setRequestProperty("Content-Type", "text/xml; charset=UTF-8");
+
+            testcon = url.openConnection();
+            filesize = testcon.getContentLength();
+        Log.i("test","filezie:" + filesize);
+            if (con.getReadTimeout() == 5) {
+                // 网络错误(超时)
+                throw new TimeoutException("connect timeout");
+            }
+
+            con.setAllowUserInteraction(true);
+            // 设置当前线程下载的起点，终点
+            con.setRequestProperty("Range", "bytes=" + startPosition + "-");
+
+            if (startPosition >= filesize) {
+                //下载完成
+                return;
+            }
+
+//            Log.i(TAG, "con.getContentLength() =" + con.getContentLength()
+//                    + " filesize;" + filesize + " startPosition;"
+//                    + startPosition);
+
+            // 使用java中的RandomAccessFile 对文件进行随机读写操作
+            fos = new RandomAccessFile(file, "rw");
+
+            // 设置开始写文件的位置
+            fos.seek(startPosition);
+            bis = new BufferedInputStream(con.getInputStream());
+            // 开始循环以流的形式读写文件
+        int len = 0;
+        while ((len = bis.read(buf, 0, BUFFER_SIZE)) != -1) {
+//            while (curPosition < filesize) {
+//            int len = bis.read(buf, 0, BUFFER_SIZE);
+                if (len == -1) {
+                    break;
+                }
+                fos.write(buf, 0, len);
+                curPosition = curPosition + len;
+//                    int x = (int) (curPosition * 1.0 / filesize * 10000);
+//                    Log.i(TAG, "curPosition/filesize=" + curPosition + "/"
+//                            + filesize + "=" + x);
+            }
+            bis.close();
+            fos.close();
+    }
+
+    public static void downLoadFile2 (String urlStr,File file) throws Exception {
+        URL url=new URL(urlStr);
+        HttpURLConnection conn=(HttpURLConnection)url.openConnection();
+        OutputStream output;
+
+        InputStream input=conn.getInputStream();
+        if(file.exists()){
+            if (file.length()==0) {
+                file.delete();
+            }
+            int length = conn.getContentLength();
+            if (length!=0) {
+                if (file.length()!=length) {
+                    file.delete();
+                }
+            }
+
+            if (length==-1 || file.length()>0) {
+                return;
+            }
+        }
+
+
+            file.createNewFile();//新建文件
+            output=new FileOutputStream(file);
+            //读取大文件
+            byte[] buffer=new byte[BUFFER_SIZE];
+            int len=0;
+            while ((len = input.read(buffer, 0, BUFFER_SIZE)) != -1) {
+                output.write(buffer,0,len);
+            }
+            output.flush();
+
     }
 }
