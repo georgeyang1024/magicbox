@@ -26,35 +26,44 @@
 
     </android.support.v4.widget.SwipeRefreshLayout>
 
-    <it.sephiroth.widget.MultiDirectionSlidingDrawer
-        android:id="@+id/drawer"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="200dp"
-        app:content="@+id/content"
-        app:direction="bottomToTop"
-        app:handle="@+id/handle" >
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
 
-        <LinearLayout
-            android:id="@+id/handle"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical" >
+        <it.sephiroth.widget.MultiDirectionSlidingDrawer
+            android:id="@+id/drawer"
+            android:layout_alignParentBottom="true"
+            android:layout_width="fill_parent"
+            android:layout_height="140dp"
+            app:content="@+id/content"
+            app:direction="bottomToTop"
+            app:handle="@+id/handle" >
 
-            <ImageView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_horizontal"
-                android:paddingBottom="0dp"
-                android:src="@mipmap/bottom_bar" />
-        </LinearLayout>
+            <LinearLayout
+                android:id="@+id/handle"
+                android:layout_width="match_parent"
+                android:layout_height="20dp"
+                android:gravity="bottom"
+                android:orientation="vertical" >
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal"
+                    android:paddingBottom="0dp"
+                    android:src="@mipmap/bottom_bar" />
+            </LinearLayout>
 
 
-        <include android:id="@+id/content"
-                 layout="@layout/include_menu" />
+            <include android:id="@+id/content"
+                layout="@layout/include_menu" />
 
 
-    </it.sephiroth.widget.MultiDirectionSlidingDrawer>
+        </it.sephiroth.widget.MultiDirectionSlidingDrawer>
+
+
+    </RelativeLayout>
+
 
 
 

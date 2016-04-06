@@ -27,10 +27,11 @@ android {
 }
 
 dependencies {
-    compile fileTree(dir: 'libs', include: ['*.jar'])
-    compile files('libs/fastjson-1.2.5.jar')
+    compile fileTree(include: ['*.jar'], dir: 'libs')
     compile 'com.android.support:appcompat-v7:+'
     compile 'com.android.support:support-v4:+'
     compile 'com.android.support:recyclerview-v7:+'
     compile project(':devlibrary')
+    compile 'com.squareup.okhttp:okhttp:2.7.5'
+    compile 'com.google.code.gson:gson:2.6.2'
 }
