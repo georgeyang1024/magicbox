@@ -236,6 +236,9 @@ public class PluginActivity extends Activity {
     }
 
     private void loadAnim(boolean isExit) {
+        if (animType==null) {
+            animType = PluginConfig.System;
+        }
         switch (animType) {
             case PluginConfig.LeftInRightOut:
                 if (isExit) {

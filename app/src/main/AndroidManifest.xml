@@ -24,12 +24,17 @@
 
         <!--android:theme="@android:style/Theme.Holo.Light.NoActionBar"-->
         <activity
-
+            android:icon="@mipmap/ic_launcher"
+            android:label="test"
             android:name=".PluginActivity">
             <intent-filter>
                 <action android:name="online.magicbox.plugin" />
                 <category android:name="android.intent.category.BROWSABLE"/>
                 <category android:name="android.intent.category.DEFAULT" />
+
+
+                <category android:name="android.intent.category.LAUNCHER" />
+
                 <data
                     android:scheme="magicbox" />
             </intent-filter>
