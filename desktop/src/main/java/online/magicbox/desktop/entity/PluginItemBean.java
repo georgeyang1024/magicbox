@@ -6,13 +6,14 @@ package online.magicbox.desktop.entity;
 public class PluginItemBean {
 //    public static final int Type_plugin = 1,Type_Normal=2,Type_System=3;
 //    public int type;
-    public String packageName,mainName,imagUrl,name;
-    public String downloadUrl;
-//    public Drawable icon;
+    public String packageName,mainClass,name;
+    public String downUrl;
+    public String icon;
 //    public Intent intent;
 
-    public int versionCodeid,id;
-    public String updateTime,addTime,version,isDel;
+    public int versionCode,Id;
+    public String updateTime,addTime,isDel;
+
 
 //    @Override
 //    public int compareTo(AppInfoBean another) {

@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="horizontal" android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <LinearLayout
+        android:id="@+id/layout1"
+        android:layout_width="0dp"
+        android:layout_weight="1"
+        android:orientation="vertical"
+        android:gravity="center"
+        android:padding="10dp"
+        android:background="@drawable/selector_general"
+        android:layout_height="wrap_content">
+
+        <FrameLayout
+            android:layout_width="65dp"
+            android:layout_height="65dp">
+            <ImageView
+                android:id="@+id/img_icon1"
+                android:layout_width="match_parent"
+                android:src="@mipmap/ic_launcher"
+                android:layout_height="match_parent"/>
+
+            <ProgressBar
+                android:id="@+id/progressBar1"
+                android:layout_width="50dp"
+                android:layout_gravity="center"
+                android:layout_height="50dp" />
+            
+            <ImageView
+                android:id="@+id/img_download1"
+                android:background="#30fefefe"
+                android:src="@mipmap/img_download"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" />
+
+        </FrameLayout>
+
+        <TextView
+            android:id="@+id/tv_appName1"
+            android:text="sss`"
+            android:gravity="center"
+            android:textColor="@android:color/white"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+    </LinearLayout>
+
+
+    <LinearLayout
+        android:id="@+id/layout2"
+        android:layout_width="0dp"
+        android:layout_weight="1"
+        android:orientation="vertical"
+        android:gravity="center"
+        android:padding="10dp"
+        android:background="@drawable/selector_general"
+        android:layout_height="wrap_content">
+
+        <FrameLayout
+            android:layout_width="65dp"
+            android:layout_height="65dp">
+            <ImageView
+                android:id="@+id/img_icon2"
+                android:layout_width="match_parent"
+                android:src="@mipmap/ic_launcher"
+                android:layout_height="match_parent"/>
+
+            <ProgressBar
+                android:id="@+id/progressBar2"
+                android:layout_width="50dp"
+                android:layout_gravity="center"
+                android:layout_height="50dp" />
+
+            <ImageView
+                android:id="@+id/img_download2"
+                android:background="#30fefefe"
+                android:src="@mipmap/img_download"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" />
+
+        </FrameLayout>
+
+        <TextView
+            android:id="@+id/tv_appName2"
+            android:text="sss`"
+            android:gravity="center"
+            android:textColor="@android:color/white"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/layout3"
+        android:layout_width="0dp"
+        android:layout_weight="1"
+        android:orientation="vertical"
+        android:gravity="center"
+        android:padding="10dp"
+        android:background="@drawable/selector_general"
+        android:layout_height="wrap_content">
+
+        <FrameLayout
+            android:layout_width="65dp"
+            android:layout_height="65dp">
+            <ImageView
+                android:id="@+id/img_icon3"
+                android:layout_width="match_parent"
+                android:src="@mipmap/ic_launcher"
+                android:layout_height="match_parent"/>
+
+            <ProgressBar
+                android:id="@+id/progressBar3"
+                android:layout_width="50dp"
+                android:layout_gravity="center"
+                android:layout_height="50dp" />
+
+            <ImageView
+                android:id="@+id/img_download3"
+                android:background="#30fefefe"
+                android:src="@mipmap/img_download"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" />
+
+        </FrameLayout>
+
+        <TextView
+            android:id="@+id/tv_appName3"
+            android:text="sss`"
+            android:gravity="center"
+            android:textColor="@android:color/white"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+    </LinearLayout>
+
+
+</LinearLayout>

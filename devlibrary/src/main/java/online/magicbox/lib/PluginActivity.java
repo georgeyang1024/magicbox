@@ -30,7 +30,7 @@ public class PluginActivity extends Activity {
     public Object mSlice;//切片
     private Context mContext;//
 
-    private static String ACTION = "cn.magicbox.plugin";
+    private static String ACTION = "online.magicbox.plugin";
     private static String SCHEME = "magicbox";
 
     public static void init(String action, String scheme) {
@@ -70,7 +70,7 @@ public class PluginActivity extends Activity {
 
 
     public static Intent buildIntent(Class clazz) {
-        return buildIntent(clazz.getPackage().getName(), clazz.getSimpleName(), null);
+        return buildIntent(clazz.getPackage().getName(), clazz.getSimpleName(), PluginConfig.System);
     }
 
     public static Intent buildIntent(Class clazz, String animType) {
@@ -83,12 +83,31 @@ public class PluginActivity extends Activity {
         return buildIntent(clazz.getPackage().getName(), clazz.getSimpleName(), params);
     }
 
+    public static Intent buildIntent(String packageName, String className,String version) {
+        HashMap<String, String> params = new HashMap<>();
+        params.put("animType", "System");
+        params.put("version", version);
+        return buildIntent(packageName, className, params);
+    }
+
+    public static Intent buildIntent(String packageName, String className,String animType,String version) {
+        HashMap<String, String> params = new HashMap<>();
+        params.put("animType", animType);
+        params.put("version", version);
+        return buildIntent(packageName, className, params);
+    }
+
     public static Intent buildIntent(String packageName, String className, Map<String, String> params) {
         Uri.Builder builder = new Uri.Builder().scheme(SCHEME).path(packageName + "." + className);
-        String animType = (params == null || !params.containsKey("animType")) ? PluginConfig.System : params.get("animType");
-        String version = (params == null || !params.containsKey("version")) ? PluginConfig.pluginVersion : params.get("version");
-        builder.appendQueryParameter("animType", animType);
-        builder.appendQueryParameter("version", version);
+        if (params==null) {
+            params = new HashMap<>();
+        }
+        if (!params.containsKey("animType")) {
+            params.put("animType",PluginConfig.System);
+        }
+        if (!params.containsKey("version")) {
+            params.put("version",PluginConfig.pluginVersion);
+        }
         if (params != null) {
             for (String key : params.keySet()) {
                 builder.appendQueryParameter(key, params.get(key));

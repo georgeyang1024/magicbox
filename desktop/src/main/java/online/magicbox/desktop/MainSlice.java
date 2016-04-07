@@ -8,6 +8,7 @@ import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.GridLayoutManager;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.View;
@@ -40,6 +41,7 @@ public class MainSlice extends Slice implements View.OnClickListener, UiThread.U
     private SwipeRefreshLayout swipeRefreshLayout;
     private MultiDirectionSlidingDrawer multiDirectionSlidingDrawer;
     private PluginListProcessor processor;
+    private NormalRecyclerViewAdapter adapter;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -75,7 +77,9 @@ public class MainSlice extends Slice implements View.OnClickListener, UiThread.U
                 if (obj==null) {
                     return null;
                 }
-                return processor.doSomething((List<PluginItemBean>)obj);
+                List<AppInfoBean> ret = processor.doSomething((List<PluginItemBean>)obj);
+                adapter = new NormalRecyclerViewAdapter(ret);
+                return ret;
         }
         return null;
     }
@@ -85,14 +89,17 @@ public class MainSlice extends Slice implements View.OnClickListener, UiThread.U
         switch (flag) {
             case "init":
                 Log.i("test","jni:" + JniTest.hello());
-                mRecyclerView.setLayoutManager(new GridLayoutManager(this, 3));
-                mRecyclerView.setAdapter(new NormalRecyclerViewAdapter(this));
+//                mRecyclerView.setLayoutManager(new GridLayoutManager(this, 3));
+                mRecyclerView.setLayoutManager(new LinearLayoutManager(this,LinearLayoutManager.VERTICAL,false));
                 swipeRefreshLayout.setOnRefreshListener(this);
                 findViewById(R.id.content).setOnClickListener(this);
                 onRefresh();
                 break;
             case "deal":
                 swipeRefreshLayout.setRefreshing(false);
+                if (obj!=null) {
+                    mRecyclerView.setAdapter(adapter);
+                }
                 break;
         }
     }
@@ -103,7 +110,8 @@ public class MainSlice extends Slice implements View.OnClickListener, UiThread.U
         Map<String,Object> params = new HashMap<>();
         params.put("packageName","online.magicbox.desktop");
         params.put("versionCode","0");
-        OkHttpRequest.getInstance().post(getView(),"","http://georgeyang.cn/magicbox/dex",params,this);
+        params.put("lastId","0");
+        OkHttpRequest.getInstance().post(getView(),"","http://georgeyang.cn/magicbox/listplugin",params,this);
     }
 
     @Override

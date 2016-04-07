@@ -22,12 +22,13 @@
         <activity
             android:name="online.magicbox.lib.PluginActivity"
             android:theme="@android:style/Theme.Holo.Light.NoActionBar">
+
             <intent-filter>
                 <action android:name="online.magicbox.desktop" />
-
+                <category android:name="android.intent.category.BROWSABLE"/>
                 <category android:name="android.intent.category.DEFAULT" />
-
-                <data android:scheme="magicbox" />
+                <data
+                    android:scheme="magicbox" />
             </intent-filter>
         </activity>
     </application>

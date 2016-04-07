@@ -4,6 +4,7 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.hardware.Camera;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -57,7 +58,10 @@ public class MainSlice extends Slice implements View.OnClickListener {
         }
         parameters = camera.getParameters();
         Log.i("test", "mode:" + parameters.getFlashMode());
-        if (parameters.getFlashMode().equals(Camera.Parameters.FLASH_MODE_TORCH)) {
+        String flashMode = parameters == null?null:parameters.getFlashMode();
+        if (TextUtils.isEmpty(flashMode)) {
+            new AlertDialog.Builder(this).setTitle("提示").setMessage("你的手机没有闪光灯,开启失败!").setNegativeButton("确认",null).create().show();
+        } else if (parameters.getFlashMode().equals(Camera.Parameters.FLASH_MODE_TORCH)) {
             lightBtn.setBackgroundResource(R.drawable.shou_off);
             parameters.setFlashMode(Camera.Parameters.FLASH_MODE_OFF);
             camera.setParameters(parameters);
