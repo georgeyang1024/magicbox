@@ -1,4 +1,4 @@
-package cn.georgeyang.FLASHLIGHT;
+package cn.georgeyang.flashlight;
 
 
 /**
