@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
+import android.view.Menu;
 import android.view.View;
 
 import java.lang.reflect.Method;
@@ -47,6 +48,10 @@ public abstract class Slice extends ContextWrapper {
 
     public void onCreate(Bundle savedInstanceState) {
 
+    }
+
+    public void startProxyActivity() {
+        callMethodByCache(mHolder,"startProxyActivity",new Class[]{},new Object[]{});
     }
 
     public final void pushMessage (int type,Object object) {
@@ -110,6 +115,14 @@ public abstract class Slice extends ContextWrapper {
 
     }
 
+    public boolean onCreateOptionsMenu(Menu menu) {
+        return false;
+    }
+
+    public boolean onOptionsMenuClosed(Menu menu) {
+        return false;
+    }
+
     public void onSaveInstanceState(Bundle outState) {
 
     }
@@ -144,5 +157,8 @@ public abstract class Slice extends ContextWrapper {
         }
         return null;
     }
+
+
+
 
 }

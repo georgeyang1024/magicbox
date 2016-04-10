@@ -3,7 +3,11 @@ package online.magicbox.desktop.adapter;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
+import android.net.Uri;
+import android.provider.Settings;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,10 +22,13 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import cn.georgeyang.database.Mdb;
 import cn.georgeyang.lib.UiThread;
 import cn.georgeyang.util.HttpUtil;
+import cn.georgeyang.util.ImageLoder;
 import online.magicbox.desktop.R;
 import online.magicbox.desktop.entity.AppInfoBean;
+import online.magicbox.desktop.entity.PluginItemBean;
 
 
 /**
@@ -30,8 +37,8 @@ import online.magicbox.desktop.entity.AppInfoBean;
 public class NormalRecyclerViewAdapter extends RecyclerView.Adapter<NormalRecyclerViewAdapter.NormalTextViewHolder> {
     private List<Object> lineData = new ArrayList<>();
     private Context mContext;
-    //please init in thread
-    public NormalRecyclerViewAdapter(List<AppInfoBean> list) {
+
+    public void setDataInThread (List<AppInfoBean> list) {
         lineData.clear();
         if (list!=null) {
             Map<Integer,List<AppInfoBean>> typeMap = new HashMap<>();
@@ -89,8 +96,7 @@ public class NormalRecyclerViewAdapter extends RecyclerView.Adapter<NormalRecycl
         Object object = lineData.get(position);
         if (object instanceof Integer) {
             int type = (Integer) object;
-            String name = type==1?"魔盒應用":type==2?"安裝應用":"系統應用";
-            holder.tv_title.setText(name);
+            holder.tv_title.setText(type==1?R.string.appTypePlugin:type==2?R.string.appTypeDownload:R.string.appTypeSystem);
         } else {
             List<AppInfoBean> innerList = (List<AppInfoBean>) object;
             for (int i=0;i<3;i++) {
@@ -98,64 +104,182 @@ public class NormalRecyclerViewAdapter extends RecyclerView.Adapter<NormalRecycl
                    holder.layout[i].setVisibility(View.INVISIBLE);
                 } else {
                     final AppInfoBean infoBean = innerList.get(i);
-                    if (infoBean.isInstall) {
-                        holder.progressBars[i].setVisibility(View.GONE);
-                        holder.img_download[i].setVisibility(View.GONE);
-                    } else if (infoBean.downloading) {
+                    holder.tv_name[i].setText(infoBean.name);
+                    if (infoBean.icon!=null) {
+                        holder.img_icon[i].setImageDrawable(infoBean.icon);
+                    } else if (!TextUtils.isEmpty(infoBean.imageUrl)){
+                        ImageLoder.loadImage(holder.img_icon[i],infoBean.imageUrl,300,300,R.mipmap.ic_launcher);
+                    } else {
+                        holder.img_icon[i].setImageResource(R.mipmap.ic_launcher);
+                    }
+
+                    if (infoBean.isInstall && infoBean.lastVersionCode!=infoBean.installVersionCode) {
+                        holder.img_hasUpdate[i].setVisibility(View.VISIBLE);
+                    } else {
+                        holder.img_hasUpdate[i].setVisibility(View.GONE);
+                    }
+
+                    if (infoBean.downloading) {
                         holder.progressBars[i].setVisibility(View.VISIBLE);
                         holder.img_download[i].setVisibility(View.GONE);
+                    } else if (infoBean.isInstall) {
+                        holder.progressBars[i].setVisibility(View.GONE);
+                        holder.img_download[i].setVisibility(View.GONE);
                     } else {
+                        holder.img_download[i].setTag(infoBean);
                         holder.progressBars[i].setVisibility(View.GONE);
                         holder.img_download[i].setVisibility(View.VISIBLE);
-                        holder.img_download[i].setOnClickListener(new View.OnClickListener() {
-                            @Override
-                            public void onClick(View v) {
-                                new AlertDialog.Builder(mContext).setTitle("提示").setMessage("确认要安装这个程序吗?").setNegativeButton("确认", new DialogInterface.OnClickListener() {
-                                    @Override
-                                    public void onClick(DialogInterface dialog, int which) {
-                                        infoBean.downloading = true;
-                                        notifyDataSetChanged();
-                                        UiThread.init(mContext).setObject(infoBean).start(new UiThread.UIThreadEvent() {
-                                            @Override
-                                            public Object runInThread(String flag, Object obj, UiThread.Publisher publisher) {
-                                                AppInfoBean infoBean = (AppInfoBean) obj;
-                                                File downFile = new File(mContext.getFilesDir(),String.format("%s_%s.apk",new Object[]{infoBean.packageName,infoBean.version}));
-                                                try {
-                                                    HttpUtil.downLoadFile2(infoBean.downUrl,downFile);
-                                                    infoBean.downloading = false;
-                                                    infoBean.isInstall = true;
-                                                } catch (Exception e) {
-                                                    e.printStackTrace();
-                                                    return null;
-                                                }
-                                                return infoBean;
-                                            }
-
-                                            @Override
-                                            public void runInUi(String flag, Object obj, boolean ispublish, float progress) {
-                                                if (obj!=null) {
-                                                    notifyDataSetChanged();
-                                                }
-                                            }
-                                        });
-                                    }
-                                }).setPositiveButton("取消",null).create().show();
-                            }
-                        });
+                        holder.img_download[i].setOnClickListener(downLoadOnClickListener);
                     }
                     holder.layout[i].setVisibility(View.VISIBLE);
-                    holder.layout[i].setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            v.getContext().startActivity(infoBean.intent);
-                        }
-                    });
-                    holder.tv_name[i].setText(infoBean.name);
-                    holder.img_icon[i].setImageDrawable(infoBean.icon);
+                    holder.layout[i].setTag(infoBean);
+                    holder.layout[i].setOnClickListener(layoutOnClickListener);
+                    holder.layout[i].setOnLongClickListener(longClickListener);
+
                 }
             }
         }
     }
+
+    private static final String SCHEME = "package";
+    private View.OnLongClickListener longClickListener = new View.OnLongClickListener() {
+        @Override
+        public boolean onLongClick(View v) {
+            final AppInfoBean infoBean = (AppInfoBean) v.getTag();
+            AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
+            builder.setTitle("选择操作");
+            if (infoBean.type==AppInfoBean.Type_plugin) {
+                builder.setItems(R.array.pluginAppMenu, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        switch (which) {
+                            case 0:
+                                mContext.startActivity(infoBean.intent);
+                                break;
+                            case 1:
+                                if (infoBean.installVersionCode!=infoBean.lastVersionCode) {
+                                    String infoMsg = String.format("确认要更新这个程序吗(大小:%sM)?",new Object[]{infoBean.size+""});
+                                    new AlertDialog.Builder(mContext).setTitle("提示").setMessage(infoMsg).setPositiveButton("确认", new DialogInterface.OnClickListener() {
+                                        @Override
+                                        public void onClick(DialogInterface dialog, int which) {
+                                            startDownload(infoBean);
+                                        }
+                                    }).setNegativeButton("取消",null).create().show();
+                                } else {
+                                    new AlertDialog.Builder(mContext).setTitle("提示").setMessage("无需更新，请留意图标右上角的小红点，若出现小红点即可更新!").setPositiveButton("确认", null).create().show();
+                                }
+                                break;
+                            case 2:
+                                new AlertDialog.Builder(mContext).setTitle("提示").setMessage("卸载后需重新下载才能使用,确定要卸载该应用?").setPositiveButton("确认", new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        String name = infoBean.packageName + "_" + infoBean.installVersionCode;
+                                        File apkFile = new File(mContext.getFilesDir().getAbsolutePath(),name + ".apk");
+                                        apkFile.delete();
+                                        File dexFile = new File(mContext.getCacheDir().getAbsolutePath(),name+".dex");
+                                        dexFile.delete();
+                                        infoBean.isInstall = false;
+                                        infoBean.installVersionCode = -1;
+                                        notifyDataSetChanged();
+                                    }
+                                }).setNegativeButton("取消",null).create().show();
+                                break;
+                        }
+                    }
+                });
+            } else {
+                builder.setItems(R.array.appMenu, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        try {
+                            switch (which) {
+                                case 0:
+                                    mContext.startActivity(infoBean.intent);
+                                    break;
+                                case 1:
+                                    Intent intent = new Intent();
+                                    intent.setAction(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
+                                    Uri uri = Uri.fromParts(SCHEME, infoBean.packageName, null);
+                                    intent.setData(uri);
+                                    mContext.startActivity(intent);
+                                    break;
+                                case 2:
+                                    Uri packageURI = Uri.parse("package:" + infoBean.packageName);
+                                    Intent intent2 = new Intent(Intent.ACTION_DELETE,packageURI);
+                                    mContext.startActivity(intent2);
+                                    break;
+                            }
+                        } catch (Exception e) {
+
+                        }
+                    }
+                });
+            }
+            builder.setNegativeButton("取消", null);
+            builder.create().show();
+            return false;
+        }
+    };
+
+    private View.OnClickListener downLoadOnClickListener = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            final AppInfoBean infoBean = (AppInfoBean) v.getTag();
+
+            String infoMsg = String.format("确认要安装这个程序吗(大小:%sM)?",new Object[]{infoBean.size+""});
+            new AlertDialog.Builder(mContext).setTitle("提示").setMessage(infoMsg).setNegativeButton("确认", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    startDownload(infoBean);
+                }
+            }).setPositiveButton("取消",null).create().show();
+        }
+    };
+
+    private void startDownload(final AppInfoBean infoBean) {
+        infoBean.downloading = true;
+        notifyDataSetChanged();
+        UiThread.init(mContext).setObject(infoBean).start(new UiThread.UIThreadEvent() {
+            @Override
+            public Object runInThread(String flag, Object obj, UiThread.Publisher publisher) {
+                try {
+                    AppInfoBean infoBean = (AppInfoBean) obj;
+                    File downFile = new File(mContext.getFilesDir(),String.format("%s_%s.apk",new Object[]{infoBean.packageName,infoBean.lastVersionCode}));
+                    HttpUtil.downLoadFile2(infoBean.downUrl,downFile);
+                    infoBean.downloading = false;
+                    infoBean.isInstall = true;
+                    infoBean.installVersionCode = infoBean.lastVersionCode;
+
+                    PluginItemBean dbBean = Mdb.getInstance().findOnebyWhereDesc(PluginItemBean.class,"_addTime",String.format("packageName='%s'",new Object[]{infoBean.packageName}));
+                    dbBean.installVersionCode = infoBean.lastVersionCode;
+                    dbBean.save();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    return null;
+                }
+                return infoBean;
+            }
+
+            @Override
+            public void runInUi(String flag, Object obj, boolean ispublish, float progress) {
+                if (obj!=null) {
+                    notifyDataSetChanged();
+                } else {
+                    new AlertDialog.Builder(mContext).setTitle("提示").setMessage("下载失败!").setNegativeButton("确认", null).create().show();
+                    infoBean.downloading = false;
+                    notifyDataSetChanged();
+                }
+            }
+        });
+    }
+
+    private View.OnClickListener layoutOnClickListener = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            AppInfoBean appInfoBean = (AppInfoBean) v.getTag();
+            v.getContext().startActivity(appInfoBean.intent);
+        }
+    };
 
     @Override
     public int getItemCount() {
@@ -171,9 +295,10 @@ public class NormalRecyclerViewAdapter extends RecyclerView.Adapter<NormalRecycl
     public static class NormalTextViewHolder extends RecyclerView.ViewHolder {
         TextView tv_title;
         TextView[] tv_name;
-        ImageView[] img_icon,img_download;
+        ImageView[] img_icon,img_download,img_hasUpdate;
         LinearLayout[] layout;
         ProgressBar[] progressBars;
+
 
         NormalTextViewHolder(View view) {
             super(view);
@@ -193,6 +318,11 @@ public class NormalRecyclerViewAdapter extends RecyclerView.Adapter<NormalRecycl
             img_download[0] = (ImageView) view.findViewById(R.id.img_download1);
             img_download[1] = (ImageView) view.findViewById(R.id.img_download2);
             img_download[2] = (ImageView) view.findViewById(R.id.img_download3);
+
+            img_hasUpdate = new ImageView[3];
+            img_hasUpdate[0] = (ImageView) view.findViewById(R.id.img_hasUpdate1);
+            img_hasUpdate[1] = (ImageView) view.findViewById(R.id.img_hasUpdate2);
+            img_hasUpdate[2] = (ImageView) view.findViewById(R.id.img_hasUpdate3);
 
             progressBars = new ProgressBar[3];
             progressBars[0] = (ProgressBar) view.findViewById(R.id.progressBar1);

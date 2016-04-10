@@ -7,6 +7,7 @@ import android.widget.ImageView;
 
 import java.io.File;
 
+import cn.georgeyang.lib.LruCache;
 import cn.georgeyang.lib.UiThread;
 
 /**
@@ -17,7 +18,7 @@ public class ImageLoder {
         String filePath = file.getAbsolutePath();
         imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
 
-        Bitmap cache  = ImageCache.getInstance().get("path-" + filePath);
+        Bitmap cache  = LruCache.getInstance().getFast("path-" + filePath);
         if (cache!=null) {
             imageView.setImageBitmap(cache);
         } else if (!filePath.equals(imageView.getTag())) {
@@ -31,13 +32,13 @@ public class ImageLoder {
             @Override
             public Object runInThread(String flag, Object obj, UiThread.Publisher publisher) {
                 String cachekey = "path-" + flag;
-                Bitmap bitmap  = ImageCache.getInstance().get(cachekey);
+                Bitmap bitmap  = LruCache.getInstance().getFast(cachekey);
                 if (bitmap==null) {
                     bitmap = BitmapCompressor.decodeSampledBitmapFromFile(flag,500,500);
 
                     String path = (String) imageView.getTag();
                     if (flag.equals(path)) {
-                        ImageCache.getInstance().put(cachekey,bitmap);
+                        LruCache.getInstance().put(cachekey,bitmap);
                     }
                 }
                 Thread.currentThread().interrupt();
@@ -61,7 +62,7 @@ public class ImageLoder {
     public static void loadImage (final ImageView imageView, @NonNull final String url, final int resizeWidth, int resizeHeight, final @DrawableRes int errorImg) {
         imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
 
-        final Bitmap cache  = ImageCache.getInstance().get("url-" + url.hashCode());
+        final Bitmap cache  = LruCache.getInstance().getFast("url-" + url.hashCode());
         if (cache!=null) {
             imageView.setImageBitmap(cache);
         } else if (!url.equals(imageView.getTag())) {
@@ -75,13 +76,13 @@ public class ImageLoder {
             @Override
             public Object runInThread(String flag, Object obj, UiThread.Publisher publisher) {
                 String cachekey = "url-" + flag;
-                Bitmap bitmap  = ImageCache.getInstance().get(cachekey);
+                Bitmap bitmap  = LruCache.getInstance().getFast(cachekey);
                 if (bitmap==null) {
                     File cacheDir = new File(imageView.getContext().getCacheDir(),"imageCache");
                     if (!cacheDir.exists()) {
                         cacheDir.mkdir();
                     }
-                    File cacheFile = new File(cacheDir.getAbsoluteFile(),flag.toString()+".img");
+                    File cacheFile = new File(cacheDir.getAbsoluteFile(),flag.toString().hashCode()+".img");
                     if (!cacheFile.exists()) {
                         try {
                             HttpUtil.downLoadFile2(url,cacheFile);
@@ -91,10 +92,12 @@ public class ImageLoder {
                     }
 
                     bitmap = BitmapCompressor.decodeSampledBitmapFromFile(cacheFile.getAbsolutePath(),500,500);
-
+                    if (bitmap==null) {
+                        return null;
+                    }
                     String path = (String) imageView.getTag();
                     if (flag.equals(path)) {
-                        ImageCache.getInstance().put(cachekey,bitmap);
+                        LruCache.getInstance().put(cachekey,bitmap);
                     }
                 }
                 Thread.currentThread().interrupt();

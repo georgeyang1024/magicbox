@@ -1,13 +1,17 @@
 package cn.georgeyang.network;
 
+import android.content.Context;
+import android.os.Environment;
 import android.text.TextUtils;
 import android.util.Log;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+import com.squareup.okhttp.Cache;
 import com.squareup.okhttp.Call;
 import com.squareup.okhttp.FormEncodingBuilder;
 import com.squareup.okhttp.Headers;
+import com.squareup.okhttp.Interceptor;
 import com.squareup.okhttp.MediaType;
 import com.squareup.okhttp.OkHttpClient;
 import com.squareup.okhttp.Request;
@@ -16,6 +20,9 @@ import com.squareup.okhttp.Response;
 
 import org.json.JSONArray;
 
+import java.io.File;
+import java.io.IOException;
+import java.lang.reflect.Method;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
@@ -33,10 +40,33 @@ import cn.georgeyang.util.Logutil;
 abstract class OkRequestBase {
     protected static final OkHttpClient okHttpClient = new OkHttpClient();
     protected static final String TAG =  "request";
+    protected static Context mContext;
 
     static {
         okHttpClient.setReadTimeout(1, TimeUnit.MINUTES);
         okHttpClient.setConnectTimeout(1, TimeUnit.MINUTES);
+        okHttpClient.setWriteTimeout(5,TimeUnit.MINUTES);
+    }
+
+    public static void init(Context context) {
+        if (mContext==null) {
+            File sdcache = new File(context.getCacheDir().getAbsolutePath(),"netCache");
+            if (!sdcache.exists()) {
+                sdcache.mkdirs();
+            }
+            int cacheSize = 10 * 1024 * 1024; // 10 MiB
+            okHttpClient.setCache(new Cache(sdcache.getAbsoluteFile(), cacheSize));
+            okHttpClient.interceptors().add(new Interceptor() {
+                @Override
+                public Response intercept(Chain chain) throws IOException {
+                    Response originalResponse = chain.proceed(chain.request());
+                    return originalResponse.newBuilder()
+                            .header("Cache-Control", "max-age=6000")
+                            .build();
+                }
+            });
+        }
+        mContext = context;
     }
 
     public void cancel (Object requestTag) {
@@ -44,6 +74,7 @@ abstract class OkRequestBase {
     }
 
 
+    private static Method cacheGetMothod;
     public static <T> Resp<T> request(Request request, Type clazz) {
         Resp ret = new Resp();
 
@@ -57,8 +88,24 @@ abstract class OkRequestBase {
                 Logutil.i(TAG,"body Length:" + request.body().contentLength());
             }
 
-            Call call = okHttpClient.newCall(request);
-            Response response = call.execute();
+            Response response = null;
+            try {
+                Call call = okHttpClient.newCall(request);
+                response = call.execute();
+            } catch (Exception e) {
+                Logutil.i(TAG,"net error use local cache!!" +  e.getMessage());
+            }
+
+            if (response==null) {
+//                Cache cache = okHttpClient.getCache();
+//                if (cacheGetMothod==null) {
+//                    cacheGetMothod = cache.getClass().getDeclaredMethod("get",new Class[]{Request.class});
+//                    cacheGetMothod.setAccessible(true);
+//                }
+//                response = (Response) cacheGetMothod.invoke(cache,new Object[]{request});
+                response = getCacheResponseByRequest(request);
+            }
+
             ret.code = response.code();
             ret.success = response.isSuccessful();
 
@@ -123,20 +170,26 @@ abstract class OkRequestBase {
         return ret;
     }
 
-    protected static <T> Resp<T> get (Object requestTag, String url, Map<String,Object> params, Type retClass) {
+    public static <T> Resp<T> get (Object requestTag, String url, Map<String,Object> params, Type retClass) {
         pringUrl("get",url,params);
-        Request request = new Request.Builder()
-                .url(url + getParamStr(params))
-                .tag(requestTag)
-                .build();
+        Request request = buildGetRequest(requestTag,url,params);
         return request(request,retClass);
     }
 
     public static <T> Resp<T> post(String url, Map<String, Object> params) {
         return post("",url,params,String.class);
     }
-    protected static <T> Resp<T> post(Object requestTag,String url, Map<String, Object> params,Type clazz) {
-        pringUrl("post",url,params);
+
+    public static Request buildGetRequest(Object requestTag,String url, Map<String, Object> params) {
+        Request request = new Request.Builder()
+                .url(url + getParamStr(params))
+                .tag(requestTag)
+                .build();
+        return request;
+    }
+
+
+    public static Request buildPostRequest(Object requestTag,String url, Map<String, Object> params) {
         RequestBody body;
         if (!(params==null || params.size()==0)) {
             FormEncodingBuilder builder = new FormEncodingBuilder();
@@ -156,12 +209,49 @@ abstract class OkRequestBase {
                 .post(body)
                 .tag(requestTag)
                 .build();
-
-        return request(request, clazz);
+        return request;
     }
 
 
+    public static String getPostRequestCache(Object requestTag,String url, Map<String, Object> params) {
+        Request request = buildPostRequest(requestTag,url,params);
+        return getCacheByRequest(request);
+    }
 
+    public static String getGetRequestCache(Object requestTag,String url, Map<String, Object> params) {
+        Request request = buildGetRequest(requestTag,url,params);
+        return getCacheByRequest(request);
+    }
+
+    public static String getCacheByRequest (Request request) {
+        Response response = getCacheResponseByRequest(request);
+        if (response==null) {
+            return null;
+        }
+        return response.body().toString();
+    }
+
+    public static Response getCacheResponseByRequest (Request request) {
+        Response response = null;
+        try {
+            Cache cache = okHttpClient.getCache();
+            if (cacheGetMothod == null) {
+                cacheGetMothod = cache.getClass().getDeclaredMethod("get", new Class[]{Request.class});
+                cacheGetMothod.setAccessible(true);
+            }
+            response = (Response) cacheGetMothod.invoke(cache, new Object[]{request});
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        Logutil.showlog("getCacheResponseByRequest>>" + response);
+        return response;
+    }
+
+    protected static <T> Resp<T> post(Object requestTag,String url, Map<String, Object> params,Type clazz) {
+        pringUrl("post",url,params);
+        Request request = buildPostRequest(requestTag,url,params);
+        return request(request, clazz);
+    }
 
     private static void pringUrl(String method,String url,Map<String, Object> params) {
         Logutil.i(TAG,"==========>" +  method + ":"+ url + getParamStr(params));

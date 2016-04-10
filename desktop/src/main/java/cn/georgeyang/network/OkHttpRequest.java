@@ -4,6 +4,9 @@ import android.app.Activity;
 import android.content.Context;
 import android.os.Build;
 import android.support.v4.app.Fragment;
+
+import com.squareup.okhttp.Request;
+
 import java.lang.reflect.Type;
 import java.util.Map;
 
@@ -16,10 +19,6 @@ import cn.georgeyang.util.ReflectUtil;
  */
 public class OkHttpRequest extends OkRequestBase {
     private static OkHttpRequest instance;
-    private static Context mContext;
-    public static void init (Context context) {
-        mContext = context;
-    }
 
     public static OkHttpRequest getInstance() {
         synchronized (OkRequestBase.class) {

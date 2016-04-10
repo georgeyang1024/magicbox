@@ -7,4 +7,6 @@
     <color name="transparent_white" >#55ffffff</color>
     <color name="transparent_black" >#55000000</color>
     <color name="transparent">#00ffffff</color>
+
+    <color name="appIconBG">#30fefefe</color>
 </resources>

@@ -177,6 +177,14 @@ public class PluginActivity extends Activity {
 
         loadAnim(false);
 
+        if (android.os.Build.VERSION.SDK_INT >= 21) {
+            this.setTheme(android.R.style.Theme_Material_Light_NoActionBar);
+        } else if (android.os.Build.VERSION.SDK_INT >= 13) {
+            this.setTheme(android.R.style.Theme_Holo_Light_NoActionBar);
+        } else {
+            this.setTheme(android.R.style.Theme_Black_NoTitleBar);
+        }
+
         super.onCreate(savedInstanceState);
 
         allActivity.add(this);

@@ -8,9 +8,12 @@ import android.os.Build;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
+import android.view.Menu;
 import android.widget.Toast;
 
+import java.lang.ref.WeakReference;
 import java.lang.reflect.Constructor;
+import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -19,6 +22,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.WeakHashMap;
 
+import dalvik.system.DexClassLoader;
 import online.magicebox.devlibrary.R;
 
 
@@ -46,6 +50,41 @@ public class PluginActivity extends Activity {
 //        proxyContext.loadResources(pluginPath,packageName);
         return this;
     }
+
+    //http://blog.csdn.net/cauchyweierstrass/article/details/51087198
+    private void replaceClassLoader(String tagPackage,DexClassLoader loader){
+        try {
+            Class clazz_Ath = Class.forName("android.app.ActivityThread");
+            Class clazz_LApk = Class.forName("android.app.LoadedApk");
+
+            Object currentActivityThread = clazz_Ath.getMethod("currentActivityThread").invoke(null);
+            Field field1 = clazz_Ath.getDeclaredField("mPackages");
+            field1.setAccessible(true);
+            Map mPackages = (Map)field1.get(currentActivityThread);
+
+            WeakReference ref = (WeakReference) mPackages.get(tagPackage);
+            Field field2 = clazz_LApk.getDeclaredField("mClassLoader");
+            field2.setAccessible(true);
+            field2.set(ref.get(), loader);
+        } catch (Exception e){
+            System.out.println("-------------------------------------" + "click");
+            e.printStackTrace();
+        }
+    }
+
+    public void startProxyActivity() {
+        DexClassLoader dexClassLoader = (DexClassLoader) mContext.getClassLoader();
+        replaceClassLoader(getPackageName(), dexClassLoader);
+        try {
+            Class<?> activity = dexClassLoader.loadClass("online.magicbox.ProxyActivity");
+            Intent intent = new Intent(this, activity);
+            startActivity(intent);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+
 
 
     private static final List<PluginActivity> allActivity = new ArrayList<>();
@@ -174,6 +213,14 @@ public class PluginActivity extends Activity {
 
         loadAnim(false);
 
+        if (android.os.Build.VERSION.SDK_INT >= 21) {
+            this.setTheme(android.R.style.Theme_Material_Light_NoActionBar);
+        } else if (android.os.Build.VERSION.SDK_INT >= 13) {
+            this.setTheme(android.R.style.Theme_Holo_Light_NoActionBar);
+        } else {
+            this.setTheme(android.R.style.Theme_Black_NoTitleBar);
+        }
+
         super.onCreate(savedInstanceState);
 
         allActivity.add(this);
@@ -269,7 +316,32 @@ public class PluginActivity extends Activity {
         }
     }
 
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        boolean bool = false;
+        try {
+            bool = (boolean) callMethodByCache(mSlice, "onCreateOptionsMenu", new Class[]{Menu.class}, new Object[]{menu});
+        } catch (Exception e) {
 
+        }
+        if (!bool) {
+            return super.onCreateOptionsMenu(menu);
+        }
+        return bool;
+    }
+
+    @Override
+    public void onOptionsMenuClosed(Menu menu) {
+        boolean bool = false;
+        try {
+            bool = (boolean) callMethodByCache(mSlice, "onOptionsMenuClosed", new Class[]{Menu.class}, new Object[]{menu});
+        } catch (Exception e) {
+
+        }
+        if (!bool) {
+            super.onOptionsMenuClosed(menu);
+        }
+    }
 
     @Override
     protected void onSaveInstanceState(Bundle outState) {

@@ -34,7 +34,7 @@
             android:id="@+id/drawer"
             android:layout_alignParentBottom="true"
             android:layout_width="fill_parent"
-            android:layout_height="140dp"
+            android:layout_height="160dp"
             app:content="@+id/content"
             app:direction="bottomToTop"
             app:handle="@+id/handle" >

@@ -1,3 +1,19 @@
 <resources>
     <string name="app_name">Desktop</string>
+
+    <array name="appMenu">
+        <item>打开</item>
+        <item>详情</item>
+        <item>卸载</item>
+    </array>
+
+    <array name="pluginAppMenu">
+        <item>打开</item>
+        <item>更新</item>
+        <item>卸载</item>
+    </array>
+
+    <string name="appTypePlugin" >魔盒应用</string>
+    <string name="appTypeDownload" >安装应用</string>
+    <string name="appTypeSystem" >系统应用</string>
 </resources>

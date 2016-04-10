@@ -13,9 +13,20 @@
         android:background="@drawable/selector_general"
         android:layout_height="wrap_content">
 
-        <FrameLayout
+        <RelativeLayout
             android:layout_width="65dp"
             android:layout_height="65dp">
+
+            <ImageView
+                android:id="@+id/img_hasUpdate1"
+                android:layout_marginTop="5dp"
+                android:layout_marginRight="5dp"
+                android:layout_width="5dp"
+                android:src="@mipmap/img_glanceat_dot"
+                android:layout_alignParentRight="true"
+                android:layout_alignParentTop="true"
+                android:layout_height="5dp"/>
+
             <ImageView
                 android:id="@+id/img_icon1"
                 android:layout_width="match_parent"
@@ -24,23 +35,26 @@
 
             <ProgressBar
                 android:id="@+id/progressBar1"
-                android:layout_width="50dp"
+                android:layout_width="match_parent"
                 android:layout_gravity="center"
-                android:layout_height="50dp" />
+                android:background="@color/transparent_black"
+                android:layout_height="match_parent" />
             
             <ImageView
                 android:id="@+id/img_download1"
-                android:background="#30fefefe"
+                android:background="@drawable/selector_general_appicon"
                 android:src="@mipmap/img_download"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent" />
 
-        </FrameLayout>
+        </RelativeLayout>
 
-        <TextView
+        <cn.georgeyang.widget.AlwaysMarqueeTextView
             android:id="@+id/tv_appName1"
             android:text="sss`"
             android:gravity="center"
+            android:singleLine="true"
+            android:ellipsize="marquee"
             android:textColor="@android:color/white"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
@@ -58,9 +72,20 @@
         android:background="@drawable/selector_general"
         android:layout_height="wrap_content">
 
-        <FrameLayout
+        <RelativeLayout
             android:layout_width="65dp"
             android:layout_height="65dp">
+
+            <ImageView
+                android:id="@+id/img_hasUpdate2"
+                android:layout_marginTop="5dp"
+                android:layout_marginRight="5dp"
+                android:layout_width="5dp"
+                android:src="@mipmap/img_glanceat_dot"
+                android:layout_alignParentRight="true"
+                android:layout_alignParentTop="true"
+                android:layout_height="5dp"/>
+
             <ImageView
                 android:id="@+id/img_icon2"
                 android:layout_width="match_parent"
@@ -69,22 +94,25 @@
 
             <ProgressBar
                 android:id="@+id/progressBar2"
-                android:layout_width="50dp"
+                android:layout_width="match_parent"
                 android:layout_gravity="center"
-                android:layout_height="50dp" />
+                android:background="@color/transparent_black"
+                android:layout_height="match_parent" />
 
             <ImageView
                 android:id="@+id/img_download2"
-                android:background="#30fefefe"
+                android:background="@drawable/selector_general_appicon"
                 android:src="@mipmap/img_download"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent" />
 
-        </FrameLayout>
+        </RelativeLayout>
 
-        <TextView
+        <cn.georgeyang.widget.AlwaysMarqueeTextView
             android:id="@+id/tv_appName2"
             android:text="sss`"
+            android:singleLine="true"
+            android:ellipsize="marquee"
             android:gravity="center"
             android:textColor="@android:color/white"
             android:layout_width="match_parent"
@@ -102,9 +130,19 @@
         android:background="@drawable/selector_general"
         android:layout_height="wrap_content">
 
-        <FrameLayout
+        <RelativeLayout
             android:layout_width="65dp"
             android:layout_height="65dp">
+
+            <ImageView
+                android:id="@+id/img_hasUpdate3"
+                android:layout_marginTop="5dp"
+                android:layout_marginRight="5dp"
+                android:layout_width="5dp"
+                android:src="@mipmap/img_glanceat_dot"
+                android:layout_alignParentRight="true"
+                android:layout_alignParentTop="true"
+                android:layout_height="5dp"/>
             <ImageView
                 android:id="@+id/img_icon3"
                 android:layout_width="match_parent"
@@ -113,22 +151,25 @@
 
             <ProgressBar
                 android:id="@+id/progressBar3"
-                android:layout_width="50dp"
+                android:layout_width="match_parent"
                 android:layout_gravity="center"
-                android:layout_height="50dp" />
+                android:background="@color/transparent_black"
+                android:layout_height="match_parent" />
 
             <ImageView
                 android:id="@+id/img_download3"
-                android:background="#30fefefe"
+                android:background="@drawable/selector_general_appicon"
                 android:src="@mipmap/img_download"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent" />
 
-        </FrameLayout>
+        </RelativeLayout>
 
-        <TextView
+        <cn.georgeyang.widget.AlwaysMarqueeTextView
             android:id="@+id/tv_appName3"
             android:text="sss`"
+            android:singleLine="true"
+            android:ellipsize="marquee"
             android:gravity="center"
             android:textColor="@android:color/white"
             android:layout_width="match_parent"

@@ -3,7 +3,17 @@
               android:orientation="vertical"
               android:layout_width="match_parent"
              android:background="#99ffffff"
-              android:layout_height="120dp">
+              android:layout_height="140dp">
+    <cn.georgeyang.widget.AlwaysMarqueeTextView
+        android:layout_width="match_parent"
+        android:layout_height="20dp"
+        android:textSize="12sp"
+        android:gravity="center_vertical"
+        android:ellipsize="marquee"
+        android:singleLine="true"
+        android:text="wwwwehrtwieuyrb6g5678526783542635462536754"
+        />
+
 
     <LinearLayout
         android:layout_width="match_parent"
