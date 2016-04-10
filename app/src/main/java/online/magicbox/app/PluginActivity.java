@@ -11,7 +11,9 @@ import android.util.Log;
 import android.widget.Toast;
 
 import java.io.File;
+import java.lang.ref.WeakReference;
 import java.lang.reflect.Constructor;
+import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -20,7 +22,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.WeakHashMap;
 
-import online.magicbox.bugfix.AssetUtils;
+import dalvik.system.DexClassLoader;
 
 /**
  * Created by george.yang on 2016-3-30.
@@ -38,18 +40,33 @@ public class PluginActivity extends Activity {
         PluginActivity.SCHEME = scheme;
     }
 
-    private Context getPluginContent() {
+    private static Map<String,Object> contextCache = new HashMap<>();
+
+    private static Context getPluginContent(Context context,String packageName,String version) {
         try {
 //            String pluginPath = AssetUtils.copyAsset(this,String.format("%s_%s.apk",new Object[]{packageName,version}), getFilesDir());
-            String pluginPath = new File(getFilesDir(),String.format("%s_%s.apk",new Object[]{packageName,version})).getAbsolutePath();
-            Log.i("test","load plugin:" + pluginPath);
-            PluginContext proxyContext = new PluginContext(this);
-            proxyContext.loadResources(pluginPath,packageName);
-            return proxyContext;
+            String pluginPath = new File(context.getFilesDir(),String.format("%s_%s.apk",new Object[]{packageName,version})).getAbsolutePath();
+            Object cache = contextCache.get(pluginPath);
+            if (cache!=null) {
+                return (Context) cache;
+            }
+
+            Class pluginContextClass = context.getClassLoader().loadClass("online.magicbox.app.PluginContext");
+            Constructor<?> localConstructor = pluginContextClass.getConstructor(new Class[]{Context.class});
+            Object pluginContext = localConstructor.newInstance(new Object[]{context});
+            Method loadResourcesMethod = pluginContextClass.getMethod("loadResources",new Class[]{String.class,String.class});
+            loadResourcesMethod.invoke(pluginContext,new Object[]{pluginPath,packageName});
+            contextCache.put(pluginPath,pluginContext);
+            return (Context)pluginContext;
+
+//            Log.i("test","load plugin:" + pluginPath);
+//            PluginContext proxyContext = new PluginContext(context);
+//            proxyContext.loadResources(pluginPath,packageName);
+//            return proxyContext;
         } catch (Exception e) {
             e.printStackTrace();
         }
-        return this;
+        return context;
     }
 
 
@@ -73,45 +90,82 @@ public class PluginActivity extends Activity {
         }
     }
 
-    public static Intent buildIntent(Class clazz) {
-        return buildIntent(clazz.getPackage().getName(), clazz.getSimpleName(), PluginConfig.System);
+    public static Intent buildIntent(Context context,Class clazz) {
+        return buildIntent(context,clazz.getPackage().getName(), clazz.getSimpleName(), PluginConfig.System);
     }
 
-    public static Intent buildIntent(Class clazz, String animType) {
+    public static Intent buildIntent(Context context,Class clazz, String animType) {
         HashMap<String, String> params = new HashMap<>();
         params.put("animType", animType);
-        return buildIntent(clazz.getPackage().getName(), clazz.getSimpleName(), params);
+        return buildIntent(context,clazz.getPackage().getName(), clazz.getSimpleName(), params);
     }
 
-    public static Intent buildIntent(Class clazz, Map<String, String> params) {
-        return buildIntent(clazz.getPackage().getName(), clazz.getSimpleName(), params);
+    public static Intent buildIntent(Context context,Class clazz, Map<String, String> params) {
+        return buildIntent(context,clazz.getPackage().getName(), clazz.getSimpleName(), params);
     }
 
-    public static Intent buildIntent(String packageName, String className,String version) {
+    public static Intent buildIntent(Context context,String packageName, String className,String version) {
         HashMap<String, String> params = new HashMap<>();
         params.put("animType", "System");
         params.put("version", version);
-        return buildIntent(packageName, className, params);
+        return buildIntent(context,packageName, className, params);
     }
 
-    public static Intent buildIntent(String packageName, String className,String animType,String version) {
+    public static Intent buildIntent(Context context,String packageName, String className,String animType,String version) {
         HashMap<String, String> params = new HashMap<>();
         params.put("animType", animType);
         params.put("version", version);
-        return buildIntent(packageName, className, params);
+        return buildIntent(context,packageName, className, params);
     }
 
-    public static Intent buildIntent(String packageName, String className, Map<String, String> params) {
-        Uri.Builder builder = new Uri.Builder().scheme(SCHEME).path(packageName + "." + className);
-        if (params == null) {
+    public static Intent buildIntent(Context context,String packageName, String className, Map<String, String> params) {
+        if (params==null) {
             params = new HashMap<>();
         }
         if (!params.containsKey("animType")) {
-            params.put("animType", PluginConfig.System);
+            params.put("animType",PluginConfig.System);
         }
         if (!params.containsKey("version")) {
-            params.put("version", PluginConfig.pluginVersion);
+            params.put("version",PluginConfig.pluginVersion);
         }
+
+
+
+        Log.i("test","buildIntent=====");
+        Log.i("test","context:" + context);
+        Log.i("test","loder:" + context.getClassLoader());
+        Log.i("test","packageName:" + packageName);
+        Log.i("test","className:" + className);
+        for (String key:params.keySet()) {
+            Log.i("test","key:" + key + ">>" + params.get(key));
+        }
+        Log.i("test","buildIntent end=====");
+
+        if ("ProxyActivity".equals(className)) {
+            String version = params.get("version");
+            Context plugInContent = getPluginContent(context,packageName,version);
+            ClassLoader classLoader =  plugInContent.getClassLoader();
+            if (!(classLoader instanceof DexClassLoader)) {
+                try {
+                    Class<?> activity = classLoader.loadClass("online.magicbox.app.ProxyActivity");
+                    Intent intent = new Intent(context, activity);
+                    return intent;
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            } else {
+                replaceClassLoader(context.getPackageName(), (DexClassLoader) classLoader);
+                try {
+                    Class<?> activity = classLoader.loadClass("online.magicbox.ProxyActivity");
+                    Intent intent = new Intent(context, activity);
+                    return intent;
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+
+        Uri.Builder builder = new Uri.Builder().scheme(SCHEME).path(packageName + "." + className);
         if (params != null) {
             for (String key : params.keySet()) {
                 builder.appendQueryParameter(key, params.get(key));
@@ -121,6 +175,26 @@ public class PluginActivity extends Activity {
         Intent intent = new Intent(ACTION);
         intent.setData(uri);
         return intent;
+    }
+
+    //http://blog.csdn.net/cauchyweierstrass/article/details/51087198
+    private static void replaceClassLoader(String tagPackage,DexClassLoader loader){
+        try {
+            Class clazz_Ath = Class.forName("android.app.ActivityThread");
+            Class clazz_LApk = Class.forName("android.app.LoadedApk");
+
+            Object currentActivityThread = clazz_Ath.getMethod("currentActivityThread").invoke(null);
+            Field field1 = clazz_Ath.getDeclaredField("mPackages");
+            field1.setAccessible(true);
+            Map mPackages = (Map)field1.get(currentActivityThread);
+
+            WeakReference ref = (WeakReference) mPackages.get(tagPackage);
+            Field field2 = clazz_LApk.getDeclaredField("mClassLoader");
+            field2.setAccessible(true);
+            field2.set(ref.get(), loader);
+        } catch (Exception e){
+            e.printStackTrace();
+        }
     }
 
     @Override
@@ -160,7 +234,7 @@ public class PluginActivity extends Activity {
                 animType = PluginConfig.System;
             }
 
-            mContext = getPluginContent();
+            mContext = getPluginContent(this,packageName,version);
             Class pluginActivityClass = mContext.getClassLoader().loadClass(String.format("%s.%s", new Object[]{packageName, className}));
             Constructor<?> localConstructor = pluginActivityClass.getConstructor(new Class[]{Context.class,Object.class});
             mSlice = localConstructor.newInstance(new Object[]{mContext,PluginActivity.this});
@@ -201,17 +275,15 @@ public class PluginActivity extends Activity {
     private static Object callMethodByCache(Object receiver, String methodName, Class[] parameterTypes, Object[] args) {
         try {
             String key = receiver.getClass() + "#" + methodName + "&" + Arrays.toString(parameterTypes);
-            Log.i("test", "cache key:" + key);
             Method method = methodCache.get(key);
             if (method == null) {
                 method = receiver.getClass().getMethod(methodName, parameterTypes);
                 methodCache.put(key, method);
             } else {
-                Log.i("test", "use cache:" + key);
             }
             return method.invoke(receiver, args);
         } catch (Exception e) {
-            e.printStackTrace();
+//            e.printStackTrace();
         }
         return null;
     }
@@ -240,15 +312,23 @@ public class PluginActivity extends Activity {
      */
     @Override
     public void onBackPressed() {
-        boolean ret = (boolean)callMethodByCache(mSlice, "onBackPressed", new Class[]{}, new Object[]{});
-        if (ret) {
-            return;
+        Object ret = callMethodByCache(mSlice, "onBackPressed", new Class[]{}, new Object[]{});
+        if (ret!=null) {
+            try {
+                if ((boolean)ret) {
+                    return;
+                }
+            } catch (Exception e) {
+
+            }
         }
         super.onBackPressed();
     }
 
     @Override
     protected void onDestroy() {
+        String pluginPath = new File(getFilesDir(),String.format("%s_%s.apk",new Object[]{packageName,version})).getAbsolutePath();
+        contextCache.remove(pluginPath);
         callMethodByCache(mSlice, "onDestroy", new Class[]{}, new Object[]{});
         super.onDestroy();
     }

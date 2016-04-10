@@ -1,5 +1,6 @@
 package online.magicbox.desktop;
 
+import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.os.Bundle;
@@ -35,6 +36,7 @@ import online.magicbox.lib.Slice;
 public class MainSlice extends Slice implements View.OnClickListener, UiThread.UIThreadEvent, SwipeRefreshLayout.OnRefreshListener, NetCallback<List<PluginItemBean>> {
     public MainSlice(Context base, Object holder) {
         super(base, holder);
+        adapter.setActivity((Activity) holder);
     }
     private RecyclerView mRecyclerView;
     private SwipeRefreshLayout swipeRefreshLayout;

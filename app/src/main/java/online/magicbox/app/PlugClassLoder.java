@@ -40,21 +40,29 @@ public class PlugClassLoder extends DexClassLoader {
             clazz = getParent().loadClass(className);
         } catch (Exception e) {
         }
-        if (clazz != null)
-            return clazz;
-        if (plugLoderMap != null) {
-            for (PlugClassLoder c : plugLoderMap.values()) {
-                try {
-                    clazz = c.findClass(className);
-                    break;
-                } catch (Exception e) {
 
-                }
-            }
-        }
         if (clazz != null)
             return clazz;
+
+//        if (plugLoderMap != null) {
+//            for (PlugClassLoder c : plugLoderMap.values()) {
+//                try {
+//                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.ICE_CREAM_SANDWICH) {
+//                        clazz = c.findClass(className);
+//                    }
+//                    break;
+//                } catch (Exception e) {
+//
+//                }
+//            }
+//        }
+//        if (clazz != null)
+//            return clazz;
+
         clazz = findClass(className);
+        if (clazz != null)
+            return clazz;
+
         return clazz;
     }
 

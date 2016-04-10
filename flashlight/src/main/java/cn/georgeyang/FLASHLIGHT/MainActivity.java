@@ -13,7 +13,7 @@ public class MainActivity extends Activity {
         super.onCreate(savedInstanceState);
 
         PluginActivity.init("cn.georgeyang.flashlight","magicbox");
-        Intent intent = PluginActivity.buildIntent(MainSlice.class);
+        Intent intent = PluginActivity.buildIntent(this,MainSlice.class);
         startActivity(intent);
 
         finish();

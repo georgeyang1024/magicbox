@@ -147,7 +147,6 @@ public class PluginContext extends ContextWrapper {
             try {
                 zipIn.closeEntry();
             } catch (Exception e) {
-             e.printStackTrace();
             }
         }
 

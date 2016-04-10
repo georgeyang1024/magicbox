@@ -1,0 +1,202 @@
+<?xml version="1.0" encoding="utf-8"?>
+    <LinearLayout 
+    android:background="#ff808080" 
+    xmlns:android="http://schemas.android.com/apk/res/android" 
+    android:layout_width="fill_parent" 
+    android:layout_height="fill_parent" 
+    android:orientation="vertical"
+    android:layout_gravity="center_vertical" android:id="@+id/zhengfu">
+        
+        <EditText 
+        android:text="TextView" 
+        android:id="@+id/textView1" 
+        android:textSize="25sp"
+        android:textColor="#000000" 
+        android:layout_gravity="center"
+        android:gravity="left"
+        android:cursorVisible="false"
+        android:editable = "false" 
+        android:layout_height="wrap_content" 
+        android:layout_width="fill_parent" 
+        android:layout_marginLeft="4dip" 
+        android:layout_marginRight="4dip" 
+        android:layout_marginTop="4dip" android:layout_weight="1.5">
+        </EditText>
+        
+        
+        
+        <TableLayout
+        android:id="@+id/tablelayout"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="4dip" android:layout_weight="10">
+        
+        <LinearLayout
+        android:id="@+id/linearlayout02"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content" 
+        android:layout_weight="1">
+        	<Button
+        	android:layout_width="50dip"
+        	android:layout_height="fill_parent"
+        	android:layout_weight="1"
+        	android:textSize="25sp" android:id="@+id/buttonc" android:text="@string/shan">
+        	</Button>
+
+        	<Button
+        	android:layout_width="50dip"
+        	android:layout_height="fill_parent"
+        	android:layout_weight="1"
+        	android:textSize="25sp" android:id="@+id/buttonce" android:text="@string/shanchu">
+        	</Button>
+        </LinearLayout>
+        	<TableRow
+        	android:id="@+id/row0"
+        	android:layout_width="fill_parent"
+        	android:layout_height="fill_parent"
+        	android:layout_weight="1">
+        		<Button
+        		android:layout_width="40dip"
+        		android:layout_height="fill_parent"
+        		android:layout_weight="1"
+        		android:textSize="25sp" android:text="@string/one" android:id="@+id/button1">
+        		</Button>
+        		<Button
+        		android:layout_width="40dip"
+        		android:layout_height="fill_parent"
+        		android:layout_weight="1"
+        		android:textSize="25sp" android:text="@string/two" android:id="@+id/button2">
+        		</Button>
+        		<Button
+        		android:layout_width="40dip"
+        		android:layout_height="fill_parent"
+        		android:layout_weight="1"
+        		android:textSize="25sp" android:text="@string/three" android:id="@+id/button3">
+        		</Button>
+        		<Button
+        		android:layout_width="40dip"
+        		android:layout_height="fill_parent"
+        		android:layout_weight="1"
+        		android:textSize="25sp" android:text="@string/jia" android:id="@+id/button01">
+        		</Button>
+        	</TableRow>
+        	
+        	<TableRow
+        	android:id="@+id/row1"
+        	android:layout_width="fill_parent"
+        	android:layout_height="fill_parent"
+        	android:layout_weight="1">
+        		<Button
+        		android:layout_width="40dip"
+        		android:layout_height="fill_parent"
+        		android:layout_weight="1"
+        		android:textSize="25sp" android:text="@string/fore" android:id="@+id/button4">
+        		</Button>
+        		<Button
+        		android:layout_width="40dip"
+        		android:layout_height="fill_parent"
+        		android:layout_weight="1"
+        		android:textSize="25sp" android:text="@string/five" android:id="@+id/button5">
+        		</Button>
+        		<Button
+        		android:layout_width="40dip"
+        		android:layout_height="fill_parent"
+        		android:layout_weight="1"
+        		android:textSize="25sp" android:text="@string/six" android:id="@+id/button6">
+        		</Button>
+        		<Button
+        		android:layout_width="40dip"
+        		android:layout_height="fill_parent"
+        		android:layout_weight="1"
+        		android:textSize="25sp" android:text="@string/jian" android:id="@+id/button02">
+        		</Button>
+        	</TableRow>
+        	
+        	<TableRow
+        	android:id="@+id/row2"
+        	android:layout_width="fill_parent"
+        	android:layout_height="fill_parent"
+        	android:layout_weight="1">
+        		<Button
+        		android:layout_width="40dip"
+        		android:layout_height="fill_parent"
+        		android:layout_weight="1"
+        		android:textSize="25sp" android:text="@string/seven" android:id="@+id/button7">
+        		</Button>
+        		<Button
+        		android:layout_width="40dip"
+        		android:layout_height="fill_parent"
+        		android:layout_weight="1"
+        		android:textSize="25sp" android:text="@string/eight" android:id="@+id/button8">
+        		</Button>
+        		<Button
+        		android:layout_width="40dip"
+        		android:layout_height="fill_parent"
+        		android:layout_weight="1"
+        		android:textSize="25sp" android:text="@string/nine" android:id="@+id/button9">
+        		</Button>
+        		<Button
+        		android:layout_width="40dip"
+        		android:layout_height="fill_parent"
+        		android:layout_weight="1"
+        		android:textSize="25sp" android:text="@string/cheng" android:id="@+id/button03">
+        		</Button>
+       	 	 </TableRow>
+        	
+        	<TableRow
+        	android:id="@+id/row3"
+        	android:layout_width="fill_parent"
+        	android:layout_height="fill_parent"
+        	android:layout_weight="1">
+        		<Button
+        		android:layout_width="40dip"
+        		android:layout_height="fill_parent"
+        		android:layout_weight="1"
+        		android:textSize="25sp" android:text="@string/zero" android:id="@+id/button0">
+        		</Button>
+        		<Button
+        		android:layout_width="40dip"
+        		android:layout_height="fill_parent"
+        		android:layout_weight="1"
+        		android:textSize="25sp" android:id="@+id/button06" android:text="@string/dihao">
+        		</Button>
+        		<Button
+        		android:layout_width="40dip"
+        		android:layout_height="fill_parent"
+        		android:layout_weight="1"
+        		android:textSize="25sp" android:text="@string/dengyu" android:id="@+id/button05">
+        		</Button>
+        		<Button
+        		android:layout_width="40dip"
+        		android:layout_height="fill_parent"
+        		android:layout_weight="1"
+        		android:textSize="25sp" android:text="@string/chu" android:id="@+id/button04">
+        		</Button>
+       	  </TableRow>
+        <LinearLayout
+        android:id="@+id/tableRow1" 
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content" 
+        android:orientation="horizontal"
+        android:layout_weight="1">
+           <Button 
+           android:textSize="25sp" 
+           android:layout_height="fill_parent" 
+           android:layout_width="50dp" android:layout_weight="1" android:text="@string/zhengfu" android:id="@+id/zheng">
+           </Button>
+           <Button 
+           android:id="@+id/pingfang" 
+           android:textSize="25sp" 
+           android:layout_height="fill_parent" 
+           android:layout_width="50dp" android:layout_weight="1" android:text="@string/ping">
+           </Button>
+           <Button 
+           android:id="@+id/kaifang" 
+           android:textSize="25sp" 
+           android:layout_height="fill_parent" 
+           android:layout_width="50dp" android:layout_weight="1" android:text="@string/kai">
+           </Button>
+
+        </LinearLayout>
+       </TableLayout>
+    </LinearLayout>

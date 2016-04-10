@@ -13,5 +13,5 @@ public class PluginConfig {
     public static final String TopOut = "TopOut";//上进，往下出
     public static final String ZoomShow = "ZoomShow";//fragment默认缩放
     public static final String AlphaShow = "Alpha";//透明顯示
-    public static final String pluginVersion = "1.0";//配置插件版本
+    public static final String pluginVersion = "1";//配置插件版本
 }

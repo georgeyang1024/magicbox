@@ -57,11 +57,18 @@ public class PluginListProcessor {
                 infoBean.installVersionCode = dbBean.installVersionCode;
             }
 
-            Intent intent = PluginActivity.buildIntent(pluginItemBean.packageName,pluginItemBean.mainClass, PluginConfig.System,pluginItemBean.installVersionCode+"");
-            infoBean.intent = intent;
             String apkFileName = String.format("%s_%s.apk",new Object[]{pluginItemBean.packageName,pluginItemBean.installVersionCode+""});
             Logutil.showlog("apk:" + apkFileName);
-            infoBean.isInstall = new File(appDownloadDir,apkFileName).exists();
+            boolean hasInstall = new File(appDownloadDir,apkFileName).exists();
+            infoBean.isInstall = hasInstall;
+
+            if (hasInstall) {
+                Intent intent = PluginActivity.buildIntent(mcontext,pluginItemBean.packageName,pluginItemBean.mainClass, PluginConfig.System,pluginItemBean.installVersionCode+"");
+                infoBean.intent = intent;
+            } else {
+                Intent intent = PluginActivity.buildIntent(mcontext,pluginItemBean.packageName,pluginItemBean.mainClass, PluginConfig.System,pluginItemBean.versionCode+"");
+                infoBean.intent = intent;
+            }
 
 
             ret.add(infoBean);

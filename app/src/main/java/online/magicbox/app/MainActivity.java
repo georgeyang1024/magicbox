@@ -6,7 +6,6 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.pm.PackageInfo;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
@@ -97,7 +96,7 @@ public class MainActivity extends Activity implements UiThread.UIThreadEvent {
 
     public void intoDesktop () {
         PluginActivity.init("online.magicbox.plugin","magicbox");
-        Intent intent = PluginActivity.buildIntent(Vars.DesktopPackageName,"MainSlice",desktopVersionCode);
+        Intent intent = PluginActivity.buildIntent(this,Vars.DesktopPackageName,"MainSlice",desktopVersionCode);
         startActivity(intent);
         finish();
     }

@@ -1,5 +1,6 @@
 package online.magicbox.desktop.adapter;
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -37,6 +38,11 @@ import online.magicbox.desktop.entity.PluginItemBean;
 public class NormalRecyclerViewAdapter extends RecyclerView.Adapter<NormalRecyclerViewAdapter.NormalTextViewHolder> {
     private List<Object> lineData = new ArrayList<>();
     private Context mContext;
+    private Activity activity;
+
+    public void setActivity(Activity activity) {
+        this.activity = activity;
+    }
 
     public void setDataInThread (List<AppInfoBean> list) {
         lineData.clear();
