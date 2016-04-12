@@ -8,6 +8,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
+import android.view.Menu;
 import android.widget.Toast;
 
 import java.io.File;
@@ -40,23 +41,17 @@ public class PluginActivity extends Activity {
         PluginActivity.SCHEME = scheme;
     }
 
-    private static Map<String,Object> contextCache = new HashMap<>();
 
     private static Context getPluginContent(Context context,String packageName,String version) {
         try {
 //            String pluginPath = AssetUtils.copyAsset(this,String.format("%s_%s.apk",new Object[]{packageName,version}), getFilesDir());
             String pluginPath = new File(context.getFilesDir(),String.format("%s_%s.apk",new Object[]{packageName,version})).getAbsolutePath();
-            Object cache = contextCache.get(pluginPath);
-            if (cache!=null) {
-                return (Context) cache;
-            }
 
             Class pluginContextClass = context.getClassLoader().loadClass("online.magicbox.app.PluginContext");
             Constructor<?> localConstructor = pluginContextClass.getConstructor(new Class[]{Context.class});
             Object pluginContext = localConstructor.newInstance(new Object[]{context});
             Method loadResourcesMethod = pluginContextClass.getMethod("loadResources",new Class[]{String.class,String.class});
             loadResourcesMethod.invoke(pluginContext,new Object[]{pluginPath,packageName});
-            contextCache.put(pluginPath,pluginContext);
             return (Context)pluginContext;
 
 //            Log.i("test","load plugin:" + pluginPath);
@@ -91,7 +86,7 @@ public class PluginActivity extends Activity {
     }
 
     public static Intent buildIntent(Context context,Class clazz) {
-        return buildIntent(context,clazz.getPackage().getName(), clazz.getSimpleName(), PluginConfig.System);
+        return buildIntent(context,clazz.getPackage().getName(), clazz.getSimpleName(), PluginConfig.pluginVersion);
     }
 
     public static Intent buildIntent(Context context,Class clazz, String animType) {
@@ -327,8 +322,6 @@ public class PluginActivity extends Activity {
 
     @Override
     protected void onDestroy() {
-        String pluginPath = new File(getFilesDir(),String.format("%s_%s.apk",new Object[]{packageName,version})).getAbsolutePath();
-        contextCache.remove(pluginPath);
         callMethodByCache(mSlice, "onDestroy", new Class[]{}, new Object[]{});
         super.onDestroy();
     }
@@ -366,6 +359,32 @@ public class PluginActivity extends Activity {
         }
     }
 
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        boolean bool = false;
+        try {
+            bool = (boolean) callMethodByCache(mSlice, "onCreateOptionsMenu", new Class[]{Menu.class}, new Object[]{menu});
+        } catch (Exception e) {
+
+        }
+        if (!bool) {
+            return super.onCreateOptionsMenu(menu);
+        }
+        return bool;
+    }
+
+    @Override
+    public void onOptionsMenuClosed(Menu menu) {
+        boolean bool = false;
+        try {
+            bool = (boolean) callMethodByCache(mSlice, "onOptionsMenuClosed", new Class[]{Menu.class}, new Object[]{menu});
+        } catch (Exception e) {
+
+        }
+        if (!bool) {
+            super.onOptionsMenuClosed(menu);
+        }
+    }
 
 
     @Override

@@ -43,7 +43,11 @@ public class MainActivity extends Activity implements UiThread.UIThreadEvent {
 
         hotfixDex = sharedPreferences.getString("hotfixDex","");
         hotfixUpdateTime = sharedPreferences.getLong("hotfixUpdateTime",0);
-        dexVersionCode = sharedPreferences.getString("dexVersionCode","0");
+        int versionCode = 0;
+        try {
+            versionCode = getPackageManager().getPackageInfo(getPackageName(),0).versionCode;
+        } catch (Exception e) {}
+        dexVersionCode = sharedPreferences.getString("dexVersionCode",versionCode+"");
         boolean needRestart = sharedPreferences.getBoolean("needRestart",false);
         Log.i("test","desktopApk:" + desktopApk);
         if (needRestart) {

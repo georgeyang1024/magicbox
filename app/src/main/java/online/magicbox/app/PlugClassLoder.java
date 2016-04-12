@@ -15,13 +15,13 @@ public class PlugClassLoder extends DexClassLoader {
     public String dexPath;
     public static final String TAG = "PlugManger";
 
-    private static final HashMap<String, PlugClassLoder> plugLoderMap = new HashMap<>();
+    public static final HashMap<String, PlugClassLoder> plugClassLoderCache = new HashMap<>();
 
     public PlugClassLoder(String dexPath, String optimizedDirectory, String libraryPath, ClassLoader parent) {
         super(dexPath, optimizedDirectory, libraryPath, parent);
         this.dexPath = dexPath;
-        if (!plugLoderMap.containsKey(dexPath)) {
-            plugLoderMap.put(dexPath, this);
+        if (!plugClassLoderCache.containsKey(dexPath)) {
+            plugClassLoderCache.put(dexPath, this);
         }
     }
 

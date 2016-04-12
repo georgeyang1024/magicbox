@@ -44,6 +44,7 @@ public class PluginActivity extends Activity {
         PluginActivity.SCHEME = scheme;
     }
 
+
     private static Context getPluginContent(Context context,String packageName,String version) {
         try {
 //            String pluginPath = AssetUtils.copyAsset(this,String.format("%s_%s.apk",new Object[]{packageName,version}), getFilesDir());
@@ -66,26 +67,6 @@ public class PluginActivity extends Activity {
         return context;
     }
 
-    //http://blog.csdn.net/cauchyweierstrass/article/details/51087198
-    private static void replaceClassLoader(String tagPackage,DexClassLoader loader){
-        try {
-            Class clazz_Ath = Class.forName("android.app.ActivityThread");
-            Class clazz_LApk = Class.forName("android.app.LoadedApk");
-
-            Object currentActivityThread = clazz_Ath.getMethod("currentActivityThread").invoke(null);
-            Field field1 = clazz_Ath.getDeclaredField("mPackages");
-            field1.setAccessible(true);
-            Map mPackages = (Map)field1.get(currentActivityThread);
-
-            WeakReference ref = (WeakReference) mPackages.get(tagPackage);
-            Field field2 = clazz_LApk.getDeclaredField("mClassLoader");
-            field2.setAccessible(true);
-            field2.set(ref.get(), loader);
-        } catch (Exception e){
-            System.out.println("-------------------------------------" + "click");
-            e.printStackTrace();
-        }
-    }
 
     private static final List<PluginActivity> allActivity = new ArrayList<>();
 
@@ -106,7 +87,6 @@ public class PluginActivity extends Activity {
             callMethodByCache(activity.mSlice, "onReceiveMessage", new Class[]{int.class, Object.class}, new Object[]{type, object});
         }
     }
-
 
     public static Intent buildIntent(Context context,Class clazz) {
         return buildIntent(context,clazz.getPackage().getName(), clazz.getSimpleName(), PluginConfig.pluginVersion);
@@ -148,6 +128,7 @@ public class PluginActivity extends Activity {
         }
 
 
+
         Log.i("test","buildIntent=====");
         Log.i("test","context:" + context);
         Log.i("test","loder:" + context.getClassLoader());
@@ -162,7 +143,6 @@ public class PluginActivity extends Activity {
             String version = params.get("version");
             Context plugInContent = getPluginContent(context,packageName,version);
             ClassLoader classLoader =  plugInContent.getClassLoader();
-            Log.i("test","buildIntent classLoader:" + classLoader);
             if (!(classLoader instanceof DexClassLoader)) {
                 try {
                     Class<?> activity = classLoader.loadClass("online.magicbox.app.ProxyActivity");
@@ -195,6 +175,25 @@ public class PluginActivity extends Activity {
         return intent;
     }
 
+    //http://blog.csdn.net/cauchyweierstrass/article/details/51087198
+    private static void replaceClassLoader(String tagPackage,DexClassLoader loader){
+        try {
+            Class clazz_Ath = Class.forName("android.app.ActivityThread");
+            Class clazz_LApk = Class.forName("android.app.LoadedApk");
+
+            Object currentActivityThread = clazz_Ath.getMethod("currentActivityThread").invoke(null);
+            Field field1 = clazz_Ath.getDeclaredField("mPackages");
+            field1.setAccessible(true);
+            Map mPackages = (Map)field1.get(currentActivityThread);
+
+            WeakReference ref = (WeakReference) mPackages.get(tagPackage);
+            Field field2 = clazz_LApk.getDeclaredField("mClassLoader");
+            field2.setAccessible(true);
+            field2.set(ref.get(), loader);
+        } catch (Exception e){
+            e.printStackTrace();
+        }
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -233,8 +232,7 @@ public class PluginActivity extends Activity {
                 animType = PluginConfig.System;
             }
 
-            mContext = getPluginContent(this,packageName,className);
-
+            mContext = getPluginContent(this,packageName,version);
             Class pluginActivityClass = mContext.getClassLoader().loadClass(String.format("%s.%s", new Object[]{packageName, className}));
             Constructor<?> localConstructor = pluginActivityClass.getConstructor(new Class[]{Context.class,Object.class});
             mSlice = localConstructor.newInstance(new Object[]{mContext,PluginActivity.this});
@@ -279,9 +277,11 @@ public class PluginActivity extends Activity {
             if (method == null) {
                 method = receiver.getClass().getMethod(methodName, parameterTypes);
                 methodCache.put(key, method);
+            } else {
             }
             return method.invoke(receiver, args);
         } catch (Exception e) {
+//            e.printStackTrace();
         }
         return null;
     }
@@ -330,6 +330,9 @@ public class PluginActivity extends Activity {
     }
 
     private void loadAnim(boolean isExit) {
+        if (animType==null) {
+            animType = PluginConfig.System;
+        }
         switch (animType) {
             case PluginConfig.LeftInRightOut:
                 if (isExit) {
@@ -386,10 +389,11 @@ public class PluginActivity extends Activity {
         }
     }
 
+
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-       callMethodByCache(mSlice, "onSaveInstanceState", new Class[]{Bundle.class}, new Object[]{outState});
+        callMethodByCache(mSlice, "onSaveInstanceState", new Class[]{Bundle.class}, new Object[]{outState});
     }
 
 

@@ -64,6 +64,7 @@ public class PluginContext extends ContextWrapper {
     public static final String COLOR = "color";
     public static final String DIMEN = "dimen";
 
+
 	public PluginContext(Context base) {
 		super(base);
 		this.context = base;
@@ -116,43 +117,46 @@ public class PluginContext extends ContextWrapper {
 
         //释放so文件
         String libPath = getCacheDir().getAbsolutePath() + "/lib";
-        ZipInputStream zipIn = null;
-        int readedBytes = 0;
-        byte buf[] = new byte[4096];
-        new File(libPath).mkdirs();
-        try {
-            zipIn = new ZipInputStream(new BufferedInputStream(new FileInputStream(dexPath)));
-            ZipEntry zipEntry = null;
-            while ((zipEntry = zipIn.getNextEntry()) != null) {
-                String name = zipEntry.getName();
-                if (!TextUtils.isEmpty(name)) {
-                    if (name.startsWith("lib/" + Build.CPU_ABI)) {
-                        String fileName = name.substring(name.lastIndexOf("/")+1,name.length());
-                        try {
-                            FileOutputStream fileOut = new FileOutputStream(new File(libPath,fileName));
-                            while ((readedBytes = zipIn.read(buf)) > 0) {
-                                fileOut.write(buf, 0, readedBytes);
-                            }
-                            fileOut.close();
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                        }
-                    }
-                }
-            }
-            zipIn.close();
-        } catch (Exception e) {
-            e.printStackTrace();
-        } finally {
-            try {
-                zipIn.closeEntry();
-            } catch (Exception e) {
-            }
-        }
 
-		plugClassLoder = new PlugClassLoder(dexPath,context.getCacheDir().getAbsolutePath(),libPath,context.getClassLoader());
+		plugClassLoder = PlugClassLoder.plugClassLoderCache.get(dexPath);
+		if (plugClassLoder==null) {
+			ZipInputStream zipIn = null;
+			int readedBytes = 0;
+			byte buf[] = new byte[4096];
+			new File(libPath).mkdirs();
+			try {
+				zipIn = new ZipInputStream(new BufferedInputStream(new FileInputStream(dexPath)));
+				ZipEntry zipEntry = null;
+				while ((zipEntry = zipIn.getNextEntry()) != null) {
+					String name = zipEntry.getName();
+					if (!TextUtils.isEmpty(name)) {
+						if (name.startsWith("lib/" + Build.CPU_ABI)) {
+							String fileName = name.substring(name.lastIndexOf("/")+1,name.length());
+							try {
+								FileOutputStream fileOut = new FileOutputStream(new File(libPath,fileName));
+								while ((readedBytes = zipIn.read(buf)) > 0) {
+									fileOut.write(buf, 0, readedBytes);
+								}
+								fileOut.close();
+							} catch (Exception e) {
+								e.printStackTrace();
+							}
+						}
+					}
+				}
+				zipIn.close();
+			} catch (Exception e) {
+				e.printStackTrace();
+			} finally {
+				try {
+					zipIn.closeEntry();
+				} catch (Exception e) {
+				}
+			}
+
+			plugClassLoder = new PlugClassLoder(dexPath,context.getCacheDir().getAbsolutePath(),libPath,context.getClassLoader());
+		}
 	}
-
 	
 	/**
 	 * 获取插件资源对应的id

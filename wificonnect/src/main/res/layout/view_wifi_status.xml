@@ -1,0 +1,154 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/bg_custom_dialog"
+    android:orientation="vertical" >
+
+    <TextView
+        android:id="@+id/txt_wifi_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:padding="15dp"
+        android:text="Large Text"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:textColor="@color/light_blue"
+        android:textStyle="bold" />
+
+    <ImageView
+        android:layout_width="fill_parent"
+        android:layout_height="4dp"
+        android:background="@color/light_blue" />
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" >
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingLeft="10dp"
+            android:paddingRight="10dp"
+            android:paddingTop="10dp" >
+
+            <!-- 状态 -->
+
+            <TextView
+                android:id="@+id/txt_label_conn_status"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5dp"
+                android:text="@string/conn_status"
+                android:textColor="@android:color/black" />
+
+            <TextView
+                android:id="@+id/txt_conn_status"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/conn_status"
+                android:textColor="@android:color/black"
+                android:textSize="16sp"
+                android:textStyle="bold" />
+            <!-- 信号强度 -->
+
+            <TextView
+                android:id="@+id/txt_label_signal_strength"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:text="@string/signal_strength"
+                android:textColor="@android:color/black" />
+
+            <TextView
+                android:id="@+id/txt_signal_strength"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/signal_strength"
+                android:textColor="@android:color/black"
+                android:textSize="16sp"
+                android:textStyle="bold" />
+
+            <!-- 安全性 -->
+
+            <TextView
+                android:id="@+id/txt_label_security_level"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:text="@string/security_level"
+                android:textColor="@android:color/black" />
+
+            <TextView
+                android:id="@+id/txt_security_level"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/security_level"
+                android:textColor="@android:color/black"
+                android:textSize="16sp"
+                android:textStyle="bold" />
+
+            <!-- IP地址 -->
+
+            <TextView
+                android:id="@+id/txt_label_ip_address"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:text="@string/ip_address"
+                android:textColor="@android:color/black" />
+
+            <TextView
+                android:id="@+id/txt_ip_address"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/ip_address"
+                android:textColor="@android:color/black"
+                android:textSize="16sp"
+                android:textStyle="bold" />
+        </LinearLayout>
+    </ScrollView>
+
+    <View
+        android:layout_width="fill_parent"
+        android:layout_height="2dp"
+        android:background="@android:color/black"
+        android:layout_marginTop="10dp"
+        />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal" >
+
+        <TextView
+            android:id="@+id/txt_btn_cancel"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:clickable="true"
+            android:enabled="true"
+            android:gravity="center"
+            android:padding="10dp"
+            android:text="@string/cancel"
+            android:textColor="@android:color/black" />
+
+        <View
+            android:layout_width="1dp"
+            android:layout_height="match_parent"
+            android:background="@android:color/black"/>
+
+        <TextView
+            android:id="@+id/txt_btn_disconnect"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:clickable="true"
+            android:enabled="true"
+            android:gravity="center"
+            android:padding="10dp"
+            android:text="@string/disconnect"
+            android:textColor="@android:color/black" />
+    </LinearLayout>
+
+</LinearLayout>

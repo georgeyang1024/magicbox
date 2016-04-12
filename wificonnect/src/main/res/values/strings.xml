@@ -1,0 +1,13 @@
+<resources>
+    <string name="app_name">WifiDemo</string>
+
+    <string name="signal_strength">信号强度</string>
+    <string name="security_level">安全性</string>
+    <string name="password">密码</string>
+    <string name="show_password">显示密码</string>
+    <string name="connect">连接</string>
+    <string name="disconnect">忘记</string>
+    <string name="cancel">取消</string>
+    <string name="conn_status">连接状态</string>
+    <string name="ip_address">IP地址</string>
+</resources>
