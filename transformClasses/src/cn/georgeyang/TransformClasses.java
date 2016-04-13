@@ -22,7 +22,7 @@ public class TransformClasses {
 		PrintWriter printer = null;
 		try {
 			printer = new PrintWriter(System.out);
-
+			
 			if (args == null || args.length < 3) {
 				printer.println("# args must be:buildDir libDir ignoreList");
 			} else {
@@ -32,14 +32,14 @@ public class TransformClasses {
 			String buildContext = args[0];
 			String libContext = args[1];
 			String ignoreContext = args[2];
-
+			
 			buildContext = buildContext.replace("\\\\", "\\");
 			libContext = libContext.replace("\\\\", "\\");
-
+			
 			String[] libPaths = libContext.split(";");
 			String[] buildPaths = buildContext.split(";");
 			String[] ignorePaths = ignoreContext.split(";");
-
+			
 			ClassPool classes = ClassPool.getDefault();
 
 			for (String libPath:libPaths) {
@@ -48,18 +48,18 @@ public class TransformClasses {
 			for (String buildPath:buildPaths) {
 				classes.appendClassPath(buildPath);
 			}
-
+			
 			for (String buildPath:buildPaths) {
 				loopToInsert(printer, classes,ignorePaths, buildPath,new File(buildPath));
 			}
-
+			
 		} catch (Exception e) {
 			e.printStackTrace();
 		} finally {
 			try {
 				printer.close();
 			} catch (Exception e2) {
-
+				
 			}
 		}
 	}
@@ -71,53 +71,52 @@ public class TransformClasses {
 				for (File subFile : files) {
 					loopToInsert(writer, classPool,ignorePath, buildDir, subFile);
 				}
-		} else {
+		} else {		
 			String className = buildPackageNameByFilePath(buildDir,file.getAbsolutePath());
 			if (className == null || className.equals("")) {
 				writer.println("# transform pass:\t" + file.getAbsolutePath());
 				return;
 			}
-
+			
 			CtClass c = classPool.get(className);
-
-			//修改資源
+			
+			//�޸��YԴ
 			if (className.indexOf(".R$")>0 || className.endsWith(".R")) {
-				c.stopPruning(true);
-
-				writer.println("# transform resoure:\t" + file.getAbsolutePath());
-				CtField[] fields = c.getFields();
-				if (fields!=null) {
-					for (CtField field:fields) {
-						try {
-							String name = field.getName();
-							int value = (Integer)field.getConstantValue();
-							int packageId = ((value >> 24) & 255);
-							int resourceType = ((value >> 16) & 255);
-							int resourcesSeq = value & 0xffff;
-
-							packageId = 120;
-							value = (packageId << 24) + (resourceType <<16)  + resourcesSeq ;
-							c.removeField(field);
-//							byte[] by = new byte[1];
-//							by[0]=123;
-//							field.setAttribute(name, by);
-							String newFieldCode = String.format("public static final int %s = %s;",new Object[]{name,String.valueOf(value)});
-
-							CtField.make(newFieldCode, c);
-							writer.println("# newFieldCode:\t" +newFieldCode);
-
-							c.writeFile();
-							c.defrost();
-						} catch (Exception e) {
-							e.printStackTrace();
-						}
-					}
-				}
-				writer.flush();
+//				c.stopPruning(true);
+//				
+//				writer.println("# transform resoure:\t" + file.getAbsolutePath());
+//				CtField[] fields = c.getFields();
+//				if (fields!=null) {
+//					for (CtField field:fields) {
+//						try {
+//							String name = field.getName();
+//							int value = (Integer)field.getConstantValue();
+//							int packageId = ((value >> 24) & 255);
+//							int resourceType = ((value >> 16) & 255); 	
+//							int resourcesSeq = value & 0xffff;
+//							
+//							packageId = 120;
+//							value = (packageId << 24) + (resourceType <<16)  + resourcesSeq ;
+//							c.removeField(field);
+//							
+//							String newFieldCode = String.format("public static final int %s = %s;",new Object[]{name,String.valueOf(value)});
+//							
+//							CtField.make(newFieldCode, c);
+//							writer.println("# newFieldCode:\t" +newFieldCode);
+//							
+//							c.writeFile(buildDir);
+//							c.defrost();
+//						} catch (Exception e) {
+//							e.printStackTrace();
+//						}
+//					}
+//				}
+//				writer.flush();
+				writer.println("# ignore resoure:\t" + file.getAbsolutePath());
 				return;
 			}
-
-			//過濾類
+			
+			//�^�V�
 			for (String iPath : ignorePath) {
 				if (iPath.endsWith(".*")) {
 					String match = iPath.substring(0, iPath.length()-2);
@@ -143,18 +142,19 @@ public class TransformClasses {
 					return;
 				}
 			}
-
-			// 下面的操作比较容易理解,在将需要关联的类的构造方法中插入引用代码
+			
+			// ����Ĳ����Ƚ��������,�ڽ���Ҫ��������Ĺ��췽���в������ô���
 			CtConstructor[] constructors = c.getConstructors();
 			if (constructors == null || constructors.length == 0) {
 				writer.println(String.format("# transform fail:\t %s - %s",new Object[]{"no constructors",file.getAbsolutePath()}));
 				return;
 			}
-
+			
 			try {
 				CtConstructor constructor = constructors[0];
-				constructor.insertBefore("System.out.println(AntilazyLoad.class);");
-				c.writeFile();
+//				constructor.insertBefore("System.out.println(AntilazyLoad.class);");
+				constructor.insertBefore("cn.georgeyang.AntilazyLoad.load();");
+				c.writeFile(buildDir);
 				writer.println("+ transform success:\t" + file.getAbsolutePath());
 			} catch (Exception e2) {
 				writer.println(String.format("# transform fail:\t %s - %s",new Object[]{e2.getLocalizedMessage(),file.getAbsolutePath()}));
@@ -172,7 +172,7 @@ public class TransformClasses {
 			String packageName = prePackageName.replace('/', '.').replace('\\', '.');
 			return packageName;
 		} catch (Exception e) {
-
+			
 		}
 		return "";
 	}

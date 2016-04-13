@@ -79,7 +79,9 @@
         <activity
             android:icon="@mipmap/ic_launcher"
             android:label="test"
-            android:name=".PluginActivity">
+            android:name=".PluginActivity"
+            android:theme="@android:style/Theme.Holo.Light.NoActionBar"
+            >
             <intent-filter>
                 <action android:name="online.magicbox.plugin" />
                 <category android:name="android.intent.category.BROWSABLE"/>
@@ -94,7 +96,9 @@
 
         </activity>
 
-        <activity android:name=".ProxyActivity"
+        <activity
+            android:name=".ProxyActivity"
+            android:theme="@android:style/Theme.Holo.Light.NoActionBar"
             android:label="proxy"
             />
     </application>

@@ -4,6 +4,7 @@ package online.magicbox.app;
 import android.os.Build;
 import android.util.Log;
 
+import java.io.File;
 import java.util.HashMap;
 
 import dalvik.system.DexClassLoader;
@@ -19,9 +20,12 @@ public class PlugClassLoder extends DexClassLoader {
 
     public PlugClassLoder(String dexPath, String optimizedDirectory, String libraryPath, ClassLoader parent) {
         super(dexPath, optimizedDirectory, libraryPath, parent);
+        File file = new File(dexPath);
         this.dexPath = dexPath;
-        if (!plugClassLoderCache.containsKey(dexPath)) {
-            plugClassLoderCache.put(dexPath, this);
+        if (!(file==null || !file.exists())) {
+            if (!plugClassLoderCache.containsKey(dexPath)) {
+                plugClassLoderCache.put(dexPath, this);
+            }
         }
     }
 

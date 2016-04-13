@@ -47,17 +47,17 @@ public class PluginActivity extends Activity {
 //            String pluginPath = AssetUtils.copyAsset(this,String.format("%s_%s.apk",new Object[]{packageName,version}), getFilesDir());
             String pluginPath = new File(context.getFilesDir(),String.format("%s_%s.apk",new Object[]{packageName,version})).getAbsolutePath();
 
-            Class pluginContextClass = context.getClassLoader().loadClass("online.magicbox.app.PluginContext");
-            Constructor<?> localConstructor = pluginContextClass.getConstructor(new Class[]{Context.class});
-            Object pluginContext = localConstructor.newInstance(new Object[]{context});
-            Method loadResourcesMethod = pluginContextClass.getMethod("loadResources",new Class[]{String.class,String.class});
-            loadResourcesMethod.invoke(pluginContext,new Object[]{pluginPath,packageName});
-            return (Context)pluginContext;
+//            Class pluginContextClass = context.getClassLoader().loadClass("online.magicbox.app.PluginContext");
+//            Constructor<?> localConstructor = pluginContextClass.getConstructor(new Class[]{Context.class});
+//            Object pluginContext = localConstructor.newInstance(new Object[]{context});
+//            Method loadResourcesMethod = pluginContextClass.getMethod("loadResources",new Class[]{String.class,String.class});
+//            loadResourcesMethod.invoke(pluginContext,new Object[]{pluginPath,packageName});
+//            return (Context)pluginContext;
 
 //            Log.i("test","load plugin:" + pluginPath);
-//            PluginContext proxyContext = new PluginContext(context);
-//            proxyContext.loadResources(pluginPath,packageName);
-//            return proxyContext;
+            PluginContext proxyContext = new PluginContext(context);
+            proxyContext.loadResources(pluginPath,packageName);
+            return proxyContext;
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -246,8 +246,9 @@ public class PluginActivity extends Activity {
 
         loadAnim(false);
 
+        //運行的是插件時，這段代碼無效
         if (android.os.Build.VERSION.SDK_INT >= 21) {
-            this.setTheme(android.R.style.Theme_Material_Light_NoActionBar);
+            this.setTheme(android.R.style.Theme_Holo_Light_NoActionBar);
         } else if (android.os.Build.VERSION.SDK_INT >= 13) {
             this.setTheme(android.R.style.Theme_Holo_Light_NoActionBar);
         } else {
@@ -392,7 +393,6 @@ public class PluginActivity extends Activity {
         super.onSaveInstanceState(outState);
         callMethodByCache(mSlice, "onSaveInstanceState", new Class[]{Bundle.class}, new Object[]{outState});
     }
-
 
     @Override
     public void onStart() {

@@ -88,9 +88,9 @@ public class PluginContext extends ContextWrapper {
 	/**
 	 * 加载插件中的资源
 	 *
-	 * @param pluginPackageName 资源插件的包名
-	 * @param testModel 是否为测试模式。 如果是测试模式每次都会拷贝assets插件到项目文件目录中，保存插件每次都是最新的，上线时请关闭
-	 * @author 小姜
+	 * @param dexPath 路徑
+	 * @param packageName 是包名
+	 * @author 小姜 change by georgeyang
 	 * @time 2015-4-16 上午11:31:36
 	 */
 	public void loadResources(String dexPath, String packageName) {
@@ -241,13 +241,22 @@ public class PluginContext extends ContextWrapper {
 //		return context.getClassLoader();
 		return plugClassLoder;
 	}
-	
+
 	@Override
 	public Resources.Theme getTheme() {
 		if(mTheme == null){
 			mTheme = mResources.newTheme();
-			mTheme.applyStyle(android.R.style.Theme_Light,true);
 		}
+//		int theme = 0;
+//		if (android.os.Build.VERSION.SDK_INT >= 21) {
+//			theme = android.R.style.Theme_Material_Light_NoActionBar;
+//		} else if (android.os.Build.VERSION.SDK_INT >= 13) {
+//			theme = android.R.style.Theme_Holo_Light_NoActionBar;
+//		} else {
+//			theme = android.R.style.Theme_Black_NoTitleBar;
+//		}
+//		mTheme.applyStyle(theme,true);
+		mTheme.applyStyle(android.R.style.Theme_DeviceDefault_Light_NoActionBar,true);
 		return mTheme;
 	}
 	
