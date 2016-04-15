@@ -42,7 +42,7 @@ public class MainSlice extends Slice implements View.OnClickListener, UiThread.U
     private SwipeRefreshLayout swipeRefreshLayout;
     private MultiDirectionSlidingDrawer multiDirectionSlidingDrawer;
     private PluginListProcessor processor;
-    private NormalRecyclerViewAdapter adapter = new NormalRecyclerViewAdapter();
+    private NormalRecyclerViewAdapter adapter = new NormalRecyclerViewAdapter(5);
     private static List<AppInfoBean> cacheList;
 
     @Override

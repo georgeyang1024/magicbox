@@ -1,0 +1,222 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="horizontal" android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_weight="1"
+        android:orientation="vertical"
+        android:gravity="center"
+        android:padding="10dp"
+        android:background="@drawable/selector_general"
+        android:layout_height="wrap_content">
+
+        <RelativeLayout
+            android:layout_width="57dp"
+            android:layout_height="57dp">
+
+            <ImageView
+                android:layout_marginTop="5dp"
+                android:layout_marginRight="5dp"
+                android:layout_width="5dp"
+                android:src="@mipmap/img_glanceat_dot"
+                android:layout_alignParentRight="true"
+                android:layout_alignParentTop="true"
+                android:layout_height="5dp"/>
+
+            <ImageView
+
+                android:layout_width="match_parent"
+                android:src="@mipmap/ic_launcher"
+                android:layout_height="match_parent"/>
+
+            <ProgressBar
+
+                android:layout_width="match_parent"
+                android:layout_gravity="center"
+                android:background="@color/transparent_black"
+                android:layout_height="match_parent" />
+            
+            <ImageView
+                android:background="@drawable/selector_general_appicon"
+                android:src="@mipmap/img_download"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" />
+
+        </RelativeLayout>
+
+        <cn.georgeyang.widget.AlwaysMarqueeTextView
+            android:text="sss`"
+            android:gravity="center"
+            android:singleLine="true"
+            android:ellipsize="marquee"
+            android:textColor="@android:color/white"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_weight="1"
+        android:orientation="vertical"
+        android:gravity="center"
+        android:padding="10dp"
+        android:background="@drawable/selector_general"
+        android:layout_height="wrap_content">
+
+        <RelativeLayout
+            android:layout_width="57dp"
+            android:layout_height="57dp">
+
+            <ImageView
+                android:layout_marginTop="5dp"
+                android:layout_marginRight="5dp"
+                android:layout_width="5dp"
+                android:src="@mipmap/img_glanceat_dot"
+                android:layout_alignParentRight="true"
+                android:layout_alignParentTop="true"
+                android:layout_height="5dp"/>
+
+            <ImageView
+
+                android:layout_width="match_parent"
+                android:src="@mipmap/ic_launcher"
+                android:layout_height="match_parent"/>
+
+            <ProgressBar
+
+                android:layout_width="match_parent"
+                android:layout_gravity="center"
+                android:background="@color/transparent_black"
+                android:layout_height="match_parent" />
+
+            <ImageView
+                android:background="@drawable/selector_general_appicon"
+                android:src="@mipmap/img_download"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" />
+
+        </RelativeLayout>
+
+        <cn.georgeyang.widget.AlwaysMarqueeTextView
+            android:text="sss`"
+            android:gravity="center"
+            android:singleLine="true"
+            android:ellipsize="marquee"
+            android:textColor="@android:color/white"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_weight="1"
+        android:orientation="vertical"
+        android:gravity="center"
+        android:padding="10dp"
+        android:background="@drawable/selector_general"
+        android:layout_height="wrap_content">
+
+        <RelativeLayout
+            android:layout_width="57dp"
+            android:layout_height="57dp">
+
+            <ImageView
+                android:layout_marginTop="5dp"
+                android:layout_marginRight="5dp"
+                android:layout_width="5dp"
+                android:src="@mipmap/img_glanceat_dot"
+                android:layout_alignParentRight="true"
+                android:layout_alignParentTop="true"
+                android:layout_height="5dp"/>
+
+            <ImageView
+
+                android:layout_width="match_parent"
+                android:src="@mipmap/ic_launcher"
+                android:layout_height="match_parent"/>
+
+            <ProgressBar
+
+                android:layout_width="match_parent"
+                android:layout_gravity="center"
+                android:background="@color/transparent_black"
+                android:layout_height="match_parent" />
+
+            <ImageView
+                android:background="@drawable/selector_general_appicon"
+                android:src="@mipmap/img_download"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" />
+
+        </RelativeLayout>
+
+        <cn.georgeyang.widget.AlwaysMarqueeTextView
+            android:id="@+id/tv_appName1"
+            android:text="sss`"
+            android:gravity="center"
+            android:singleLine="true"
+            android:ellipsize="marquee"
+            android:textColor="@android:color/white"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_weight="1"
+        android:orientation="vertical"
+        android:gravity="center"
+        android:padding="10dp"
+        android:background="@drawable/selector_general"
+        android:layout_height="wrap_content">
+
+        <RelativeLayout
+            android:layout_width="57dp"
+            android:layout_height="57dp">
+
+            <ImageView
+                android:layout_marginTop="5dp"
+                android:layout_marginRight="5dp"
+                android:layout_width="5dp"
+                android:src="@mipmap/img_glanceat_dot"
+                android:layout_alignParentRight="true"
+                android:layout_alignParentTop="true"
+                android:layout_height="5dp"/>
+
+            <ImageView
+                android:layout_width="match_parent"
+                android:src="@mipmap/ic_launcher"
+                android:layout_height="match_parent"/>
+
+            <ProgressBar
+
+                android:layout_width="match_parent"
+                android:layout_gravity="center"
+                android:background="@color/transparent_black"
+                android:layout_height="match_parent" />
+
+            <ImageView
+                android:background="@drawable/selector_general_appicon"
+                android:src="@mipmap/img_download"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" />
+
+        </RelativeLayout>
+
+        <cn.georgeyang.widget.AlwaysMarqueeTextView
+            android:text="sss`"
+            android:gravity="center"
+            android:singleLine="true"
+            android:ellipsize="marquee"
+            android:textColor="@android:color/white"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+    </LinearLayout>
+
+</LinearLayout>

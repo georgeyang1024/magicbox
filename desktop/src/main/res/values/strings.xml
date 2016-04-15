@@ -11,6 +11,7 @@
         <item>打开</item>
         <item>更新</item>
         <item>卸载</item>
+        <item>发送快捷方式</item>
     </array>
 
     <string name="appTypePlugin" >魔盒应用</string>

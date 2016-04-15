@@ -15,6 +15,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import java.io.File;
@@ -27,6 +28,7 @@ import cn.georgeyang.database.Mdb;
 import cn.georgeyang.lib.UiThread;
 import cn.georgeyang.util.HttpUtil;
 import cn.georgeyang.util.ImageLoder;
+import cn.georgeyang.util.ShortCutUtil;
 import online.magicbox.desktop.R;
 import online.magicbox.desktop.entity.AppInfoBean;
 import online.magicbox.desktop.entity.PluginItemBean;
@@ -39,6 +41,11 @@ public class NormalRecyclerViewAdapter extends RecyclerView.Adapter<NormalRecycl
     private List<Object> lineData = new ArrayList<>();
     private Context mContext;
     private Activity activity;
+    private int iconCount = 3;
+
+    public NormalRecyclerViewAdapter (int lineCounts) {
+        iconCount = lineCounts;
+    }
 
     public void setActivity(Activity activity) {
         this.activity = activity;
@@ -70,7 +77,7 @@ public class NormalRecyclerViewAdapter extends RecyclerView.Adapter<NormalRecycl
 
                     lineList.add(infoBean);
                     lineCount++;
-                    if (lineCount==3) {
+                    if (lineCount==iconCount) {
                         lineData.add(lineList);
                         lineCount=0;
                     } else if (i==innerList.size()-1) {
@@ -90,9 +97,15 @@ public class NormalRecyclerViewAdapter extends RecyclerView.Adapter<NormalRecycl
         }
         NormalTextViewHolder holder = null;
         if (viewType==0) {
-            holder =  new NormalTextViewHolder(mLayoutInflater.inflate(R.layout.item_listtitle, parent, false));// ID #0x7f04001d
+            holder =  new NormalTextViewHolder(mLayoutInflater.inflate(R.layout.item_listtitle, parent, false),iconCount);// ID #0x7f04001d
         } else {
-            holder = new NormalTextViewHolder(mLayoutInflater.inflate(R.layout.item_appline, parent, false));// ID #0x7f04001d
+            if (iconCount==3) {
+                holder = new NormalTextViewHolder(mLayoutInflater.inflate(R.layout.item_appline, parent, false),iconCount);// ID #0x7f04001d
+            } else if (iconCount==4) {
+                holder = new NormalTextViewHolder(mLayoutInflater.inflate(R.layout.item_appline4, parent, false),iconCount);// ID #0x7f04001d
+            } else if (iconCount==5) {
+                holder = new NormalTextViewHolder(mLayoutInflater.inflate(R.layout.item_appline5, parent, false),iconCount);// ID #0x7f04001d
+            }
         }
         return holder;
     }
@@ -105,7 +118,7 @@ public class NormalRecyclerViewAdapter extends RecyclerView.Adapter<NormalRecycl
             holder.tv_title.setText(type==1?R.string.appTypePlugin:type==2?R.string.appTypeDownload:R.string.appTypeSystem);
         } else {
             List<AppInfoBean> innerList = (List<AppInfoBean>) object;
-            for (int i=0;i<3;i++) {
+            for (int i=0;i<iconCount;i++) {
                 if (i>=innerList.size()) {
                    holder.layout[i].setVisibility(View.INVISIBLE);
                 } else {
@@ -189,6 +202,9 @@ public class NormalRecyclerViewAdapter extends RecyclerView.Adapter<NormalRecycl
                                         notifyDataSetChanged();
                                     }
                                 }).setNegativeButton("取消",null).create().show();
+                                break;
+                            case 3:
+                                ShortCutUtil.createShortCut(mContext,infoBean.name,infoBean.intent);
                                 break;
                         }
                     }
@@ -306,39 +322,64 @@ public class NormalRecyclerViewAdapter extends RecyclerView.Adapter<NormalRecycl
         ProgressBar[] progressBars;
 
 
-        NormalTextViewHolder(View view) {
+        NormalTextViewHolder(View view,int size) {
             super(view);
             tv_title = (TextView) view.findViewById(R.id.tv_title);
 
-            tv_name = new TextView[3];
-            tv_name[0] = (TextView) view.findViewById(R.id.tv_appName1);
-            tv_name[1] = (TextView) view.findViewById(R.id.tv_appName2);
-            tv_name[2] = (TextView) view.findViewById(R.id.tv_appName3);
+            if (tv_title == null && view instanceof LinearLayout) {
+                LinearLayout linearLayout = (LinearLayout) view;
+                tv_name = new TextView[size];
+                img_icon = new ImageView[size];
+                img_download = new ImageView[size];
+                img_hasUpdate = new ImageView[size];
+                progressBars = new ProgressBar[size];
+                layout = new LinearLayout[size];
+                for (int i=0;i<size;i++) {
+                    layout[i] = (LinearLayout) linearLayout.getChildAt(i);
+                    LinearLayout innerLayout = layout[i];
 
-            img_icon = new ImageView[3];
-            img_icon[0] = (ImageView) view.findViewById(R.id.img_icon1);
-            img_icon[1] = (ImageView) view.findViewById(R.id.img_icon2);
-            img_icon[2] = (ImageView) view.findViewById(R.id.img_icon3);
+                    RelativeLayout relativeLayout = (RelativeLayout) innerLayout.getChildAt(0);
+                    tv_name[i] = (TextView) innerLayout.getChildAt(1);
 
-            img_download = new ImageView[3];
-            img_download[0] = (ImageView) view.findViewById(R.id.img_download1);
-            img_download[1] = (ImageView) view.findViewById(R.id.img_download2);
-            img_download[2] = (ImageView) view.findViewById(R.id.img_download3);
+                    img_hasUpdate[i] = (ImageView) relativeLayout.getChildAt(0);
+                    img_icon[i] = (ImageView) relativeLayout.getChildAt(1);
+                    progressBars[i] = (ProgressBar) relativeLayout.getChildAt(2);
+                    img_download[i] = (ImageView) relativeLayout.getChildAt(3);
 
-            img_hasUpdate = new ImageView[3];
-            img_hasUpdate[0] = (ImageView) view.findViewById(R.id.img_hasUpdate1);
-            img_hasUpdate[1] = (ImageView) view.findViewById(R.id.img_hasUpdate2);
-            img_hasUpdate[2] = (ImageView) view.findViewById(R.id.img_hasUpdate3);
 
-            progressBars = new ProgressBar[3];
-            progressBars[0] = (ProgressBar) view.findViewById(R.id.progressBar1);
-            progressBars[1] = (ProgressBar) view.findViewById(R.id.progressBar2);
-            progressBars[2] = (ProgressBar) view.findViewById(R.id.progressBar3);
+                }
+            }
 
-            layout = new LinearLayout[3];
-            layout[0] = (LinearLayout) view.findViewById(R.id.layout1);
-            layout[1] = (LinearLayout) view.findViewById(R.id.layout2);
-            layout[2] = (LinearLayout) view.findViewById(R.id.layout3);
+
+//            tv_name = new TextView[3];
+//            tv_name[0] = (TextView) view.findViewById(R.id.tv_appName1);
+//            tv_name[1] = (TextView) view.findViewById(R.id.tv_appName2);
+//            tv_name[2] = (TextView) view.findViewById(R.id.tv_appName3);
+//
+//            img_icon = new ImageView[3];
+//            img_icon[0] = (ImageView) view.findViewById(R.id.img_icon1);
+//            img_icon[1] = (ImageView) view.findViewById(R.id.img_icon2);
+//            img_icon[2] = (ImageView) view.findViewById(R.id.img_icon3);
+//
+//            img_download = new ImageView[3];
+//            img_download[0] = (ImageView) view.findViewById(R.id.img_download1);
+//            img_download[1] = (ImageView) view.findViewById(R.id.img_download2);
+//            img_download[2] = (ImageView) view.findViewById(R.id.img_download3);
+//
+//            img_hasUpdate = new ImageView[3];
+//            img_hasUpdate[0] = (ImageView) view.findViewById(R.id.img_hasUpdate1);
+//            img_hasUpdate[1] = (ImageView) view.findViewById(R.id.img_hasUpdate2);
+//            img_hasUpdate[2] = (ImageView) view.findViewById(R.id.img_hasUpdate3);
+//
+//            progressBars = new ProgressBar[3];
+//            progressBars[0] = (ProgressBar) view.findViewById(R.id.progressBar1);
+//            progressBars[1] = (ProgressBar) view.findViewById(R.id.progressBar2);
+//            progressBars[2] = (ProgressBar) view.findViewById(R.id.progressBar3);
+//
+//            layout = new LinearLayout[3];
+//            layout[0] = (LinearLayout) view.findViewById(R.id.layout1);
+//            layout[1] = (LinearLayout) view.findViewById(R.id.layout2);
+//            layout[2] = (LinearLayout) view.findViewById(R.id.layout3);
         }
     }
 }

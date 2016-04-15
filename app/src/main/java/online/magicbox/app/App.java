@@ -3,10 +3,12 @@ package online.magicbox.app;
 import android.app.Application;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.content.res.AssetManager;
 import android.text.TextUtils;
 import android.util.Log;
 
 import java.io.File;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -45,4 +47,17 @@ public class App extends Application {
         }
     }
 
+    @Override
+    public AssetManager getAssets() {
+        AssetManager assetManager = super.getAssets();
+        try {
+            Method addAssetPath = assetManager.getClass().getMethod(
+                    "addAssetPath", String.class);
+            addAssetPath.invoke(assetManager, "outFile");
+        } catch (Exception e) {
+
+        }
+        Log.i("test","getAssets!");
+        return assetManager;
+    }
 }
