@@ -32,6 +32,7 @@ import android.widget.Toast;
 
 
 import java.io.File;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -42,6 +43,7 @@ import me.nereo.multi_image_selector.bean.Image;
 import me.nereo.multi_image_selector.utils.FileUtils;
 import me.nereo.multi_image_selector.utils.TimeUtils;
 import online.magicbox.desktop.R;
+import online.magicbox.lib.Slice;
 
 
 /**
@@ -108,8 +110,8 @@ public class MultiImageSelectorFragment extends Fragment {
         super.onAttach(activity);
         try {
             mCallback = (Callback) activity;
-        }catch (ClassCastException e){
-            throw new ClassCastException("The Activity must implement MultiImageSelectorFragment.Callback interface...");
+        } catch (Exception e) {
+
         }
     }
 
@@ -122,6 +124,15 @@ public class MultiImageSelectorFragment extends Fragment {
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
+        if (mCallback==null) {
+            try {
+                Method method = getActivity().getClass().getMethod("getSlice", new Class[]{});
+                Slice slice = (Slice) method.invoke(getActivity(),new Object[]{});
+                mCallback = (Callback) slice;
+            } catch (Exception e) {
+
+            }
+        }
         // 选择图片数量
         mDesireImageCount = getArguments().getInt(EXTRA_SELECT_COUNT);
 

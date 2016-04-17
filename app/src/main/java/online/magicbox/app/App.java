@@ -48,6 +48,20 @@ public class App extends Application {
     }
 
     @Override
+    public void onCreate() {
+        super.onCreate();
+        try {
+            Class crashClass = Class.forName("online.magicbox.app.CrashHandler");
+            Method getInstance = crashClass.getMethod("getInstance",new Class[]{});
+            Object instance = getInstance.invoke(null,new Object[]{});
+            Method initMethod = crashClass.getMethod("init",new Class[]{Context.class});
+            initMethod.invoke(instance,new Object[]{this});
+        } catch (Exception e) {
+
+        }
+    }
+
+    @Override
     public AssetManager getAssets() {
         AssetManager assetManager = super.getAssets();
         try {

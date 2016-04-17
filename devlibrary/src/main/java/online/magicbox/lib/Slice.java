@@ -1,5 +1,6 @@
 package online.magicbox.lib;
 
+import android.app.Activity;
 import android.app.FragmentManager;
 import android.content.Context;
 import android.content.ContextWrapper;
@@ -29,6 +30,10 @@ public abstract class Slice extends ContextWrapper {
     public Slice(Context base, Object holder) {
         super(base);
         mHolder = holder;
+    }
+
+    public Activity getActivity () {
+        return (Activity) mHolder;
     }
 
     public final LayoutInflater getLayoutInflater() {
@@ -152,8 +157,22 @@ public abstract class Slice extends ContextWrapper {
             String key = receiver.getClass() + "#" + methodName + "&" + Arrays.toString(parameterTypes);
             Method method = methodCache.get(key);
             if (method==null) {
-                method =receiver.getClass().getMethod(methodName,parameterTypes);
-                methodCache.put(key,method);
+                Class currClass = receiver.getClass();
+                while (method==null) {
+                    try {
+                        method = currClass.getMethod(methodName,parameterTypes);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                    currClass = currClass.getSuperclass();
+                    if (currClass==null) {
+                        break;
+                    }
+                }
+
+                if (method!=null) {
+                    methodCache.put(key,method);
+                }
             }
             return method.invoke(receiver,args);
         } catch (Exception e) {

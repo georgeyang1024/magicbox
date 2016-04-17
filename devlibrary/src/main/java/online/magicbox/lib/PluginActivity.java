@@ -1,6 +1,7 @@
 package online.magicbox.lib;
 
 import android.app.Activity;
+import android.app.FragmentManager;
 import android.content.Context;
 import android.content.Intent;
 import android.location.Location;
@@ -38,7 +39,7 @@ import online.magicebox.devlibrary.R;
  */
 public class PluginActivity extends Activity {
     private String packageName = null, animType = null, className = null, version = null;
-    public Object mSlice;//切片
+    public Slice mSlice;//切片
     private Context mContext;//
 
     private static String ACTION = "online.magicbox.plugin";
@@ -258,7 +259,7 @@ public class PluginActivity extends Activity {
             mContext = getPluginContent(this,packageName,version);
             Class pluginActivityClass = mContext.getClassLoader().loadClass(String.format("%s.%s", new Object[]{packageName, className}));
             Constructor<?> localConstructor = pluginActivityClass.getConstructor(new Class[]{Context.class,Object.class});
-            mSlice = localConstructor.newInstance(new Object[]{mContext,PluginActivity.this});
+            mSlice = (Slice) localConstructor.newInstance(new Object[]{mContext,PluginActivity.this});
 
         } catch (Exception e) {
             Toast.makeText(this, "加载失败:" + e.getMessage(), Toast.LENGTH_SHORT).show();
@@ -286,6 +287,11 @@ public class PluginActivity extends Activity {
         callMethodByCache(mSlice, "onCreate", new Class[]{Bundle.class}, new Object[]{savedInstanceState});
     }
 
+    //必须用反射call
+    public Slice getSlice() {
+        return mSlice;
+    }
+
     @Override
     protected void onResume() {
         super.onResume();
@@ -297,14 +303,27 @@ public class PluginActivity extends Activity {
         try {
             String key = receiver.getClass() + "#" + methodName + "&" + Arrays.toString(parameterTypes);
             Method method = methodCache.get(key);
-            if (method == null) {
-                method = receiver.getClass().getMethod(methodName, parameterTypes);
-                methodCache.put(key, method);
-            } else {
+            if (method==null) {
+                Class currClass = receiver.getClass();
+                while (method==null) {
+                    try {
+                        method = currClass.getMethod(methodName,parameterTypes);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                    currClass = currClass.getSuperclass();
+                    if (currClass==null) {
+                        break;
+                    }
+                }
+
+                if (method!=null) {
+                    methodCache.put(key,method);
+                }
             }
-            return method.invoke(receiver, args);
+            return method.invoke(receiver,args);
         } catch (Exception e) {
-//            e.printStackTrace();
+            e.printStackTrace();
         }
         return null;
     }
@@ -548,5 +567,22 @@ public class PluginActivity extends Activity {
     public void onStop() {
         super.onStop();
         callMethodByCache(mSlice, "onStop", new Class[]{}, new Object[]{});
+    }
+
+    @Override
+    public Intent getIntent() {
+        return super.getIntent();
+    }
+
+
+    @Override
+    public FragmentManager getFragmentManager() {
+        return super.getFragmentManager();
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        callMethodByCache(mSlice, "onActivityResult", new Class[]{int.class,int.class,Intent.class}, new Object[]{requestCode,resultCode,data});
     }
 }
