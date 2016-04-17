@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">WifiDemo</string>
+    <string name="app_name">wifi连接</string>
 
     <string name="signal_strength">信号强度</string>
     <string name="security_level">安全性</string>

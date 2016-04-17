@@ -17,6 +17,7 @@ import org.json.JSONObject;
 
 import java.io.File;
 import java.util.HashMap;
+import java.util.Objects;
 
 
 public class MainActivity extends Activity implements UiThread.UIThreadEvent {
@@ -109,7 +110,7 @@ public class MainActivity extends Activity implements UiThread.UIThreadEvent {
     public Object runInThread(String flag, Object obj, UiThread.Publisher publisher) {
         if (flag.equals("hotFix")) {
             try {
-                HashMap<String,String> params = new HashMap<String, String>();
+                HashMap<String,Object> params = new HashMap<>();
                 params.put("packageName",getPackageName());
                 params.put("versionCode",dexVersionCode);
                 String json = HttpUtil.post(Vars.HotFixGetterUrl,params);
@@ -141,7 +142,7 @@ public class MainActivity extends Activity implements UiThread.UIThreadEvent {
         } else if (flag.equals("desktop")) {
             //downLoad hotFix dex
             try {
-                HashMap<String,String> params = new HashMap<String, String>();
+                HashMap<String,Object> params = new HashMap<String, Object>();
                 params.put("packageName",Vars.DesktopPackageName);
                 params.put("versionCode",desktopVersionCode);
                 String json = HttpUtil.post(Vars.DesktopGetterUrl,params);

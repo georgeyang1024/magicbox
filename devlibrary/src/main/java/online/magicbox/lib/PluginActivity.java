@@ -3,12 +3,17 @@ package online.magicbox.lib;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.location.Location;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
+import android.view.ContextMenu;
+import android.view.KeyEvent;
 import android.view.Menu;
+import android.view.MenuItem;
+import android.view.View;
 import android.widget.Toast;
 
 import java.io.File;
@@ -67,6 +72,24 @@ public class PluginActivity extends Activity {
         return context;
     }
 
+
+    public void startLocation () {
+        Object location = "ampLocation Object";
+        String[] info = new String[]{"0","0.0","0.0","广东省珠海市",""};
+        callMethodByCache(mSlice, "onReceiveLocation", new Class[]{Object.class,String[].class}, new Object[]{location,info});
+    }
+
+    public void stopLocation () {
+
+    }
+
+    public void httpGet(String flag, final String url, final Map<String,Object> params) {
+        callMethodByCache(mSlice, "onReceiveHttpData", new Class[]{String.class, String.class}, new Object[]{flag, ""});
+    }
+
+    public void httpPost(String flag, final String url, final Map<String,Object> params) {
+        callMethodByCache(mSlice, "onReceiveHttpData", new Class[]{String.class, String.class}, new Object[]{flag, ""});
+    }
 
     private static final List<PluginActivity> allActivity = new ArrayList<>();
 
@@ -300,7 +323,6 @@ public class PluginActivity extends Activity {
 
     @Override
     public void finish() {
-        callMethodByCache(mSlice, "finish", new Class[]{}, new Object[]{});
         super.finish();
         loadAnim(true);
     }
@@ -368,7 +390,7 @@ public class PluginActivity extends Activity {
         try {
             bool = (boolean) callMethodByCache(mSlice, "onCreateOptionsMenu", new Class[]{Menu.class}, new Object[]{menu});
         } catch (Exception e) {
-
+            e.printStackTrace();
         }
         if (!bool) {
             return super.onCreateOptionsMenu(menu);
@@ -388,6 +410,125 @@ public class PluginActivity extends Activity {
             super.onOptionsMenuClosed(menu);
         }
     }
+
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        boolean bool = false;
+        try {
+            bool = (boolean) callMethodByCache(mSlice, "onKeyDown", new Class[]{int.class,KeyEvent.class}, new Object[]{keyCode,event});
+        } catch (Exception e) {
+
+        }
+        return bool?true:super.onKeyDown(keyCode, event);
+    }
+
+    @Override
+    public boolean onMenuItemSelected(int featureId, MenuItem item) {
+        boolean bool = false;
+        try {
+            bool = (boolean) callMethodByCache(mSlice, "onMenuItemSelected", new Class[]{int.class,MenuItem.class}, new Object[]{featureId,item});
+        } catch (Exception e) {
+
+        }
+        return bool?true:super.onMenuItemSelected(featureId, item);
+    }
+
+    @Override
+    public boolean onPrepareOptionsMenu(Menu menu) {
+        boolean bool = false;
+        try {
+            bool = (boolean) callMethodByCache(mSlice, "onPrepareOptionsMenu", new Class[]{MenuItem.class}, new Object[]{menu});
+        } catch (Exception e) {
+
+        }
+        return bool?true:super.onPrepareOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        boolean bool = false;
+        try {
+            bool = (boolean) callMethodByCache(mSlice, "onOptionsItemSelected", new Class[]{MenuItem.class}, new Object[]{item});
+        } catch (Exception e) {
+
+        }
+        return bool?true:super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public boolean onMenuOpened(int featureId, Menu menu) {
+        boolean bool = false;
+        try {
+            bool = (boolean) callMethodByCache(mSlice, "onMenuOpened", new Class[]{int.class,Menu.class}, new Object[]{featureId,menu});
+        } catch (Exception e) {
+
+        }
+        return bool?true:super.onMenuOpened(featureId, menu);
+    }
+
+    @Override
+    public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
+        boolean bool = false;
+        try {
+            bool = (boolean) callMethodByCache(mSlice, "onCreateContextMenu", new Class[]{ContextMenu.class,View.class,ContextMenu.ContextMenuInfo.class}, new Object[]{menu,v,menuInfo});
+        } catch (Exception e) {
+
+        }
+        if (!bool) {
+            super.onCreateContextMenu(menu, v, menuInfo);
+        }
+    }
+
+    @Override
+    public void closeOptionsMenu() {
+        boolean bool = false;
+        try {
+            bool = (boolean) callMethodByCache(mSlice, "closeOptionsMenu", new Class[]{}, new Object[]{});
+        } catch (Exception e) {
+
+        }
+        if (!bool) {
+            super.closeOptionsMenu();
+        }
+    }
+
+    @Override
+    public void openOptionsMenu() {
+        boolean bool = false;
+        try {
+            bool = (boolean) callMethodByCache(mSlice, "openOptionsMenu", new Class[]{}, new Object[]{});
+        } catch (Exception e) {
+
+        }
+        if (!bool) {
+            super.openOptionsMenu();
+        }
+    }
+
+    @Override
+    public void onContextMenuClosed(Menu menu) {
+        boolean bool = false;
+        try {
+            bool = (boolean) callMethodByCache(mSlice, "onContextMenuClosed", new Class[]{Menu.class}, new Object[]{menu});
+        } catch (Exception e) {
+
+        }
+        if (!bool) {
+            super.onContextMenuClosed(menu);
+        }
+    }
+
+    @Override
+    public boolean onContextItemSelected(MenuItem item) {
+        boolean bool = false;
+        try {
+            bool = (boolean) callMethodByCache(mSlice, "onContextItemSelected", new Class[]{MenuItem.class}, new Object[]{item});
+        } catch (Exception e) {
+
+        }
+        return bool?true:super.onContextItemSelected(item);
+    }
+
 
 
     @Override

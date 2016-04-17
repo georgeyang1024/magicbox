@@ -9,6 +9,7 @@
       <module fileurl="file://$PROJECT_DIR$/desktop/desktop.iml" filepath="$PROJECT_DIR$/desktop/desktop.iml" />
       <module fileurl="file://$PROJECT_DIR$/devlibrary/devlibrary.iml" filepath="$PROJECT_DIR$/devlibrary/devlibrary.iml" />
       <module fileurl="file://$PROJECT_DIR$/flashlight/flashlight.iml" filepath="$PROJECT_DIR$/flashlight/flashlight.iml" />
+      <module fileurl="file://$PROJECT_DIR$/seewifipwd/seewifipwd.iml" filepath="$PROJECT_DIR$/seewifipwd/seewifipwd.iml" />
       <module fileurl="file://$PROJECT_DIR$/wificonnect/wificonnect.iml" filepath="$PROJECT_DIR$/wificonnect/wificonnect.iml" />
     </modules>
   </component>

@@ -12,7 +12,7 @@ android {
         versionName "1.0"
 
         ndk {
-            moduleName "JniTest"
+            moduleName "JniFunc"
             ldLibs "log", "z", "m"
             abiFilters "armeabi", "armeabi-v7a", "x86"
         }

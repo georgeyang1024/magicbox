@@ -24,6 +24,11 @@ import java.util.concurrent.TimeoutException;
  * Created by george.yang on 16/3/26.
  */
 public class HttpUtil {
+    public static String get(String urlPath,Map<String, Object> params) {
+        StringBuffer body = getParamString(params);
+        return get(urlPath + "?" + body.toString());
+    }
+
     public static String get(String urlPath) {
         HttpURLConnection connection = null;
         InputStream is = null;
@@ -74,7 +79,7 @@ public class HttpUtil {
         return null;
     }
 
-    public static String post(String urlPath, Map<String, String> params) {
+    public static String post(String urlPath, Map<String, Object> params) {
         if (params == null || params.size() == 0) {
             return get(urlPath);
         }
@@ -144,13 +149,13 @@ public class HttpUtil {
         return null;
     }
 
-    private static StringBuffer getParamString(Map<String, String> params) {
+    private static StringBuffer getParamString(Map<String, Object> params) {
         StringBuffer result = new StringBuffer();
-        Iterator<Map.Entry<String, String>> iterator = params.entrySet().iterator();
+        Iterator<Map.Entry<String, Object>> iterator = params.entrySet().iterator();
         while (iterator.hasNext()) {
-            Map.Entry<String, String> param = iterator.next();
+            Map.Entry<String, Object> param = iterator.next();
             String key = param.getKey();
-            String value = param.getValue();
+            Object value = param.getValue();
             result.append(key).append('=').append(value);
             if (iterator.hasNext()) {
                 result.append('&');

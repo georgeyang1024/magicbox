@@ -209,8 +209,7 @@ public class PluginContext extends ContextWrapper {
 		if (LAYOUT_INFLATER_SERVICE.equals(name)) {
 			if (mLayoutInflater == null) {
 				try {
-					Class<?> cls = Class
-							.forName("com.android.internal.policy.PolicyManager");
+					Class<?> cls = ReflectUtil.getClass("com.android.internal.policy.PolicyManager");
 					Method m = cls.getMethod("makeNewLayoutInflater",
 							Context.class);
 					//传入当前PluginProxyContext类实例，创建一个布局加载器
@@ -218,7 +217,7 @@ public class PluginContext extends ContextWrapper {
 				} catch (Throwable e) {
 					e.printStackTrace();
 				}
-			}else {
+			} else {
 				return mLayoutInflater;
 			}
 		}

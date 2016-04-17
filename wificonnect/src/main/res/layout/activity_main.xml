@@ -3,6 +3,29 @@
     android:orientation="vertical" android:layout_width="match_parent"
     android:layout_height="match_parent">
 
+    <LinearLayout
+        android:gravity="center_vertical"
+        android:padding="5dp"
+        android:background="@android:color/darker_gray"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:orientation="horizontal"
+        >
+
+        <ImageView
+            android:src="@mipmap/ic_launcher"
+            android:layout_width="35dp"
+            android:layout_height="35dp"/>
+
+        <TextView
+            android:textColor="@android:color/black"
+            android:layout_marginLeft="10dp"
+            android:textSize="18sp"
+            android:text="@string/app_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+    </LinearLayout>
+
     <cn.georgeyang.wificonnect.component.MyListView
         android:id="@+id/freelook_listview"
         android:layout_width="fill_parent"

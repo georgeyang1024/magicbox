@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
+import android.util.Log;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -14,7 +15,7 @@ import java.util.List;
 import cn.georgeyang.database.Mdb;
 import cn.georgeyang.util.Logutil;
 import online.magicbox.desktop.entity.AppInfoBean;
-import online.magicbox.desktop.entity.PluginItemBean;
+import online.magicbox.desktop.entity.PluginItemEntity;
 import online.magicbox.lib.PluginActivity;
 import online.magicbox.lib.PluginConfig;
 
@@ -31,10 +32,10 @@ public class PluginListProcessor {
         mdb = new Mdb(context);
     }
 
-    public List<AppInfoBean> doSomething(List<PluginItemBean> pluginList) {
+    public List<AppInfoBean> doSomething(List<PluginItemEntity> pluginList) {
         List<AppInfoBean> ret = new ArrayList<>();
 
-        for (PluginItemBean pluginItemBean:pluginList) {
+        for (PluginItemEntity pluginItemBean:pluginList) {
             if ("y".equalsIgnoreCase(pluginItemBean.isDel)){
                 continue;
             }
@@ -45,10 +46,11 @@ public class PluginListProcessor {
             infoBean.downUrl = pluginItemBean.downUrl;
             infoBean.packageName = pluginItemBean.packageName;
             infoBean.size = pluginItemBean.size;
+            infoBean.mainClass = pluginItemBean.mainClass;
             infoBean.lastVersionCode = pluginItemBean.versionCode;
             infoBean.installVersionCode = pluginItemBean.versionCode;
 
-            PluginItemBean dbBean = mdb.findOnebyWhereDesc(PluginItemBean.class,"_addTime",String.format("packageName='%s'",new Object[]{pluginItemBean.packageName}));
+            PluginItemEntity dbBean = mdb.findOnebyWhereDesc(PluginItemEntity.class,"_addTime",String.format("packageName='%s'",new Object[]{pluginItemBean.packageName}));
             if (dbBean==null) {
                 pluginItemBean._id = pluginItemBean.Id;
                 pluginItemBean.save();
@@ -59,17 +61,19 @@ public class PluginListProcessor {
 
             String apkFileName = String.format("%s_%s.apk",new Object[]{pluginItemBean.packageName,pluginItemBean.installVersionCode+""});
             Logutil.showlog("apk:" + apkFileName);
-            boolean hasInstall = new File(appDownloadDir,apkFileName).exists();
+            File pluginFile = new File(appDownloadDir,apkFileName);
+            boolean hasInstall = pluginFile.exists();
             infoBean.isInstall = hasInstall;
 
             if (hasInstall) {
                 Intent intent = PluginActivity.buildIntent(mcontext,pluginItemBean.packageName,pluginItemBean.mainClass, PluginConfig.System,pluginItemBean.installVersionCode+"");
                 infoBean.intent = intent;
+                infoBean.installTime = pluginFile.lastModified();
             } else {
                 Intent intent = PluginActivity.buildIntent(mcontext,pluginItemBean.packageName,pluginItemBean.mainClass, PluginConfig.System,pluginItemBean.versionCode+"");
                 infoBean.intent = intent;
+                infoBean.installTime = System.currentTimeMillis();
             }
-
 
             ret.add(infoBean);
         }
@@ -86,23 +90,29 @@ public class PluginListProcessor {
         //得到系统安装的所有程序包的PackageInfo对象
         List<PackageInfo> packages = pm.getInstalledPackages(0);
         for(PackageInfo pi:packages) {
-            AppInfoBean infoBean = new AppInfoBean();
-            infoBean.isInstall = true;
-            infoBean.name = pi.applicationInfo.loadLabel(pm)+"";
-            infoBean.packageName = pi.applicationInfo.packageName;
-            if (mcontext.getPackageName().equals(infoBean.packageName)) {
-                continue;
-            }
-            infoBean.icon = pi.applicationInfo.loadIcon(pm);
-            Intent intent = pm.getLaunchIntentForPackage(pi.packageName);
-            if (intent !=null) {
-                infoBean.intent = intent;
-                if((pi.applicationInfo.flags& ApplicationInfo.FLAG_SYSTEM)!=0) {
-                    infoBean.type = AppInfoBean.Type_System;
-                } else if((pi.applicationInfo.flags&ApplicationInfo.FLAG_SYSTEM) == 0) {
-                    infoBean.type = AppInfoBean.Type_Normal;
+            try {
+                AppInfoBean infoBean = new AppInfoBean();
+                infoBean.isInstall = true;
+                infoBean.name = pi.applicationInfo.loadLabel(pm)+"";
+                infoBean.packageName = pi.applicationInfo.packageName;
+                if (mcontext.getPackageName().equals(infoBean.packageName)) {
+                    continue;
                 }
-                appInfoBeanList.add(infoBean);
+                String dir = pi.applicationInfo.publicSourceDir;
+                infoBean.installTime = new File(dir).lastModified();
+                infoBean.icon = pi.applicationInfo.loadIcon(pm);
+                Intent intent = pm.getLaunchIntentForPackage(pi.packageName);
+                if (intent !=null) {
+                    infoBean.intent = intent;
+                    if((pi.applicationInfo.flags& ApplicationInfo.FLAG_SYSTEM)!=0) {
+                        infoBean.type = AppInfoBean.Type_System;
+                    } else if((pi.applicationInfo.flags&ApplicationInfo.FLAG_SYSTEM) == 0) {
+                        infoBean.type = AppInfoBean.Type_Normal;
+                    }
+                    appInfoBeanList.add(infoBean);
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
             }
         }
         return appInfoBeanList;

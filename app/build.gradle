@@ -1,8 +1,8 @@
 apply plugin: 'com.android.application'
 
 android {
-    compileSdkVersion 23
-    buildToolsVersion "23.0.2"
+    compileSdkVersion 22
+    buildToolsVersion '22.0.0'
 
     defaultConfig {
         applicationId "online.magicbox.app"
@@ -14,18 +14,13 @@ android {
 
     signingConfigs {
         debug {
-            storeFile file("skilltemp.jks")
+            storeFile file("magicbox_debug.keystore")
             storePassword "123456"
-            keyAlias "skilltemp_demo"
-            keyPassword "123456"
-        }
-        release {
-            storeFile file("skilltemp.jks")
-            storePassword "123456"
-            keyAlias "skilltemp"
+            keyAlias "magicbox"
             keyPassword "123456"
         }
     }
+    //sha1:16:40:30:CA:5E:89:E1:64:9C:27:AE:42:D4:E4:23:B6:52:66:C7:26
 
 
     buildTypes {
@@ -120,5 +115,6 @@ gradle.taskGraph.beforeTask { Task task ->
 dependencies {
     //    compile files('src/main/libs/host.jar')
     //    compile files('src/main/jni/fastjson-1.1.37-leancloud.jar')
-//    compile 'com.alibaba:fastjson:1.2.8'
+    //    compile 'com.alibaba:fastjson:1.2.8'
+    compile files('libs/AMap_Location_V2.2.0_20151222.jar')
 }

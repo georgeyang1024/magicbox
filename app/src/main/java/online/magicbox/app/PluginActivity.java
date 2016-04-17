@@ -1,15 +1,28 @@
 package online.magicbox.app;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.app.LoaderManager;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
+import android.view.ContextMenu;
+import android.view.KeyEvent;
+import android.view.LayoutInflater;
 import android.view.Menu;
+import android.view.MenuItem;
+import android.view.View;
 import android.widget.Toast;
+
+import com.amap.api.location.AMapLocation;
+import com.amap.api.location.AMapLocationClient;
+import com.amap.api.location.AMapLocationClientOption;
+import com.amap.api.location.AMapLocationListener;
 
 import java.io.File;
 import java.lang.ref.WeakReference;
@@ -64,6 +77,77 @@ public class PluginActivity extends Activity {
         return context;
     }
 
+
+    private AMapLocationClient mLocationClient = null;
+    public void startLocation () {
+        //声明定位回调监听器
+        AMapLocationListener mLocationListener = new AMapLocationListener() {
+            @Override
+            public void onLocationChanged(AMapLocation aMapLocation) {
+                Log.i("test",aMapLocation.toStr());
+                String[] info = new String[]{aMapLocation.getErrorCode()+"",aMapLocation.getLatitude()+"",aMapLocation.getLongitude()+"",aMapLocation.getAddress()};
+                callMethodByCache(mSlice, "onReceiveLocation", new Class[]{Object.class,String[].class}, new Object[]{aMapLocation,info});
+            }
+        };
+        //初始化定位
+        mLocationClient = new AMapLocationClient(this);
+        //设置定位回调监听
+        mLocationClient.setLocationListener(mLocationListener);
+        //声明mLocationOption对象
+        AMapLocationClientOption mLocationOption = null;
+        //初始化定位参数
+        mLocationOption = new AMapLocationClientOption();
+        //设置定位模式为高精度模式，Battery_Saving为低功耗模式，Device_Sensors是仅设备模式
+        mLocationOption.setLocationMode(AMapLocationClientOption.AMapLocationMode.Hight_Accuracy);
+        //设置是否返回地址信息（默认返回地址信息）
+        mLocationOption.setNeedAddress(true);
+        //设置是否只定位一次,默认为false
+        mLocationOption.setOnceLocation(true);
+        //设置是否强制刷新WIFI，默认为强制刷新
+        mLocationOption.setWifiActiveScan(true);
+        //设置是否允许模拟位置,默认为false，不允许模拟位置
+        mLocationOption.setMockEnable(false);
+        //设置定位间隔,单位毫秒,默认为2000ms
+        mLocationOption.setInterval(2000);
+        //给定位客户端对象设置定位参数
+        mLocationClient.setLocationOption(mLocationOption);
+        //启动定位
+        mLocationClient.startLocation();
+    }
+
+    public void stopLocation () {
+        if (mLocationClient!=null) {
+            mLocationClient.stopLocation();
+        }
+    }
+
+    public void httpGet(String flag, final String url, final Map<String,Object> params) {
+        UiThread.init(this).setFlag(flag).start(new UiThread.UIThreadEvent() {
+            @Override
+            public Object runInThread(String flag, Object obj, UiThread.Publisher publisher) {
+                return HttpUtil.get(url,params);
+            }
+
+            @Override
+            public void runInUi(String flag, Object obj, boolean ispublish, float progress) {
+                callMethodByCache(mSlice, "onReceiveHttpData", new Class[]{String.class, String.class}, new Object[]{flag, obj});
+            }
+        });
+    }
+
+    public void httpPost(String flag, final String url, final Map<String,Object> params) {
+        UiThread.init(this).setFlag(flag).start(new UiThread.UIThreadEvent() {
+            @Override
+            public Object runInThread(String flag, Object obj, UiThread.Publisher publisher) {
+                return HttpUtil.post(url,params);
+            }
+
+            @Override
+            public void runInUi(String flag, Object obj, boolean ispublish, float progress) {
+                callMethodByCache(mSlice, "onReceiveHttpData", new Class[]{String.class, String.class}, new Object[]{flag, obj});
+            }
+        });
+    }
 
     private static final List<PluginActivity> allActivity = new ArrayList<>();
 
@@ -242,8 +326,6 @@ public class PluginActivity extends Activity {
             finish();
         }
 
-        Log.d("demo", "animType:" + animType);
-
         loadAnim(false);
 
         //運行的是插件時，這段代碼無效
@@ -257,8 +339,18 @@ public class PluginActivity extends Activity {
 
         super.onCreate(savedInstanceState);
 
-        allActivity.add(this);
-        callMethodByCache(mSlice, "onCreate", new Class[]{Bundle.class}, new Object[]{savedInstanceState});
+        if (ReflectUtil.getClass("com.android.internal.policy.PolicyManager")==null) {
+            new AlertDialog.Builder(mContext).setTitle("提示").setCancelable(false).setMessage("不支持的手机系统版本!请更换系统或更换手机以使用本软件~").setNegativeButton("确认", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    finish();
+                }
+            }).create().show();
+        } else {
+            Log.i("test","lin:" + LayoutInflater.from(mContext));
+            allActivity.add(this);
+            callMethodByCache(mSlice, "onCreate", new Class[]{Bundle.class}, new Object[]{savedInstanceState});
+        }
     }
 
     @Override
@@ -298,7 +390,6 @@ public class PluginActivity extends Activity {
 
     @Override
     public void finish() {
-        callMethodByCache(mSlice, "finish", new Class[]{}, new Object[]{});
         super.finish();
         loadAnim(true);
     }
@@ -324,6 +415,9 @@ public class PluginActivity extends Activity {
     @Override
     protected void onDestroy() {
         callMethodByCache(mSlice, "onDestroy", new Class[]{}, new Object[]{});
+        if (mLocationClient!=null) {
+            mLocationClient.onDestroy();//销毁定位客户端。
+        }
         super.onDestroy();
     }
 
@@ -366,7 +460,7 @@ public class PluginActivity extends Activity {
         try {
             bool = (boolean) callMethodByCache(mSlice, "onCreateOptionsMenu", new Class[]{Menu.class}, new Object[]{menu});
         } catch (Exception e) {
-
+            e.printStackTrace();
         }
         if (!bool) {
             return super.onCreateOptionsMenu(menu);
@@ -387,6 +481,123 @@ public class PluginActivity extends Activity {
         }
     }
 
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        boolean bool = false;
+        try {
+            bool = (boolean) callMethodByCache(mSlice, "onKeyDown", new Class[]{int.class,KeyEvent.class}, new Object[]{keyCode,event});
+        } catch (Exception e) {
+
+        }
+        return bool?true:super.onKeyDown(keyCode, event);
+    }
+
+    @Override
+    public boolean onMenuItemSelected(int featureId, MenuItem item) {
+        boolean bool = false;
+        try {
+            bool = (boolean) callMethodByCache(mSlice, "onMenuItemSelected", new Class[]{int.class,MenuItem.class}, new Object[]{featureId,item});
+        } catch (Exception e) {
+
+        }
+        return bool?true:super.onMenuItemSelected(featureId, item);
+    }
+
+    @Override
+    public boolean onPrepareOptionsMenu(Menu menu) {
+        boolean bool = false;
+        try {
+            bool = (boolean) callMethodByCache(mSlice, "onPrepareOptionsMenu", new Class[]{MenuItem.class}, new Object[]{menu});
+        } catch (Exception e) {
+
+        }
+        return bool?true:super.onPrepareOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        boolean bool = false;
+        try {
+            bool = (boolean) callMethodByCache(mSlice, "onOptionsItemSelected", new Class[]{MenuItem.class}, new Object[]{item});
+        } catch (Exception e) {
+
+        }
+        return bool?true:super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public boolean onMenuOpened(int featureId, Menu menu) {
+        boolean bool = false;
+        try {
+            bool = (boolean) callMethodByCache(mSlice, "onMenuOpened", new Class[]{int.class,Menu.class}, new Object[]{featureId,menu});
+        } catch (Exception e) {
+
+        }
+        return bool?true:super.onMenuOpened(featureId, menu);
+    }
+
+    @Override
+    public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
+        boolean bool = false;
+        try {
+            bool = (boolean) callMethodByCache(mSlice, "onCreateContextMenu", new Class[]{ContextMenu.class,View.class,ContextMenu.ContextMenuInfo.class}, new Object[]{menu,v,menuInfo});
+        } catch (Exception e) {
+
+        }
+        if (!bool) {
+            super.onCreateContextMenu(menu, v, menuInfo);
+        }
+    }
+
+    @Override
+    public void closeOptionsMenu() {
+        boolean bool = false;
+        try {
+            bool = (boolean) callMethodByCache(mSlice, "closeOptionsMenu", new Class[]{}, new Object[]{});
+        } catch (Exception e) {
+
+        }
+        if (!bool) {
+            super.closeOptionsMenu();
+        }
+    }
+
+    @Override
+    public void openOptionsMenu() {
+        boolean bool = false;
+        try {
+            bool = (boolean) callMethodByCache(mSlice, "openOptionsMenu", new Class[]{}, new Object[]{});
+        } catch (Exception e) {
+
+        }
+        if (!bool) {
+            super.openOptionsMenu();
+        }
+    }
+
+    @Override
+    public void onContextMenuClosed(Menu menu) {
+        boolean bool = false;
+        try {
+            bool = (boolean) callMethodByCache(mSlice, "onContextMenuClosed", new Class[]{Menu.class}, new Object[]{menu});
+        } catch (Exception e) {
+
+        }
+        if (!bool) {
+            super.onContextMenuClosed(menu);
+        }
+    }
+
+    @Override
+    public boolean onContextItemSelected(MenuItem item) {
+        boolean bool = false;
+        try {
+            bool = (boolean) callMethodByCache(mSlice, "onContextItemSelected", new Class[]{MenuItem.class}, new Object[]{item});
+        } catch (Exception e) {
+
+        }
+        return bool?true:super.onContextItemSelected(item);
+    }
 
     @Override
     protected void onSaveInstanceState(Bundle outState) {

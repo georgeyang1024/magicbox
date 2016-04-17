@@ -1,12 +1,15 @@
 package online.magicbox.lib;
 
+import android.app.FragmentManager;
 import android.content.Context;
 import android.content.ContextWrapper;
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.ContextMenu;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 
 import java.lang.reflect.Method;
@@ -66,6 +69,7 @@ public abstract class Slice extends ContextWrapper {
         params.put("animType",animType);
         return buildIntent(clazz.getPackage().getName(),clazz.getSimpleName(),params);
     }
+
     public final Intent buildIntent (Class<? extends Slice> clazz,Map<String,String> params) {
         return buildIntent(clazz.getPackage().getName(),clazz.getSimpleName(),params);
     }
@@ -107,8 +111,8 @@ public abstract class Slice extends ContextWrapper {
 
     }
 
-    public void finish () {
-
+    public final void finish () {
+        callMethodByCache(mHolder, "finish", new Class[]{}, new Object[]{});
     }
 
     public void onDestroy() {
@@ -157,6 +161,97 @@ public abstract class Slice extends ContextWrapper {
         }
         return null;
     }
+
+
+    public boolean onMenuItemSelected(int featureId, MenuItem item) {
+        return false;
+    }
+
+    public boolean onPrepareOptionsMenu(Menu menu) {
+        return false;
+    }
+
+    public boolean onOptionsItemSelected(MenuItem item) {
+        return false;
+    }
+
+    public boolean onMenuOpened(int featureId, Menu menu) {
+        return false;
+    }
+
+    public boolean onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
+        return false;
+    }
+
+    public boolean closeOptionsMenu() {
+        return false;
+    }
+
+    public boolean openOptionsMenu() {
+        return false;
+    }
+
+    public boolean onContextMenuClosed(Menu menu) {
+        return false;
+    }
+
+    public boolean onContextItemSelected(MenuItem item) {
+        return false;
+    }
+
+
+
+    public final void startLocation() {
+        callMethodByCache(mHolder,"startLocation",new Class[]{},new Object[]{});
+    }
+
+    public final void stopLocation() {
+        callMethodByCache(mHolder,"stopLocation",new Class[]{},new Object[]{});
+    }
+
+    public void onReceiveLocation(Object location,String[] info) {
+
+    }
+
+    public final void httpGet(String flag, final String url, final Map<String,Object> params) {
+        callMethodByCache(mHolder, "httpGet", new Class[]{String.class, String.class, Map.class}, new Object[]{flag, url,params});
+    }
+
+    public final void httpPost(String flag, final String url, final Map<String,Object> params) {
+        callMethodByCache(mHolder, "httpPost", new Class[]{String.class,String.class, Map.class}, new Object[]{flag, url,params});
+    }
+
+    public void onReceiveHttpData (String flag,String data) {
+
+    }
+
+    /** Standard activity result: operation canceled. */
+    public static final int RESULT_CANCELED    = 0;
+    /** Standard activity result: operation succeeded. */
+    public static final int RESULT_OK           = -1;
+    /** Start of user-defined activity results. */
+    public static final int RESULT_FIRST_USER   = 1;
+    public final void setResult(int code) {
+        callMethodByCache(mHolder,"setResult",new Class[]{int.class},new Object[]{code});
+    }
+
+
+    public final void setResult(int code,Intent intent) {
+        callMethodByCache(mHolder,"setResult",new Class[]{int.class,Intent.class},new Object[]{code,intent});
+    }
+
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+
+    }
+
+    public FragmentManager getFragmentManager () {
+        return (FragmentManager) callMethodByCache(mHolder,"getFragmentManager",new Class[]{},new Object[]{});
+    }
+
+    public Intent getIntent () {
+        return (Intent) callMethodByCache(mHolder,"getIntent",new Class[]{},new Object[]{});
+    }
+
 
 
 

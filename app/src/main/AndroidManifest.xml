@@ -9,8 +9,9 @@
     <!-- 开启闪光灯权限 -->
     <uses-permission android:name="android.permission.FLASHLIGHT" />
     <uses-permission android:name="android.permission.DISABLE_KEYGUARD" />
-    <!-- ======================Start============================= -->
 
+
+    <!-- ======================Start============================= -->
     <uses-permission android:name="android.permission.READ_PHONE_STATE" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.INTERNET" />
@@ -57,6 +58,10 @@
     <uses-permission android:name="android.permission.WAKE_LOCK" />
     <uses-permission android:name="android.permission.INTERNET" />
 
+    <!-- 图标权限 -->
+    <uses-permission android:name="com.android.launcher.permission.INSTALL_SHORTCUT"/>
+    <uses-permission android:name="com.android.launcher.permission.UNINSTALL_SHORTCUT"/>
+    <uses-permission android:name="com.android.launcher.permission.READ_SETTINGS"/>
 
     <application
         android:allowBackup="true"
@@ -65,6 +70,11 @@
         android:supportsRtl="true"
         android:name=".App"
         android:theme="@android:style/Theme.Holo.Light.NoActionBar">
+
+        <service android:name="com.amap.api.location.APSService"></service>
+        <meta-data android:name="com.amap.api.v2.apikey" android:value="780d1e41b8851303a44a33d00f1163f3"></meta-data>
+
+
         <activity android:name=".MainActivity"
             android:theme="@style/Transparent"
             >

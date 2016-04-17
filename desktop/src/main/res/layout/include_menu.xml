@@ -2,27 +2,19 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
               android:orientation="vertical"
               android:layout_width="match_parent"
-             android:background="#99ffffff"
-              android:layout_height="140dp">
-    <cn.georgeyang.widget.AlwaysMarqueeTextView
-        android:layout_width="match_parent"
-        android:layout_height="20dp"
-        android:textSize="12sp"
-        android:gravity="center_vertical"
-        android:ellipsize="marquee"
-        android:singleLine="true"
-        android:text="wwwwehrtwieuyrb6g5678526783542635462536754"
-        />
-
+              android:background="#e3ffffff"
+              android:layout_height="150dp">
 
     <LinearLayout
+        android:id="@+id/layout_iconSize"
+        android:background="@drawable/selector_general_black"
         android:layout_width="match_parent"
         android:orientation="horizontal"
         android:gravity="center_vertical"
         android:layout_height="30dp">
 
         <ImageView
-            android:src="@mipmap/ic_launcher"
+            android:src="@mipmap/setting_zoom"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"/>
 
@@ -34,13 +26,15 @@
     </LinearLayout>
 
     <LinearLayout
+        android:id="@+id/layout_sort"
+        android:background="@drawable/selector_general_black"
         android:layout_width="match_parent"
         android:orientation="horizontal"
         android:gravity="center_vertical"
         android:layout_height="30dp">
 
         <ImageView
-            android:src="@mipmap/ic_launcher"
+            android:src="@mipmap/setting_sort"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"/>
 
@@ -53,38 +47,70 @@
 
 
     <LinearLayout
+        android:id="@+id/layout_clearCache"
+        android:background="@drawable/selector_general_black"
         android:layout_width="match_parent"
         android:orientation="horizontal"
         android:gravity="center_vertical"
         android:layout_height="30dp">
 
         <ImageView
-            android:src="@mipmap/ic_launcher"
+            android:src="@mipmap/setting_clear"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"/>
 
         <TextView
+            android:id="@+id/tv_cacheMenu"
             android:layout_width="wrap_content"
-            android:text="编辑应用"
+            android:text="清理缓存(0KB)"
             android:layout_height="wrap_content"/>
 
     </LinearLayout>
 
-
     <LinearLayout
+        android:id="@+id/layout_shortcut"
+        android:background="@drawable/selector_general_black"
         android:layout_width="match_parent"
         android:orientation="horizontal"
         android:gravity="center_vertical"
         android:layout_height="30dp">
 
         <ImageView
-            android:src="@mipmap/ic_launcher"
+            android:src="@mipmap/setting_shortcut"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"/>
 
         <TextView
+            android:id="@+id/tv_shortcut"
+            android:layout_marginRight="10dp"
+            android:gravity="center_vertical"
+            android:layout_width="match_parent"
+            android:text="下载完成创建桌面图标"
+            android:drawableRight="@mipmap/icon_pop_list_choose_n"
+            android:layout_height="wrap_content"/>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/layout_autoUpdate"
+        android:background="@drawable/selector_general_black"
+        android:layout_width="match_parent"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:layout_height="30dp">
+
+        <ImageView
+            android:src="@mipmap/setting_update"
             android:layout_width="wrap_content"
-            android:text="软件设置"
+            android:layout_height="wrap_content"/>
+
+        <TextView
+            android:id="@+id/tv_update"
+            android:layout_marginRight="10dp"
+            android:gravity="center_vertical"
+            android:layout_width="match_parent"
+            android:text="后台自动更新魔盒应用"
+            android:drawableRight="@mipmap/icon_pop_list_choose_n"
             android:layout_height="wrap_content"/>
 
     </LinearLayout>

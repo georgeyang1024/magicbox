@@ -173,8 +173,6 @@ public class BitmapCompressor {
 		
 		final int picheight = options.outHeight;
 		final int picwidth = options.outWidth;
-		Log.i("test", "原尺寸:" +  picwidth + "*" +picheight);
-		
 		int targetheight = picheight;
 		int targetwidth = picwidth;
 		int inSampleSize = 1;
@@ -182,15 +180,11 @@ public class BitmapCompressor {
 		if (targetheight > reqHeight || targetwidth > reqWidth) {
 			while (targetheight  >= reqHeight
 					&& targetwidth>= reqWidth) {
-				Log.i("test","压缩:" +inSampleSize + "倍");
 				inSampleSize += 1;
 				targetheight = picheight/inSampleSize;
 				targetwidth = picwidth/inSampleSize;
 			}
 		}
-		
-		Log.i("test","最终压缩比例:" +inSampleSize + "倍");
-		Log.i("test", "新尺寸:" +  targetwidth + "*" +targetheight);
 		return inSampleSize;
 	}
 }

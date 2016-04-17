@@ -1,0 +1,17 @@
+<resources>
+    <string name="app_name">魔盒</string>
+    <string name="load_resource">加载资源中...</string>
+    <string name="load_fail_title">提示</string>
+    <string name="load_fail_content">下载资源失败,请重新启动app再试一次。</string>
+    <string name="bugFix_needRestart">App Bug已修复,请按关闭应用程序后使用最新的版本！</string>
+    <string name="ok">确认</string>
+
+    <string name="folder_all">所有图片</string>
+    <string name="preview">Preview</string>
+    <string name="msg_no_camera">没有相机!</string>
+    <string name="msg_amount_limit">选择的图片太多啦</string>
+    <string name="btn_done">完成</string>
+    <string name="tv_count">数量</string>
+    <string name="title_picture">图片</string>
+    <string name="tv_talkpicture">相机</string>
+</resources>

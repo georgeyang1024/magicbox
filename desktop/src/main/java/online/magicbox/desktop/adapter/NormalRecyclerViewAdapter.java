@@ -5,6 +5,7 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.net.Uri;
 import android.provider.Settings;
 import android.support.v7.widget.RecyclerView;
@@ -29,9 +30,12 @@ import cn.georgeyang.lib.UiThread;
 import cn.georgeyang.util.HttpUtil;
 import cn.georgeyang.util.ImageLoder;
 import cn.georgeyang.util.ShortCutUtil;
+import online.magicbox.desktop.MainSlice;
 import online.magicbox.desktop.R;
 import online.magicbox.desktop.entity.AppInfoBean;
-import online.magicbox.desktop.entity.PluginItemBean;
+import online.magicbox.desktop.entity.PluginItemEntity;
+import online.magicbox.lib.PluginActivity;
+import online.magicbox.lib.PluginConfig;
 
 
 /**
@@ -40,15 +44,10 @@ import online.magicbox.desktop.entity.PluginItemBean;
 public class NormalRecyclerViewAdapter extends RecyclerView.Adapter<NormalRecyclerViewAdapter.NormalTextViewHolder> {
     private List<Object> lineData = new ArrayList<>();
     private Context mContext;
-    private Activity activity;
     private int iconCount = 3;
 
     public NormalRecyclerViewAdapter (int lineCounts) {
         iconCount = lineCounts;
-    }
-
-    public void setActivity(Activity activity) {
-        this.activity = activity;
     }
 
     public void setDataInThread (List<AppInfoBean> list) {
@@ -111,17 +110,37 @@ public class NormalRecyclerViewAdapter extends RecyclerView.Adapter<NormalRecycl
     }
 
     @Override
-    public void onBindViewHolder(NormalTextViewHolder holder, int position) {
+    public void onBindViewHolder(final NormalTextViewHolder holder, int position) {
         Object object = lineData.get(position);
         if (object instanceof Integer) {
             int type = (Integer) object;
             holder.tv_title.setText(type==1?R.string.appTypePlugin:type==2?R.string.appTypeDownload:R.string.appTypeSystem);
         } else {
-            List<AppInfoBean> innerList = (List<AppInfoBean>) object;
+            final List<AppInfoBean> innerList = (List<AppInfoBean>) object;
             for (int i=0;i<iconCount;i++) {
                 if (i>=innerList.size()) {
                    holder.layout[i].setVisibility(View.INVISIBLE);
                 } else {
+//                    holder.layout[i].setVisibility(View.VISIBLE);
+//                    UiThread.init(mContext).setFlag(i+"").start(new UiThread.UIThreadEvent() {
+//                        @Override
+//                        public Object runInThread(String flag, Object obj, UiThread.Publisher publisher) {
+//                            while (Vars.scrolling) {
+//                                SystemClock.sleep(100);
+//                            }
+//                            int index = Integer.valueOf(flag);
+//                            return new LazyRunable(holder,index,innerList.get(index));
+//                        }
+//
+//                        @Override
+//                        public void runInUi(String flag, Object obj, boolean ispublish, float progress) {
+//                            LazyRunable runable = (LazyRunable) obj;
+//                            runable.run();
+//                        }
+//                    });
+
+//                    holder.layout[i].postDelayed(new LazyRunable(holder,i,innerList.get(i)),100);
+
                     final AppInfoBean infoBean = innerList.get(i);
                     holder.tv_name[i].setText(infoBean.name);
                     if (infoBean.icon!=null) {
@@ -154,9 +173,54 @@ public class NormalRecyclerViewAdapter extends RecyclerView.Adapter<NormalRecycl
                     holder.layout[i].setTag(infoBean);
                     holder.layout[i].setOnClickListener(layoutOnClickListener);
                     holder.layout[i].setOnLongClickListener(longClickListener);
-
                 }
             }
+        }
+    }
+
+    private class LazyRunable implements Runnable {
+        private AppInfoBean infoBean;
+        private NormalTextViewHolder holder;
+        private int index;
+        public LazyRunable (NormalTextViewHolder holder,int index,AppInfoBean infoBean) {
+            this.holder = holder;
+            this.infoBean = infoBean;
+            this.index = index;
+        }
+        @Override
+        public void run() {
+            int i =index;
+            holder.tv_name[i].setText(infoBean.name);
+            if (infoBean.icon!=null) {
+                holder.img_icon[i].setImageDrawable(infoBean.icon);
+            } else if (!TextUtils.isEmpty(infoBean.imageUrl)){
+                ImageLoder.loadImage(holder.img_icon[i],infoBean.imageUrl,300,300,R.mipmap.ic_launcher);
+            } else {
+                holder.img_icon[i].setImageResource(R.mipmap.ic_launcher);
+            }
+
+            if (infoBean.isInstall && infoBean.lastVersionCode!=infoBean.installVersionCode) {
+                holder.img_hasUpdate[i].setVisibility(View.VISIBLE);
+            } else {
+                holder.img_hasUpdate[i].setVisibility(View.GONE);
+            }
+
+            if (infoBean.downloading) {
+                holder.progressBars[i].setVisibility(View.VISIBLE);
+                holder.img_download[i].setVisibility(View.GONE);
+            } else if (infoBean.isInstall) {
+                holder.progressBars[i].setVisibility(View.GONE);
+                holder.img_download[i].setVisibility(View.GONE);
+            } else {
+                holder.img_download[i].setTag(infoBean);
+                holder.progressBars[i].setVisibility(View.GONE);
+                holder.img_download[i].setVisibility(View.VISIBLE);
+                holder.img_download[i].setOnClickListener(downLoadOnClickListener);
+            }
+            holder.layout[i].setVisibility(View.VISIBLE);
+            holder.layout[i].setTag(infoBean);
+            holder.layout[i].setOnClickListener(layoutOnClickListener);
+            holder.layout[i].setOnLongClickListener(longClickListener);
         }
     }
 
@@ -199,12 +263,28 @@ public class NormalRecyclerViewAdapter extends RecyclerView.Adapter<NormalRecycl
                                         dexFile.delete();
                                         infoBean.isInstall = false;
                                         infoBean.installVersionCode = -1;
+                                        ShortCutUtil.removeShortCut(mContext,infoBean.name,infoBean.intent);
                                         notifyDataSetChanged();
                                     }
                                 }).setNegativeButton("取消",null).create().show();
                                 break;
                             case 3:
-                                ShortCutUtil.createShortCut(mContext,infoBean.name,infoBean.intent);
+                                UiThread.init(mContext).setFlag(infoBean.imageUrl).start(new UiThread.UIThreadEvent() {
+                                    @Override
+                                    public Object runInThread(String flag, Object obj, UiThread.Publisher publisher) {
+                                        return ImageLoder.loadImage(mContext,flag,500,500);
+                                    }
+
+                                    @Override
+                                    public void runInUi(String flag, Object obj, boolean ispublish, float progress) {
+                                        if (obj instanceof Bitmap) {
+                                            Bitmap icon = (Bitmap) obj;
+                                            ShortCutUtil.createShortCutWithBitmap(mContext,infoBean.name,infoBean.intent,icon);
+                                        } else {
+                                            ShortCutUtil.createShortCut(mContext,infoBean.name,infoBean.intent);
+                                        }
+                                    }
+                                });
                                 break;
                         }
                     }
@@ -271,10 +351,28 @@ public class NormalRecyclerViewAdapter extends RecyclerView.Adapter<NormalRecycl
                     infoBean.downloading = false;
                     infoBean.isInstall = true;
                     infoBean.installVersionCode = infoBean.lastVersionCode;
+                    Intent oldIntent = infoBean.intent;
+                    Intent newIntent = PluginActivity.buildIntent(mContext,infoBean.packageName,infoBean.mainClass, PluginConfig.System,infoBean.installVersionCode+"");
+                    infoBean.intent = newIntent;
+                    infoBean.installTime = System.currentTimeMillis();
 
-                    PluginItemBean dbBean = Mdb.getInstance().findOnebyWhereDesc(PluginItemBean.class,"_addTime",String.format("packageName='%s'",new Object[]{infoBean.packageName}));
+                    PluginItemEntity dbBean = Mdb.getInstance().findOnebyWhereDesc(PluginItemEntity.class,"_addTime",String.format("packageName='%s'",new Object[]{infoBean.packageName}));
                     dbBean.installVersionCode = infoBean.lastVersionCode;
                     dbBean.save();
+
+                    try {
+                        ShortCutUtil.removeShortCut(mContext,infoBean.name,oldIntent);
+                        if (MainSlice.settingEntity.autoCreateShortCut) {
+                            Bitmap bitmap = ImageLoder.loadImage(mContext,infoBean.imageUrl,500,500);
+                            if (bitmap==null) {
+                                ShortCutUtil.createShortCut(mContext,infoBean.name,newIntent);
+                            } else {
+                                ShortCutUtil.createShortCutWithBitmap(mContext,infoBean.name,newIntent,bitmap);
+                            }
+                        }
+                    } catch (Exception e) {
+
+                    }
                 } catch (Exception e) {
                     e.printStackTrace();
                     return null;
@@ -345,41 +443,8 @@ public class NormalRecyclerViewAdapter extends RecyclerView.Adapter<NormalRecycl
                     img_icon[i] = (ImageView) relativeLayout.getChildAt(1);
                     progressBars[i] = (ProgressBar) relativeLayout.getChildAt(2);
                     img_download[i] = (ImageView) relativeLayout.getChildAt(3);
-
-
                 }
             }
-
-
-//            tv_name = new TextView[3];
-//            tv_name[0] = (TextView) view.findViewById(R.id.tv_appName1);
-//            tv_name[1] = (TextView) view.findViewById(R.id.tv_appName2);
-//            tv_name[2] = (TextView) view.findViewById(R.id.tv_appName3);
-//
-//            img_icon = new ImageView[3];
-//            img_icon[0] = (ImageView) view.findViewById(R.id.img_icon1);
-//            img_icon[1] = (ImageView) view.findViewById(R.id.img_icon2);
-//            img_icon[2] = (ImageView) view.findViewById(R.id.img_icon3);
-//
-//            img_download = new ImageView[3];
-//            img_download[0] = (ImageView) view.findViewById(R.id.img_download1);
-//            img_download[1] = (ImageView) view.findViewById(R.id.img_download2);
-//            img_download[2] = (ImageView) view.findViewById(R.id.img_download3);
-//
-//            img_hasUpdate = new ImageView[3];
-//            img_hasUpdate[0] = (ImageView) view.findViewById(R.id.img_hasUpdate1);
-//            img_hasUpdate[1] = (ImageView) view.findViewById(R.id.img_hasUpdate2);
-//            img_hasUpdate[2] = (ImageView) view.findViewById(R.id.img_hasUpdate3);
-//
-//            progressBars = new ProgressBar[3];
-//            progressBars[0] = (ProgressBar) view.findViewById(R.id.progressBar1);
-//            progressBars[1] = (ProgressBar) view.findViewById(R.id.progressBar2);
-//            progressBars[2] = (ProgressBar) view.findViewById(R.id.progressBar3);
-//
-//            layout = new LinearLayout[3];
-//            layout[0] = (LinearLayout) view.findViewById(R.id.layout1);
-//            layout[1] = (LinearLayout) view.findViewById(R.id.layout2);
-//            layout[2] = (LinearLayout) view.findViewById(R.id.layout3);
         }
     }
 }

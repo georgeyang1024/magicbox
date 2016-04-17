@@ -25,15 +25,9 @@ public class ShortCutUtil {
             // 指定动作名称
             intent.setAction("com.android.launcher.action.INSTALL_SHORTCUT");
             // 指定快捷方式的图标
-//            Intent.ShortcutIconResource icon = Intent.ShortcutIconResource.fromContext(context, R.mipmap.ic_launcher);
-//            icon.packageName = "cn.georgeyang.wificonnect";
-            //online.magicbox.desktop:mipmap/ic_launcher
-//            Logutil.showlog("name:" + context.getResources().getResourceName(R.mipmap.ic_launcher));
-//            icon.resourceName = "online.georgeyang.wificonnect:mipmap/ic_launcher";
-//            intent.putExtra(Intent.EXTRA_SHORTCUT_ICON_RESOURCE, icon);
-
-            // 指定快捷方式的图标 bitmap
-//            intent.putExtra(Intent.EXTRA_SHORTCUT_ICON, Bitmap);
+            Intent.ShortcutIconResource icon = Intent.ShortcutIconResource.fromContext(context, R.mipmap.ic_launcher);
+            //icon >> online.magicbox.desktop:mipmap/ic_launcher
+            intent.putExtra(Intent.EXTRA_SHORTCUT_ICON_RESOURCE, icon);
             // 指定快捷方式的名称
             intent.putExtra(Intent.EXTRA_SHORTCUT_NAME, name);
             // 指定快捷图标激活哪个activity
@@ -43,6 +37,25 @@ public class ShortCutUtil {
 //            ComponentName component = new ComponentName(this, MainActivity.class);
 //            actionIntent.setComponent(component);
 //            intent.putExtra(, actionIntent);
+            intent.putExtra(Intent.EXTRA_SHORTCUT_INTENT,actionIntent);
+            context.sendBroadcast(intent);
+            Toast.makeText(context,"图标已创建",Toast.LENGTH_SHORT).show();
+        } else {
+            Toast.makeText(context,"图标已存在",Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    public static void createShortCutWithBitmap(Context context,String name,Intent actionIntent,Bitmap bitmap) {
+        // 先判断该快捷是否存在
+        if (!isShortCutExist(context)) {
+            Intent intent = new Intent();
+            // 指定动作名称
+            intent.setAction("com.android.launcher.action.INSTALL_SHORTCUT");
+            // 指定快捷方式的图标 bitmap
+            intent.putExtra(Intent.EXTRA_SHORTCUT_ICON, bitmap);
+            // 指定快捷方式的名称
+            intent.putExtra(Intent.EXTRA_SHORTCUT_NAME, name);
+            // 指定快捷图标激活哪个activity
             intent.putExtra(Intent.EXTRA_SHORTCUT_INTENT,actionIntent);
             context.sendBroadcast(intent);
             Toast.makeText(context,"图标已创建",Toast.LENGTH_SHORT).show();
@@ -77,4 +90,12 @@ public class ShortCutUtil {
 
         return isExist;
     }
+
+    public static void removeShortCut (Context context,String appName,Intent tagIntent) {
+        Intent intent = new Intent("com.android.launcher.action.UNINSTALL_SHORTCUT");
+        intent.putExtra(Intent.EXTRA_SHORTCUT_NAME, appName);
+        intent.putExtra(Intent.EXTRA_SHORTCUT_INTENT, tagIntent);
+        context.sendBroadcast(intent);
+    }
+
 }

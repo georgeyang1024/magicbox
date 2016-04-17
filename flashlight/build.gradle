@@ -5,7 +5,7 @@ android {
     buildToolsVersion "23.0.2"
 
     defaultConfig {
-        applicationId "cn.georgeyang.flashlight_"
+        applicationId "cn.georgeyang.flashlight"
         minSdkVersion 13
         targetSdkVersion 23
         versionCode 1
