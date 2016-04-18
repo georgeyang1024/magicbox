@@ -1,14 +1,25 @@
-Javassist 使用:
-https://www.ibm.com/developerworks/cn/java/j-dyn0916/
+MagicBox
+---
 
+一个同时使用热修复和插件技术的app，通过特定写法写出的app既可以在魔盒app内安装，也可独立安装。
+
+![weiget Effect](./gif/SCR_20160417_225627.gif)
+
+
+Usage
+====
+
+
+---
 
 CLASS_ISPREVERIFIED的问题:
-https://github.com/dodola/HotFix
 
+https://github.com/dodola/HotFix
 
 https://github.com/bunnyblue/DroidFix
 
-
+Javassist 使用:
+https://www.ibm.com/developerworks/cn/java/j-dyn0916/
 
 gradle commend-line:
 
@@ -31,3 +42,11 @@ http://tools.android.com/tech-docs/new-build-system/user-guide
 
 資源改名
 http://hugozhu.myalert.info/2014/08/03/50-use-gradle-to-customize-apk-build.html
+
+
+Copyright and Licensing
+----
+
+Copyright george.yang ([my log](http://blog.csdn.net/u010499721)) © 2014-2015. All rights reserved.
+
+This library is distributed under an MIT License.
