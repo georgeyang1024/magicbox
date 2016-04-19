@@ -16,7 +16,7 @@ import java.util.concurrent.Executors;
  * Created by george.yang on 2015/7/1.
  */
 public class UiThread {
-    private static final int MAXTHREADCOUNT = 20;//最大执行线程数量
+    private static final int MAXTHREADCOUNT = 100;//最大执行线程数量
     private static Handler mainHandler;
     private static ExecutorService pool;
     private Object obj;//运行时需要的obj

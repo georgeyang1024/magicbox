@@ -13,20 +13,25 @@ import java.io.OutputStream;
  * Created by george.yang on 16/3/25.
  */
 public class AssetUtils {
-    public static String copyAsset(Context context, String assetName, File dir) throws IOException {
-        if (!dir.exists()) {
-            dir.mkdirs();
+    public static String copyAsset(Context context, String assetName, File dir) {
+        try {
+            if (!dir.exists()) {
+                dir.mkdirs();
+            }
+            File outFile = new File(dir, assetName);
+            if (!outFile.exists()) {
+                AssetManager assetManager = context.getAssets();
+                InputStream in = assetManager.open(assetName);
+                OutputStream out = new FileOutputStream(outFile);
+                copyFile(in, out);
+                in.close();
+                out.close();
+            }
+            return outFile.getAbsolutePath();
+        } catch (Exception e) {
+
         }
-        File outFile = new File(dir, assetName);
-        if (!outFile.exists()) {
-            AssetManager assetManager = context.getAssets();
-            InputStream in = assetManager.open(assetName);
-            OutputStream out = new FileOutputStream(outFile);
-            copyFile(in, out);
-            in.close();
-            out.close();
-        }
-        return outFile.getAbsolutePath();
+        return "";
     }
 
     private static void copyFile(InputStream in, OutputStream out) throws IOException {

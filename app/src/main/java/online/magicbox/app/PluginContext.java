@@ -112,7 +112,6 @@ public class PluginContext extends ContextWrapper {
 //		this.packageName = mResources.getResourcePackageName(R.string.app_name);//获取插件包名
 		this.packageName = packageName;
 
-		Log.i("test","加载的packageName:" + packageName);
 		getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
         //释放so文件

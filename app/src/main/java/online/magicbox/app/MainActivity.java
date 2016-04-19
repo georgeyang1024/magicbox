@@ -38,7 +38,7 @@ public class MainActivity extends Activity implements UiThread.UIThreadEvent {
         Log.i("test","Id:" + R.string.app_name);
 
         sharedPreferences= getSharedPreferences("app", Context.MODE_PRIVATE);
-        desktopApk = sharedPreferences.getString("desktopApk","");
+        desktopApk = sharedPreferences.getString("desktopApk",App.defaultApkName);
         desktopUpdateTime = sharedPreferences.getLong("desktopUpdateTime",0);
         desktopVersionCode = sharedPreferences.getString("desktopVersionCode","0");
 
@@ -68,15 +68,22 @@ public class MainActivity extends Activity implements UiThread.UIThreadEvent {
             return;
         }
 
+        File apkFile = new File(getFilesDir().getAbsolutePath(),desktopApk);
         boolean needCheck = false;
         needCheck = needCheck || TextUtils.isEmpty(desktopApk);
         needCheck = needCheck || (System.currentTimeMillis() - desktopUpdateTime) > UpdateDesktopGap;
         needCheck = needCheck || (desktopUpdateTime > System.currentTimeMillis());//系统时间变更
-        needCheck = needCheck || (!new File(getFilesDir().getAbsolutePath(),desktopApk).exists());
+        needCheck = needCheck || (apkFile == null || !apkFile.exists());
         if (needCheck) {
-            setContentView(R.layout.activity_main);
-            loadingView = (LoadingView) findViewById(R.id.loadingView);
-            loadingView.setLoadingText(getString(R.string.load_resource));
+            if (!(apkFile==null || !apkFile.exists())){
+                //默认文件存在,上线专用
+                intoDesktop();
+            } else {
+                setContentView(R.layout.activity_main);
+                loadingView = (LoadingView) findViewById(R.id.loadingView);
+                loadingView.setLoadingText(getString(R.string.load_resource));
+            }
+
 
             SharedPreferences.Editor editor = sharedPreferences.edit();
             editor.putString("desktopApk","");
@@ -85,7 +92,6 @@ public class MainActivity extends Activity implements UiThread.UIThreadEvent {
             editor.commit();
 
             UiThread.init(this).setFlag("desktop").start(this);
-
             return;
         }
 
@@ -98,8 +104,12 @@ public class MainActivity extends Activity implements UiThread.UIThreadEvent {
         }
     }
 
-
+    private boolean isIntoDesktop;
     public void intoDesktop () {
+        if (isIntoDesktop) {
+            return;
+        }
+        isIntoDesktop = true;
         PluginActivity.init("online.magicbox.plugin","magicbox");
         Intent intent = PluginActivity.buildIntent(this,Vars.DesktopPackageName,"MainSlice",desktopVersionCode);
         startActivity(intent);
@@ -156,19 +166,20 @@ public class MainActivity extends Activity implements UiThread.UIThreadEvent {
                     String versionCode = jsonObject.optInt("version",1)+"";
                     String fileName = packageName + "_" + versionCode + ".apk";
 
-                    desktopVersionCode = versionCode;
-                    desktopApk = fileName;
-
                     String downloadUrl = jsonObject.optString("downloadUrl");
                     File saveFile = new File(getFilesDir().getAbsolutePath(),fileName);
                     HttpUtil.downLoadFile2(downloadUrl,saveFile);
 
                     SharedPreferences.Editor editor = sharedPreferences.edit();
-                    editor.putString("desktopApk",desktopApk);
+                    editor.putString("desktopApk",fileName);
                     editor.putLong("desktopUpdateTime",System.currentTimeMillis());
-                    editor.putString("desktopVersionCode",desktopVersionCode);
+                    editor.putString("desktopVersionCode",versionCode);
+                    //每次更新完桌面都要重新启动
+                    editor.putBoolean("needRestart",true);
                     editor.commit();
 
+                    desktopVersionCode = versionCode;
+                    desktopApk = fileName;
                     return fileName;
                 }
             } catch (Exception e) {

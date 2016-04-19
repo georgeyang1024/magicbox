@@ -19,6 +19,8 @@ import online.magicbox.bugfix.BundlePathLoader;
  * Created by george.yang on 2016-3-24.
  */
 public class App extends Application {
+    public static final String defaultApkName = "online.magicbox.desktop_0.apk";//默认桌面
+
     @Override
     protected void attachBaseContext(Context base) {
         super.attachBaseContext(base);
@@ -29,6 +31,8 @@ public class App extends Application {
             String baseDexPath = "AntilazyLoad_dex.jar";
             baseDexPath = AssetUtils.copyAsset(base, baseDexPath, base.getFilesDir().getAbsoluteFile());
             dexFiles.add(new File(baseDexPath));
+
+            AssetUtils.copyAsset(base, defaultApkName, base.getFilesDir().getAbsoluteFile());
 
             SharedPreferences sp = getSharedPreferences("app", Context.MODE_PRIVATE);
             baseDexPath = sp.getString("hotfixDex","");

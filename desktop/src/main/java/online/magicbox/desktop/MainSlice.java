@@ -72,24 +72,6 @@ public class MainSlice extends Slice implements View.OnClickListener, UiThread.U
         setContentView(R.layout.fragment_main);
         UiThread.init(this).setFlag("init").start(this);
         UiThread.init(this).setFlag("cache").start(this);
-        UiThread.init(this).setRunDelay(3000).start(new UiThread.UIThreadEvent() {
-            @Override
-            public Object runInThread(String flag, Object obj, UiThread.Publisher publisher) {
-                return null;
-            }
-
-            @Override
-            public void runInUi(String flag, Object obj, boolean ispublish, float progress) {
-                Intent intent = PluginActivity.buildIntent(MainSlice.this,ImageSelectorSlice.class);
-                getActivity().startActivityForResult(intent,123);
-            }
-        });
-    }
-
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        Log.i("test","result:" + requestCode + "," + resultCode);
     }
 
     @Override
@@ -100,7 +82,6 @@ public class MainSlice extends Slice implements View.OnClickListener, UiThread.U
         }
         return super.onBackPressed();
     }
-
 
     @Override
     public void onClick(View v) {

@@ -14,7 +14,6 @@ import dalvik.system.DexClassLoader;
  */
 public class PlugClassLoder extends DexClassLoader {
     public String dexPath;
-    public static final String TAG = "PlugManger";
 
     public static final HashMap<String, PlugClassLoder> plugClassLoderCache = new HashMap<>();
 

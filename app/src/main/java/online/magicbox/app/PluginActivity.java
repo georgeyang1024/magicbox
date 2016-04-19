@@ -67,7 +67,6 @@ public class PluginActivity extends Activity {
 //            loadResourcesMethod.invoke(pluginContext,new Object[]{pluginPath,packageName});
 //            return (Context)pluginContext;
 
-//            Log.i("test","load plugin:" + pluginPath);
             PluginContext proxyContext = new PluginContext(context);
             proxyContext.loadResources(pluginPath,packageName);
             return proxyContext;
@@ -351,6 +350,12 @@ public class PluginActivity extends Activity {
             allActivity.add(this);
             callMethodByCache(mSlice, "onCreate", new Class[]{Bundle.class}, new Object[]{savedInstanceState});
         }
+    }
+
+    @Override
+    public void setContentView(View view) {
+        super.setContentView(view);
+        Log.i("george","setContentView:" + view);
     }
 
     @Override
