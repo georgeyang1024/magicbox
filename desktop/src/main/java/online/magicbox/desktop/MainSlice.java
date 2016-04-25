@@ -237,7 +237,7 @@ public class MainSlice extends Slice implements View.OnClickListener, UiThread.U
                                 try {
                                     ShortCutUtil.removeShortCut(MainSlice.this,infoBean.name,oldIntent);
                                     if (MainSlice.settingEntity.autoCreateShortCut) {
-                                        Bitmap bitmap = ImageLoder.loadImage(MainSlice.this,infoBean.imageUrl,500,500);
+                                        Bitmap bitmap = ImageLoder.loadImage(MainSlice.this,infoBean.imageUrl,300,300);
                                         if (bitmap==null) {
                                             ShortCutUtil.createShortCut(MainSlice.this,infoBean.name,newIntent);
                                         } else {

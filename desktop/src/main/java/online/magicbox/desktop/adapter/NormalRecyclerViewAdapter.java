@@ -194,7 +194,7 @@ public class NormalRecyclerViewAdapter extends RecyclerView.Adapter<NormalRecycl
             if (infoBean.icon!=null) {
                 holder.img_icon[i].setImageDrawable(infoBean.icon);
             } else if (!TextUtils.isEmpty(infoBean.imageUrl)){
-                ImageLoder.loadImage(holder.img_icon[i],infoBean.imageUrl,300,300,R.mipmap.ic_launcher);
+                ImageLoder.loadImage(holder.img_icon[i],infoBean.imageUrl,600,600,R.mipmap.ic_launcher);
             } else {
                 holder.img_icon[i].setImageResource(R.mipmap.ic_launcher);
             }
@@ -272,7 +272,7 @@ public class NormalRecyclerViewAdapter extends RecyclerView.Adapter<NormalRecycl
                                 UiThread.init(mContext).setFlag(infoBean.imageUrl).start(new UiThread.UIThreadEvent() {
                                     @Override
                                     public Object runInThread(String flag, Object obj, UiThread.Publisher publisher) {
-                                        return ImageLoder.loadImage(mContext,flag,500,500);
+                                        return ImageLoder.loadImage(mContext,flag,300,300);
                                     }
 
                                     @Override
@@ -412,7 +412,7 @@ public class NormalRecyclerViewAdapter extends RecyclerView.Adapter<NormalRecycl
         return lineData.get(position) instanceof Integer ? 0:1;
     }
 
-    public static class NormalTextViewHolder extends RecyclerView.ViewHolder {
+    public class NormalTextViewHolder extends RecyclerView.ViewHolder {
         TextView tv_title;
         TextView[] tv_name;
         ImageView[] img_icon,img_download,img_hasUpdate;

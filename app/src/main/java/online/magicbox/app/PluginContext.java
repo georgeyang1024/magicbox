@@ -93,7 +93,7 @@ public class PluginContext extends ContextWrapper {
 	 * @author 小姜 change by georgeyang
 	 * @time 2015-4-16 上午11:31:36
 	 */
-	public void loadResources(String dexPath, String packageName) {
+	public void loadResources(String dexPath, String packageName,String verion) {
 		try {
 //			File outFile = copy(resPluginName,true);
 			String outFile = dexPath;
@@ -115,7 +115,7 @@ public class PluginContext extends ContextWrapper {
 		getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
         //释放so文件
-        String libPath = getCacheDir().getAbsolutePath() + "/lib";
+        String libPath = getFilesDir().getAbsolutePath() + "/lib/" + packageName + "_" + verion;
 
 		plugClassLoder = PlugClassLoder.plugClassLoderCache.get(dexPath);
 		if (plugClassLoder==null) {
@@ -152,7 +152,6 @@ public class PluginContext extends ContextWrapper {
 				} catch (Exception e) {
 				}
 			}
-
 			plugClassLoder = new PlugClassLoder(dexPath,context.getCacheDir().getAbsolutePath(),libPath,context.getClassLoader());
 		}
 	}
@@ -244,6 +243,7 @@ public class PluginContext extends ContextWrapper {
 	public Resources.Theme getTheme() {
 		if(mTheme == null){
 			mTheme = mResources.newTheme();
+			mTheme.applyStyle(android.R.style.Theme_DeviceDefault_Light_NoActionBar,true);
 		}
 //		int theme = 0;
 //		if (android.os.Build.VERSION.SDK_INT >= 21) {
@@ -254,7 +254,7 @@ public class PluginContext extends ContextWrapper {
 //			theme = android.R.style.Theme_Black_NoTitleBar;
 //		}
 //		mTheme.applyStyle(theme,true);
-		mTheme.applyStyle(android.R.style.Theme_DeviceDefault_Light_NoActionBar,true);
+
 		return mTheme;
 	}
 	

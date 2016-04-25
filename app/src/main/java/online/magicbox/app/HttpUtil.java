@@ -1,7 +1,11 @@
 package online.magicbox.app;
 
+import android.content.Context;
+import android.content.pm.PackageInfo;
 import android.os.Environment;
 import android.os.Message;
+import android.provider.Settings;
+import android.telephony.TelephonyManager;
 import android.util.Log;
 
 import java.io.BufferedInputStream;
@@ -16,6 +20,7 @@ import java.io.RandomAccessFile;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLConnection;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.concurrent.TimeoutException;
@@ -220,6 +225,25 @@ public class HttpUtil {
 //            publisher.publishProgress(-1);
 //        }
 //    }
+
+    public final static Map<String,Object> buildBaseParams(Context context) {
+        HashMap<String,Object> baseParams = new HashMap<>();
+        try {
+            PackageInfo info = context.getPackageManager().getPackageInfo(context.getPackageName(), 0);
+            // 当前应用的版本名称
+            String versionName = info.versionName;
+            baseParams.put("appVersion", versionName);
+
+            TelephonyManager tm = (TelephonyManager) context.getSystemService(Context.TELEPHONY_SERVICE);
+            baseParams.put("deviceID", tm.getDeviceId());
+
+            String android_id = Settings.Secure.getString(context.getContentResolver(), Settings.Secure.ANDROID_ID);
+            baseParams.put("androidId", android_id);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return baseParams;
+    }
 
 
     private static final int BUFFER_SIZE = 1024 * 10;// 10k缓存

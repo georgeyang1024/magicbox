@@ -39,7 +39,6 @@ import online.magicbox.desktop.R;
 
 
 public class MultiDirectionSlidingDrawer extends ViewGroup {
-	
 	public static final int				ORIENTATION_RTL		= 0;
 	public static final int				ORIENTATION_BTT		= 1;
 	public static final int				ORIENTATION_LTR		= 2;

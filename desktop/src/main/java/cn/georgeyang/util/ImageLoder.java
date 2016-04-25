@@ -64,15 +64,17 @@ public class ImageLoder {
         if (context == null || url == null || url.length()<=1) {
            return null;
         }
-        String cacheKey = "url-" + url;
-        Bitmap bitmap = LruCache.getInstance().getFast(cacheKey);
-        if (bitmap == null) {
+
+        //try DownFile
+        String filePathCacheKey = "url-file Cache:" + url.hashCode();
+        File cacheFile = LruCache.getInstance().getFast(filePathCacheKey);
+        if (cacheFile==null || !cacheFile.exists()) {
             File cacheDir = new File(context.getCacheDir(), "imageCache");
             if (!cacheDir.exists()) {
                 cacheDir.mkdir();
             }
             String cacheFileName = url.substring(0,url.length()/2).hashCode() + "#" + url.substring(url.length()/2,url.length()).hashCode();
-            File cacheFile = new File(cacheDir.getAbsoluteFile(), cacheFileName + ".img");
+            cacheFile = new File(cacheDir.getAbsoluteFile(), cacheFileName + ".img");
             if (!cacheFile.exists()) {
                 try {
                     HttpUtil.downLoadFile2(url, cacheFile);
@@ -80,7 +82,13 @@ public class ImageLoder {
                     return null;
                 }
             }
+            LruCache.getInstance().put(filePathCacheKey,cacheFile);
+        }
 
+        //try getBitmap with width and height
+        String cacheKey =String.format("imageUrl-%s size:%d*%d",new Object[]{url,maxWidth,maxHeight});
+        Bitmap bitmap = LruCache.getInstance().getFast(cacheKey);
+        if (bitmap == null) {
             bitmap = BitmapCompressor.decodeSampledBitmapFromFile(cacheFile.getAbsolutePath(), maxWidth, maxHeight);
             if (bitmap!=null) {
                 LruCache.getInstance().put(cacheKey,bitmap);

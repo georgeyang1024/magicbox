@@ -43,7 +43,6 @@ public class PlugClassLoder extends DexClassLoader {
             clazz = getParent().loadClass(className);
         } catch (Exception e) {
         }
-
         if (clazz != null)
             return clazz;
 

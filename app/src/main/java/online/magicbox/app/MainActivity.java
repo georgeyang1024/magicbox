@@ -9,6 +9,8 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.View;
 
 import com.mingle.widget.LoadingView;
 
@@ -16,7 +18,10 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.io.File;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.Field;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.Objects;
 
 
@@ -33,9 +38,7 @@ public class MainActivity extends Activity implements UiThread.UIThreadEvent {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         Log.i("test","#:" + new Test().getString());
-        Log.i("test","Id:" + R.string.app_name);
 
         sharedPreferences= getSharedPreferences("app", Context.MODE_PRIVATE);
         desktopApk = sharedPreferences.getString("desktopApk",App.defaultApkName);
@@ -50,7 +53,7 @@ public class MainActivity extends Activity implements UiThread.UIThreadEvent {
         } catch (Exception e) {}
         dexVersionCode = sharedPreferences.getString("dexVersionCode",versionCode+"");
         boolean needRestart = sharedPreferences.getBoolean("needRestart",false);
-        Log.i("test","desktopApk:" + desktopApk);
+
         if (needRestart) {
             setContentView(R.layout.activity_main);
             loadingView = (LoadingView) findViewById(R.id.loadingView);
@@ -84,7 +87,6 @@ public class MainActivity extends Activity implements UiThread.UIThreadEvent {
                 loadingView.setLoadingText(getString(R.string.load_resource));
             }
 
-
             SharedPreferences.Editor editor = sharedPreferences.edit();
             editor.putString("desktopApk","");
             editor.putLong("desktopUpdateTime",0);
@@ -93,6 +95,14 @@ public class MainActivity extends Activity implements UiThread.UIThreadEvent {
 
             UiThread.init(this).setFlag("desktop").start(this);
             return;
+        }
+
+        boolean needClearCache = sharedPreferences.getBoolean("clearLayoutInflaterCache",false);
+        if (needClearCache) {
+            clearLayoutInflaterCache();
+            SharedPreferences.Editor editor = sharedPreferences.edit();
+            editor.putBoolean("clearLayoutInflaterCache",false);
+            editor.commit();
         }
 
         intoDesktop();
@@ -116,16 +126,25 @@ public class MainActivity extends Activity implements UiThread.UIThreadEvent {
         finish();
     }
 
+    private void clearLayoutInflaterCache() {
+        try {
+            Field field = LayoutInflater.class.getDeclaredField("sConstructorMap");
+            field.setAccessible(true);
+            HashMap<String, Constructor<? extends View>> map = (HashMap<String, Constructor<? extends View>>) field.get(null);
+            map.clear();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
     @Override
     public Object runInThread(String flag, Object obj, UiThread.Publisher publisher) {
         if (flag.equals("hotFix")) {
             try {
-                HashMap<String,Object> params = new HashMap<>();
+                Map<String,Object> params = HttpUtil.buildBaseParams(this);
                 params.put("packageName",getPackageName());
                 params.put("versionCode",dexVersionCode);
                 String json = HttpUtil.post(Vars.HotFixGetterUrl,params);
-
-                Log.i("test","post result:" + json);
 
                 JSONArray jsonArray = new JSONArray(json);
                 if (jsonArray.length()>0) {
@@ -152,7 +171,7 @@ public class MainActivity extends Activity implements UiThread.UIThreadEvent {
         } else if (flag.equals("desktop")) {
             //downLoad hotFix dex
             try {
-                HashMap<String,Object> params = new HashMap<String, Object>();
+                Map<String,Object> params = HttpUtil.buildBaseParams(this);
                 params.put("packageName",Vars.DesktopPackageName);
                 params.put("versionCode",desktopVersionCode);
                 String json = HttpUtil.post(Vars.DesktopGetterUrl,params);
@@ -174,8 +193,8 @@ public class MainActivity extends Activity implements UiThread.UIThreadEvent {
                     editor.putString("desktopApk",fileName);
                     editor.putLong("desktopUpdateTime",System.currentTimeMillis());
                     editor.putString("desktopVersionCode",versionCode);
-                    //每次更新完桌面都要重新启动
-                    editor.putBoolean("needRestart",true);
+                    //每次更新完桌面都需要清理LayoutInflater的Cache,不然会因为ClassLoder不同，ClassA转ClassA转化失败
+                    editor.putBoolean("clearLayoutInflaterCache",true);
                     editor.commit();
 
                     desktopVersionCode = versionCode;

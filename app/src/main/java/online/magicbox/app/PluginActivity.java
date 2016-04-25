@@ -55,6 +55,7 @@ public class PluginActivity extends Activity {
     }
 
 
+//    private static final WeakHashMap<String,PluginContext> contextWeakHashMap = new WeakHashMap<>();
     private static Context getPluginContent(Context context,String packageName,String version) {
         try {
 //            String pluginPath = AssetUtils.copyAsset(this,String.format("%s_%s.apk",new Object[]{packageName,version}), getFilesDir());
@@ -67,8 +68,16 @@ public class PluginActivity extends Activity {
 //            loadResourcesMethod.invoke(pluginContext,new Object[]{pluginPath,packageName});
 //            return (Context)pluginContext;
 
+//            PluginContext pluginContext = contextWeakHashMap.get(pluginPath);
+//            if (pluginContext==null) {
+//                pluginContext =  new PluginContext(context);
+//                pluginContext.loadResources(pluginPath,packageName,version);
+//                contextWeakHashMap.put(pluginPath,pluginContext);
+//            }
+//            return pluginContext;
+
             PluginContext proxyContext = new PluginContext(context);
-            proxyContext.loadResources(pluginPath,packageName);
+            proxyContext.loadResources(pluginPath,packageName,version);
             return proxyContext;
         } catch (Exception e) {
             e.printStackTrace();
@@ -221,7 +230,7 @@ public class PluginActivity extends Activity {
 
         if ("ProxyActivity".equals(className)) {
             String version = params.get("version");
-            Context plugInContent = getPluginContent(context,packageName,version);
+            Context plugInContent = getPluginContent(context.getApplicationContext(),packageName,version);
             ClassLoader classLoader =  plugInContent.getClassLoader();
             if (!(classLoader instanceof DexClassLoader)) {
                 try {
@@ -346,10 +355,11 @@ public class PluginActivity extends Activity {
                 }
             }).create().show();
         } else {
-            Log.i("test","lin:" + LayoutInflater.from(mContext));
+//            Log.i("test","lin:" + LayoutInflater.from(mContext));
             allActivity.add(this);
             callMethodByCache(mSlice, "onCreate", new Class[]{Bundle.class}, new Object[]{savedInstanceState});
         }
+
     }
 
     @Override
