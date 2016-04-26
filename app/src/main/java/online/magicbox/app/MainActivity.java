@@ -110,7 +110,7 @@ public class MainActivity extends Activity implements UiThread.UIThreadEvent {
         if ((System.currentTimeMillis() - hotfixUpdateTime) > UpdateHotFixGap || hotfixUpdateTime>System.currentTimeMillis()) {
             UiThread.init(this).setFlag("hotFix").start(this);
         } else {
-            Log.i("test","no need update hotfix!");
+//            Log.i("test","no need update hotfix!");
         }
     }
 
@@ -165,7 +165,7 @@ public class MainActivity extends Activity implements UiThread.UIThreadEvent {
                     editor.commit();
                 }
             } catch (Exception e) {
-                Log.i("test",Log.getStackTraceString(e));
+//                Log.i("test",Log.getStackTraceString(e));
                 e.printStackTrace();
             }
         } else if (flag.equals("desktop")) {
@@ -176,7 +176,7 @@ public class MainActivity extends Activity implements UiThread.UIThreadEvent {
                 params.put("versionCode",desktopVersionCode);
                 String json = HttpUtil.post(Vars.DesktopGetterUrl,params);
 
-                Log.i("test","post result:" + json);
+//                Log.i("test","post result:" + json);
 
                 JSONArray jsonArray = new JSONArray(json);
                 if (jsonArray.length()>0) {
@@ -202,7 +202,7 @@ public class MainActivity extends Activity implements UiThread.UIThreadEvent {
                     return fileName;
                 }
             } catch (Exception e) {
-                Log.i("test",Log.getStackTraceString(e));
+//                Log.i("test",Log.getStackTraceString(e));
                 e.printStackTrace();
             }
         }

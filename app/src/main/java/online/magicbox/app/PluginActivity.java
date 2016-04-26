@@ -92,7 +92,6 @@ public class PluginActivity extends Activity {
         AMapLocationListener mLocationListener = new AMapLocationListener() {
             @Override
             public void onLocationChanged(AMapLocation aMapLocation) {
-                Log.i("test",aMapLocation.toStr());
                 String[] info = new String[]{aMapLocation.getErrorCode()+"",aMapLocation.getLatitude()+"",aMapLocation.getLongitude()+"",aMapLocation.getAddress()};
                 callMethodByCache(mSlice, "onReceiveLocation", new Class[]{Object.class,String[].class}, new Object[]{aMapLocation,info});
             }
@@ -160,16 +159,13 @@ public class PluginActivity extends Activity {
     private static final List<PluginActivity> allActivity = new ArrayList<>();
 
     public static void pushMessage(int type, Object object) {
-        Log.i("test", "push:" + object);
         for (PluginActivity activity : allActivity) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
                 if (activity.isDestroyed()) {
-                    Log.i("test", "isDestroyed:" + activity);
                     continue;
                 }
             }
             if (activity.isFinishing()) {
-                Log.i("test", "isFinishing:" + activity);
                 continue;
             }
 
@@ -328,10 +324,10 @@ public class PluginActivity extends Activity {
 
         } catch (Exception e) {
             Toast.makeText(this, "加载失败:" + e.getMessage(), Toast.LENGTH_SHORT).show();
-            Log.d("demo", Log.getStackTraceString(e).toString());
             e.printStackTrace();
 
             finish();
+            return;
         }
 
         loadAnim(false);
@@ -355,17 +351,10 @@ public class PluginActivity extends Activity {
                 }
             }).create().show();
         } else {
-//            Log.i("test","lin:" + LayoutInflater.from(mContext));
             allActivity.add(this);
             callMethodByCache(mSlice, "onCreate", new Class[]{Bundle.class}, new Object[]{savedInstanceState});
         }
 
-    }
-
-    @Override
-    public void setContentView(View view) {
-        super.setContentView(view);
-        Log.i("george","setContentView:" + view);
     }
 
     @Override

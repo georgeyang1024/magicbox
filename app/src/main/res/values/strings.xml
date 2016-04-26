@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">MagicBox</string>
+    <string name="app_name">魔盒实用工具大全</string>
     <string name="load_resource">resource loading...</string>
     <string name="load_fail_title">Alert</string>
     <string name="load_fail_content">loading fail,please restart app and try again.</string>
