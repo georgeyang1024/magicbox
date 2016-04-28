@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">魔盒</string>
+    <string name="app_name">百宝工具箱</string>
     <string name="load_resource">加载资源中...</string>
     <string name="load_fail_title">提示</string>
     <string name="load_fail_content">下载资源失败,请重新启动app再试一次。</string>
