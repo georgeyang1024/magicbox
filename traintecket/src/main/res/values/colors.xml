@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!-- Color ↓ -->
+    <color name="black">#000000</color>
+    <color name="black_trans">#7a000000</color>
+    <color name="black_trans_light">#19000000</color>
+    <color name="black_trans_dark">#38000000</color>
+    <color name="white">#ffffff</color>
+    <color name="gray">#bfbfbf</color>
+    <color name="gray_more">#555555</color>
+    <color name="trans">#00000000</color>
+    <color name="bluelight">#06aaff</color>
+    <color name="blue">#0666ff</color>
+    <color name="green">#00ff00</color>
+    <color name="red">#ff0000</color>
+    <color name="lightred">#ff8080</color>
+    <color name="blue_trans">#600000ff</color>
+    <color name="black_divider">#19000000</color>
+    <color name="black_divider_dark">#50000000</color>
+    <color name="gray_divider">#19bfbfbf</color>
+    <color name="lighttrans">#99000000</color>
+
+    <!-- Font ↓ -->
+    <color name="word_title">#392f41</color>
+    <color name="word_item">#75878a</color>
+    <color name="word_menu">#5184bc</color>
+    <color name="word_undo">#ff461f</color>
+    <color name="word_list_black">#392f41</color>
+    <color name="word_list_blue">#0000ff</color>
+    <color name="word_list_pink">#ff9100</color>
+    <color name="word_list_red">#FF0000</color>
+
+    <!-- Layout ↓ -->
+    <color name="layout_bg">#ededed</color>
+    <color name="layout_bg1">#e0e0e0</color>
+    <color name="light_white">#ffffee</color>
+    <color name="layout_edittext">#0eb83a</color>
+
+    <!-- Button ↓ -->
+    <color name="button_exit_0">#c93756</color>
+    <color name="button_exit_1">#f9906f</color>
+    <color name="button_save_0">#0aa344</color>
+    <color name="button_save_1">#0eb83a</color>
+    <color name="button_blue_0">#6fcfc3</color>
+    <color name="button_blue_1">#49bfaf</color>
+    <color name="button_check_0">#12b525</color>
+    <color name="button_check_1">#2c8235</color>
+
+</resources>

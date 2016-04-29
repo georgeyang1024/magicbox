@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android" package="cn.georgeyang.tetris">
+
+    <application android:allowBackup="true" android:icon="@drawable/ic_launcher"
+        android:label="@string/app_name" android:supportsRtl="true"
+        android:theme="@android:style/Theme.Holo.Light.NoActionBar">
+        <activity android:name=".MainActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
+        <activity
+            android:name="online.magicbox.lib.PluginActivity"
+            android:theme="@android:style/Theme.Holo.Light.NoActionBar">
+            <intent-filter>
+                <action android:name="cn.georgeyang.tetris" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+
+                <data android:scheme="magicbox" />
+            </intent-filter>
+        </activity>
+
+
+    </application>
+
+</manifest>

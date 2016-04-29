@@ -1,0 +1,238 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/login_edit_normal"
+    android:layout_margin="5dp"
+    android:orientation="vertical" >
+    
+    
+
+<LinearLayout 
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal" >
+    
+    <TextView 
+        android:id="@+id/tiket_listview_trannumber"
+        android:layout_weight="1"
+         android:layout_width="0dp"
+         android:layout_height="match_parent"
+         android:singleLine="true"
+         android:text="车次:"
+        />
+        <TextView 
+        android:id="@+id/tiket_listview_start"
+        android:layout_weight="1"
+         android:layout_width="0dp"
+         android:layout_height="match_parent"
+         android:singleLine="true"
+         android:text="起始站:"
+        />
+            <TextView 
+        android:id="@+id/tiket_listview_end"
+        android:layout_weight="1"
+         android:layout_width="0dp"
+         android:layout_height="match_parent"
+         android:singleLine="true"
+         android:text="终点站:"
+        />
+</LinearLayout>
+    
+    
+
+<LinearLayout 
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal" >
+    
+    <TextView 
+        android:id="@+id/tiket_listview_starttime"
+         android:layout_width="wrap_content"
+         android:layout_height="match_parent"
+         android:singleLine="true"
+         android:text="出发时间:"
+        />
+        <TextView 
+        android:id="@+id/tiket_listview_endtime"
+         android:layout_width="wrap_content"
+         android:layout_height="match_parent"
+         android:layout_marginLeft="5dp"
+         android:singleLine="true"
+         android:text="到达时间:"
+        />
+            <TextView 
+        android:id="@+id/tiket_listview_lishi"
+        android:layout_weight="1"
+         android:layout_width="0dp"
+         android:singleLine="true"
+         android:layout_height="match_parent"
+          android:layout_marginLeft="5dp"
+         android:text="历时:"
+        />
+</LinearLayout>
+
+
+
+<LinearLayout 
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal" >
+ 
+        <TextView 
+        android:id="@+id/tiket_listview_swz"
+        android:layout_weight="1"
+         android:layout_width="0dp"
+         android:singleLine="true"
+         android:textColor="@color/red"
+         android:layout_height="match_parent"
+         android:text="商务座:"
+        />
+            <TextView 
+        android:id="@+id/tiket_listview_tdz"
+        android:layout_weight="1"
+         android:layout_width="0dp"
+         android:singleLine="true"
+         android:textColor="@color/red"
+         android:layout_height="match_parent"
+         android:text="特等座:"
+        />
+                 <TextView 
+        android:id="@+id/tiket_listview_ydz"
+        android:layout_weight="1"
+         android:layout_width="0dp"
+         android:singleLine="true"
+         android:textColor="@color/red"
+         android:layout_height="match_parent"
+         android:text="一等座:"
+        />
+</LinearLayout>
+    
+    
+
+
+<LinearLayout 
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal" >
+ 
+        <TextView 
+        android:id="@+id/tiket_listview_edz"
+        android:layout_weight="1"
+         android:layout_width="0dp"
+         android:singleLine="true"
+         android:textColor="@color/red"
+         android:layout_height="match_parent"
+         android:text="二等座:"
+        />
+            <TextView 
+        android:id="@+id/tiket_listview_gjrw"
+        android:layout_weight="1"
+         android:layout_width="0dp"
+         android:singleLine="true"
+         android:textColor="@color/red"
+         android:layout_height="match_parent"
+         android:text="高级软卧:"
+        />
+                 <TextView 
+        android:id="@+id/tiket_listview_wz"
+        android:layout_weight="1"
+         android:layout_width="0dp"
+         android:singleLine="true"
+         android:textColor="@color/red"
+         android:layout_height="match_parent"
+         android:text="无座:"
+        />
+</LinearLayout>
+    
+
+    
+
+
+<LinearLayout 
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal" >
+ 
+        <TextView 
+        android:id="@+id/tiket_listview_rw"
+        android:layout_weight="1"
+         android:layout_width="0dp"
+         android:singleLine="true"
+         android:textColor="@color/red"
+         android:layout_height="match_parent"
+         android:text="软卧"
+        />
+            <TextView 
+        android:id="@+id/tiket_listview_yw"
+        android:layout_weight="1"
+         android:layout_width="0dp"
+         android:singleLine="true"
+         android:textColor="@color/red"
+         android:layout_height="match_parent"
+         android:text="硬卧"
+        />
+                 <TextView 
+        android:id="@+id/tiket_listview_yz"
+        android:layout_weight="1"
+         android:layout_width="0dp"
+         android:singleLine="true"
+         android:textColor="@color/red"
+         android:layout_height="match_parent"
+         android:text="硬座"
+        />
+                             <TextView 
+        android:id="@+id/tiket_listview_rz"
+        android:layout_weight="1"
+         android:layout_width="0dp"
+         android:singleLine="true"
+         android:textColor="@color/red"
+         android:layout_height="match_parent"
+         android:text="软座"
+        />
+</LinearLayout>
+    
+    <LinearLayout 
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical" >
+ 
+            <LinearLayout 
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal" >
+                  <TextView 
+        android:id="@+id/tiket_listview_date"
+         android:layout_width="match_parent"
+         android:layout_height="match_parent"
+         android:layout_weight="1"
+         android:text="日期:"
+        />
+                  
+                   <TextView 
+        android:id="@+id/tiket_listview_remark"
+         android:layout_width="match_parent"
+         android:layout_height="match_parent"
+         android:layout_weight="1"
+         android:paddingLeft="10dp"
+         android:text="备注:"
+        />
+                  
+                  
+                  </LinearLayout>
+                  
+            
+            
+        <TextView 
+        android:id="@+id/tiket_listview_info"
+         android:layout_width="wrap_content"
+         android:layout_height="match_parent"
+         android:text="(以上信息仅供参考,请以车站为准)"
+        />
+        
+   
+
+</LinearLayout>
+    
+    
+</LinearLayout>
