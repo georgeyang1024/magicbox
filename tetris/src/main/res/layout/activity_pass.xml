@@ -1,0 +1,42 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/backgroundRL"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+
+    tools:context=".MainActivity" >
+
+<TextView
+    android:id="@+id/titleTV"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:padding="10dp"
+    android:textColor="#ffff00"
+    android:text="你好强哦~"
+    android:textSize="40dp"
+    />
+
+    <TextView 
+        android:id="@+id/goonTV"
+         android:layout_width="wrap_content"
+    	android:layout_height="wrap_content"
+    	android:layout_centerInParent="true"
+    	android:padding="10dp"
+    	android:textColor="#ff0000"
+    	android:text="大哥，继续不？"
+    	android:textSize="40dp"
+    />
+
+    <TextView 
+               android:id="@+id/quitTV"
+         android:layout_width="wrap_content"
+    	android:layout_height="wrap_content"
+    	android:layout_below="@id/goonTV"
+    	android:layout_centerInParent="true"
+    	android:padding="10dp"
+    	android:layout_marginTop="20dp"
+    	android:textColor="#00ff00"
+    	android:text="不行了，呵呵"
+    	android:textSize="15dp"
+    />
+</RelativeLayout>

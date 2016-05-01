@@ -1,0 +1,113 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".MainActivity" >
+
+	<cn.georgeyang.tetris.util.Mysurfaceview
+	    android:id="@+id/mysurfaceview"
+	    android:layout_width="fill_parent"
+	    android:layout_height="fill_parent"
+   	 >
+	</cn.georgeyang.tetris.util.Mysurfaceview>
+	<RelativeLayout 
+	    android:layout_width="fill_parent"
+	    android:layout_height="wrap_content"
+	    android:layout_alignParentBottom="true"
+	    android:layout_marginBottom="20dp"
+	    android:layout_marginLeft="65dp"
+	    android:layout_marginRight="55dp"
+	    >
+	    <Button 
+	        android:layout_width="wrap_content"
+	    	android:layout_height="wrap_content"
+	        android:id="@+id/leftBT"
+	        android:text="L"
+	        android:background="@drawable/select_shape"
+	        android:textSize="23dp"
+	        android:layout_alignParentBottom="true"
+	        android:layout_alignParentLeft="true"
+	        />   
+	        <Button 
+	        android:layout_width="wrap_content"
+	    	android:layout_height="wrap_content"
+	        android:id="@+id/rightBT"
+	        android:background="@drawable/select_shape"
+	        android:text="R"
+	        android:textSize="23dp"
+	        android:layout_alignParentRight="true"
+	          android:layout_alignParentBottom="true"
+	        />
+	        
+	      <LinearLayout 
+	          android:layout_width="wrap_content"
+	    	android:layout_height="wrap_content"
+	    
+	    	  android:layout_alignParentBottom="true"
+	    	 android:layout_centerHorizontal="true"
+	    	 android:orientation="vertical"
+	          >
+	       <Button 
+	        android:layout_width="wrap_content"
+	    	android:layout_height="wrap_content"
+	        android:id="@+id/changeBT"
+	        android:text="C"
+	        android:layout_marginBottom="15dp"
+	        android:background="@drawable/select_shape"
+	        android:textSize="23dp"
+	       
+	        />	       
+	          <Button 
+	        android:layout_width="wrap_content"
+	    	android:layout_height="wrap_content"
+	        android:id="@+id/downBT"
+	        android:text="D"
+			
+	        android:background="@drawable/select_shape"
+	        android:textSize="23dp"
+
+	        />
+	       </LinearLayout>   	      
+	</RelativeLayout>
+	
+	 <LinearLayout 
+	          android:gravity="center_vertical"
+	          android:layout_marginTop="10dp"
+	          android:layout_width="fill_parent"
+	          android:layout_height="50dp"
+	          >
+	          <ImageView 
+	            android:layout_width="35dp"
+	          	android:layout_height="35dp"
+	          	android:background="@drawable/gold"
+	              />
+	        <TextView 
+	             android:layout_width="wrap_content"
+	          	android:layout_height="wrap_content"
+	          	android:textSize="25dp"
+	          	android:textColor="#ffffff"
+	          	android:text="得分:"
+	          	android:layout_marginLeft="3dp"
+	            />
+	           <TextView
+	               android:id="@+id/scoreTV" 
+	             android:layout_width="wrap_content"
+	          	android:layout_height="wrap_content"
+	          	android:textSize="25dp"
+	          	android:text="0"
+	          	 android:textColor="#ffffff"
+	          	android:layout_marginLeft="5dp"
+	            />
+	           
+	               <TextView
+	              android:id="@+id/leveTV" 
+	             android:layout_width="wrap_content"
+	          	android:layout_height="wrap_content"
+	          	android:textSize="20dp"
+	          	android:text="0"
+
+	          	 android:textColor="#00ffff"
+	          	android:layout_marginLeft="30dp"
+	            />
+	      </LinearLayout> 
+</RelativeLayout>

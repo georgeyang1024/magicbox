@@ -1,0 +1,12 @@
+<selector xmlns:android = "http://schemas.android.com/apk/res/android">  
+<!-- 定义按钮按下时的图片 -->  
+<item  
+android:state_pressed = "false"  
+android:drawable = "@drawable/circleline_orange_shape"
+/>  
+<!-- 定义按钮默认的图片 -->  
+<item
+    android:state_pressed="true" 
+    android:drawable = "@drawable/circleline_gray_shape"/>
+    
+</selector> 
