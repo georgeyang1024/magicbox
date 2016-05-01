@@ -1,1 +1,1 @@
-include ':app', ':desktop', ':appfix', ':flashlight', ':devlibrary', ':calculator', ':wificonnect', ':seewifipwd', ':gifgenerate'
+include ':app', ':desktop', ':appfix', ':flashlight', ':devlibrary', ':calculator', ':wificonnect', ':seewifipwd', ':gifgenerate', ':csdnblog', ':xlistview'

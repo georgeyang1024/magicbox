@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/selector_text_bg_white"
+    android:gravity="center_vertical"
+    android:minHeight="50dip"
+    android:orientation="horizontal" >
+
+    <ImageView
+        android:id="@+id/imvChannel"
+        android:layout_width="wrap_content"
+        android:layout_height="50dip"
+        android:contentDescription="@null"
+        android:padding="8dip"
+        android:src="@drawable/ic_launcher"
+        android:visibility="visible" />
+
+    <TextView
+        android:id="@+id/tvChannel"
+        android:layout_width="0dip"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:gravity="left"
+        android:singleLine="true"
+        android:text="@string/channel_name"
+        android:textColor="@color/black_text"
+        android:textSize="@dimen/content_size" />
+
+    <ImageView
+        android:id="@+id/imvChecked"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:padding="12dip"
+        android:contentDescription="@null"
+        android:src="@drawable/ic_yes" />
+
+</LinearLayout>

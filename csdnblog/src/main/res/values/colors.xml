@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="transparent">#00000000</color>
+    <color name="white">#FFFFFF</color>
+
+    <color name="colorPrimary">#3F51B5</color>
+    <color name="colorPrimaryDark">#303F9F</color>
+    <color name="colorAccent">#FF4081</color>
+
+    <!--标签TAB未选中的颜色-->
+    <color name="color_unselected">#777777</color>
+    <!--标签Tab选中的颜色-->
+    <color name="color_selected">#1da8fe</color>
+
+
+
+    <drawable name="transparent">#00000000</drawable>
+
+    <color name="main_color">#21292C</color><!-- 主色调 -->
+    <color name="green_main_color">#09A284</color><!-- 绿色主色调 -->
+    <color name="blue_main_color">#019587</color><!-- 蓝色主色调 -->
+    <color name="black_main_color">#21292C</color><!-- 黑色主色调 -->
+    <color name="black">#000000</color>
+    <color name="red">#FF0000</color>
+    <color name="gray">#5D5D5D</color>
+    <color name="coffee">#622f1b</color>
+    <color name="wangyibg">#f0f0f0</color>
+    <color name="wangyibg2">#E0E0E0</color>
+    <color name="light_blue">#5CACEE</color>
+    <color name="black2">#80000000</color>
+    <color name="transparentblack">#88000000</color>
+    <color name="transparent_half">#A0000000</color>
+    <color name="list_decs_color">#999999</color>
+    <color name="list_divider_color">#D9D9D9</color>
+    <color name="blue_deep">#4A708B</color>
+    <color name="blue">#01A7FF</color><!-- 知乎蓝色 -->
+    <color name="ldrawer_color">#FFFFFF</color>
+
+
+
+
+    <!-- 微信风格 -->
+    <color name="line">#D9D9D9</color><!-- 微信线条颜色 -->
+    <color name="black_text">#353535</color><!-- 微信黑色字 -->
+    <color name="blue_text">#586B96</color><!-- 微信蓝色字 -->
+    <color name="gray_bg">#EBEBEB</color><!-- 微信灰色背景 -->
+    <color name="tab_bg">#FCFCFC</color><!-- 微信主页底部导航背景 -->
+    <color name="tab_textcolor_checked">#5AAE3E</color><!-- 微信主页底部导航背景 -->
+    <color name="tab_line1_bg">#D6D6D6</color><!-- 微信主页底部导航线条1 -->
+    <color name="tab_line2_bg">#F2F2F2</color><!-- 微信主页底部导航线条2 -->
+
+</resources>

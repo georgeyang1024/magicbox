@@ -112,6 +112,7 @@ public class PluginActivity extends Activity {
         }
     }
 
+
     public static Intent buildIntent(Context context,Class clazz) {
         return buildIntent(context,clazz.getPackage().getName(), clazz.getSimpleName(), PluginConfig.pluginVersion);
     }
@@ -323,6 +324,7 @@ public class PluginActivity extends Activity {
             }
             return method.invoke(receiver,args);
         } catch (Exception e) {
+            Log.d("test",Log.getStackTraceString(e));
             e.printStackTrace();
         }
         return null;

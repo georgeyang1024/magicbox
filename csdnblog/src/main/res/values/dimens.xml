@@ -1,0 +1,35 @@
+<resources>
+    <!-- Default screen margins, per the Android Design guidelines. -->
+    <dimen name="activity_horizontal_margin">16dp</dimen>
+    <dimen name="activity_vertical_margin">16dp</dimen>
+
+
+    <!-- 标题大小 -->
+    <dimen name="title_height">50dip</dimen>
+    <dimen name="title_size">17sp</dimen>
+    <dimen name="dialog_title_size">20sp</dimen>
+
+    <!-- 内容大小 -->
+    <dimen name="content_size">16sp</dimen>
+
+    <!-- 博主列表 -->
+    <dimen name="listitem_blogger_height">50dip</dimen>
+    <dimen name="desc_size">13sp</dimen>
+
+    <!-- 分享 -->
+    <dimen name="share_bar_height">40dip</dimen>
+
+    <!-- Popwindow -->
+    <dimen name="popwindow_bloglist_width">220dip</dimen>
+
+    <!-- DrawerLayout -->
+    <dimen name="navdrawer_width">240dip</dimen>
+    <dimen name="ldrawer_drawableSize">50dp</dimen>
+    <dimen name="ldrawer_barSize">18dp</dimen>
+    <dimen name="ldrawer_topBottomBarArrowSize">11dp</dimen>
+    <dimen name="ldrawer_thickness">2dp</dimen>
+    <dimen name="ldrawer_gapBetweenBars">3dp</dimen>
+    <dimen name="ldrawer_middleBarArrowSize">16dp</dimen>
+    <dimen name="mm_up_arrow_margin">-16dp</dimen>
+
+</resources>

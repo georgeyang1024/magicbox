@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="@dimen/title_height"
+    android:background="@color/main_color" >
+
+    <ImageView
+        android:id="@+id/btn_back"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_alignParentLeft="true"
+        android:layout_centerVertical="true"
+        android:background="@drawable/selector_btn_header"
+        android:contentDescription="@null"
+        android:padding="13dip"
+        android:src="@drawable/back" />
+
+    <ImageView
+        android:id="@+id/imv_actionbar_divider"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerVertical="true"
+        android:layout_toRightOf="@id/btn_back"
+        android:contentDescription="@null"
+        android:src="@drawable/base_action_bar_back_divider" />
+
+    <TextView
+        android:id="@+id/tv_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:layout_marginLeft="10dip"
+        android:layout_marginRight="10dip"
+        android:maxLength="20"
+        android:gravity="center"
+        android:singleLine="true"
+        android:text="@string/bogger_title"
+        android:textColor="@color/white"
+        android:textSize="@dimen/title_size" />
+
+    <ImageView
+        android:id="@+id/btn_menu"
+        android:layout_width="@dimen/title_height"
+        android:layout_height="match_parent"
+        android:layout_alignParentRight="true"
+        android:layout_centerVertical="true"
+        android:background="@drawable/selector_btn_header"
+        android:contentDescription="@null"
+        android:padding="13dip"
+        android:src="@drawable/ic_add"
+        android:visibility="gone" />
+
+</RelativeLayout>

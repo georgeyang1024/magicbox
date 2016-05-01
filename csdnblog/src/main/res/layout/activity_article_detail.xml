@@ -1,0 +1,96 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/blogContentView"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white"
+    android:clickable="true" >
+
+    <include
+        android:id="@+id/head"
+        layout="@layout/include_head_layout" />
+
+    <WebView
+        android:id="@+id/webview"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@+id/head"
+        android:layout_above="@+id/view_line"
+        android:scrollbars="vertical"
+        android:divider="@null" />
+
+    <ProgressBar
+        android:id="@+id/blogContentPro"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:indeterminateDrawable="@drawable/progressbar_large"
+        android:visibility="visible" />
+
+    <ImageView
+        android:id="@+id/reLoadImage"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:clickable="true"
+        android:contentDescription="@null"
+        android:src="@drawable/base_empty_view"
+        android:visibility="invisible" />
+
+    <View
+        android:id="@+id/view_line"
+        android:layout_width="match_parent"
+        android:layout_height="0.5dip"
+        android:layout_above="@+id/ll_share_bar"
+        android:background="@color/line" />
+
+    <LinearLayout
+        android:id="@+id/ll_share_bar"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/share_bar_height"
+        android:layout_alignParentBottom="true"
+        android:background="@color/gray_bg"
+        android:gravity="center_vertical"
+        android:orientation="horizontal" >
+
+        <CheckBox
+            android:id="@+id/tb_collect"
+            android:layout_width="0dip"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:text="@null"
+            android:checked="false"
+            android:background="@drawable/selector_btn_collect"
+            android:button="@null"
+            />
+            <!--android:src="@drawable/" />-->
+
+        <ImageView
+            android:id="@+id/iv_comment"
+            android:layout_width="0dip"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:background="@drawable/selector_share_bg"
+            android:contentDescription="@null"
+            android:src="@drawable/me_comment" />
+
+        <ImageView
+            android:id="@+id/iv_share"
+            android:layout_width="0dip"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:background="@drawable/selector_share_bg"
+            android:contentDescription="@null"
+            android:src="@drawable/me_share" />
+
+        <ImageView
+            android:id="@+id/iv_more"
+            android:layout_width="0dip"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:background="@drawable/selector_share_bg"
+            android:contentDescription="@null"
+            android:src="@drawable/me_more" />
+    </LinearLayout>
+
+</RelativeLayout>

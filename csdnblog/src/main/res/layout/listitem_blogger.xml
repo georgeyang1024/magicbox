@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:padding="7dip"
+    android:orientation="horizontal" >
+
+    <com.free.csdn.view.CircleImageView
+        android:id="@+id/imv_blogger"
+        android:layout_width="@dimen/listitem_blogger_height"
+        android:layout_height="@dimen/listitem_blogger_height"
+        android:scaleType="centerCrop"
+        android:src="@drawable/ic_default" >
+    </com.free.csdn.view.CircleImageView>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginLeft="10dip"
+        android:gravity="center_vertical"
+        android:orientation="vertical" >
+
+        <TextView
+            android:id="@+id/tv_blog_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:singleLine="true"
+            android:text="@string/blog_title"
+            android:textColor="@color/black_text"
+            android:textSize="@dimen/title_size" />
+
+        <TextView
+            android:id="@+id/tv_blog_desc"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="2dip"
+            android:singleLine="true"
+            android:text="@string/blog_desc"
+            android:textColor="@color/list_decs_color"
+            android:textSize="@dimen/desc_size" />
+    </LinearLayout>
+
+</LinearLayout>

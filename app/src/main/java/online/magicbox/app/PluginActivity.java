@@ -282,6 +282,21 @@ public class PluginActivity extends Activity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        loadAnim(false);
+
+        //運行的是插件時，這段代碼無效
+        if (android.os.Build.VERSION.SDK_INT >= 21) {
+            this.setTheme(android.R.style.Theme_Holo_Light_NoActionBar);
+        } else if (android.os.Build.VERSION.SDK_INT >= 13) {
+            this.setTheme(android.R.style.Theme_Holo_Light_NoActionBar);
+        } else {
+            this.setTheme(android.R.style.Theme_Black_NoTitleBar);
+        }
+
+        super.onCreate(savedInstanceState);
+
+
+
         try {
             Intent intent = getIntent();
             if (intent == null || intent.getData() == null) {
@@ -330,18 +345,7 @@ public class PluginActivity extends Activity {
             return;
         }
 
-        loadAnim(false);
 
-        //運行的是插件時，這段代碼無效
-        if (android.os.Build.VERSION.SDK_INT >= 21) {
-            this.setTheme(android.R.style.Theme_Holo_Light_NoActionBar);
-        } else if (android.os.Build.VERSION.SDK_INT >= 13) {
-            this.setTheme(android.R.style.Theme_Holo_Light_NoActionBar);
-        } else {
-            this.setTheme(android.R.style.Theme_Black_NoTitleBar);
-        }
-
-        super.onCreate(savedInstanceState);
 
         if (ReflectUtil.getClass("com.android.internal.policy.PolicyManager")==null) {
             new AlertDialog.Builder(mContext).setTitle("提示").setCancelable(false).setMessage("不支持的手机系统版本!请更换系统或更换手机以使用本软件~").setNegativeButton("确认", new DialogInterface.OnClickListener() {
@@ -375,7 +379,7 @@ public class PluginActivity extends Activity {
             }
             return method.invoke(receiver, args);
         } catch (Exception e) {
-//            e.printStackTrace();
+            e.printStackTrace();
         }
         return null;
     }
