@@ -13,6 +13,8 @@
       <module fileurl="file://$PROJECT_DIR$/gifgenerate/gifgenerate.iml" filepath="$PROJECT_DIR$/gifgenerate/gifgenerate.iml" />
       <module fileurl="file://$PROJECT_DIR$/seewifipwd/seewifipwd.iml" filepath="$PROJECT_DIR$/seewifipwd/seewifipwd.iml" />
       <module fileurl="file://$PROJECT_DIR$/tetris/tetris.iml" filepath="$PROJECT_DIR$/tetris/tetris.iml" />
+      <module fileurl="file://$PROJECT_DIR$/tetris/tetris.iml" filepath="$PROJECT_DIR$/tetris/tetris.iml" />
+      <module fileurl="file://$PROJECT_DIR$/traintecket/traintecket.iml" filepath="$PROJECT_DIR$/traintecket/traintecket.iml" />
       <module fileurl="file://$PROJECT_DIR$/traintecket/traintecket.iml" filepath="$PROJECT_DIR$/traintecket/traintecket.iml" />
       <module fileurl="file://$PROJECT_DIR$/wificonnect/wificonnect.iml" filepath="$PROJECT_DIR$/wificonnect/wificonnect.iml" />
       <module fileurl="file://$PROJECT_DIR$/xlistview/xlistview.iml" filepath="$PROJECT_DIR$/xlistview/xlistview.iml" />

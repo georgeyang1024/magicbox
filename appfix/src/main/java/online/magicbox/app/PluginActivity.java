@@ -2,7 +2,6 @@ package online.magicbox.app;
 
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.app.LoaderManager;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -13,7 +12,6 @@ import android.text.TextUtils;
 import android.util.Log;
 import android.view.ContextMenu;
 import android.view.KeyEvent;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -283,55 +281,54 @@ public class PluginActivity extends Activity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        String errMsg = "";
-
-        Intent intent = getIntent();
-        if (intent == null || intent.getData() == null) {
-            errMsg = "缺少参数";
-        } else {
-            Uri uri = intent.getData();
-
-            String path = uri.getPath();
-            packageName = path.substring(1, path.lastIndexOf('.'));
-            if (TextUtils.isEmpty(packageName)) {
-                errMsg =  "未指定插件名";
-            }
-
-            className = path.substring(path.lastIndexOf('.') + 1, path.length());
-            if (TextUtils.isEmpty(className)) {
-                className = "MainFragment";
-            }
-
-            version = uri.getQueryParameter("version");
-            if (TextUtils.isEmpty(version)) {
-                version = PluginConfig.pluginVersion;
-            }
-
-            animType = uri.getQueryParameter("animType");
-            if (TextUtils.isEmpty(animType)) {
-                animType = PluginConfig.System;
-            }
-        }
-
         loadAnim(false);
 
         //運行的是插件時，這段代碼無效
-        if (android.os.Build.VERSION.SDK_INT >= 21) {
+        if (Build.VERSION.SDK_INT >= 21) {
             this.setTheme(android.R.style.Theme_Holo_Light_NoActionBar);
-        } else if (android.os.Build.VERSION.SDK_INT >= 13) {
+        } else if (Build.VERSION.SDK_INT >= 13) {
             this.setTheme(android.R.style.Theme_Holo_Light_NoActionBar);
         } else {
             this.setTheme(android.R.style.Theme_Black_NoTitleBar);
         }
 
-        //先显示动画
         super.onCreate(savedInstanceState);
-        if (!TextUtils.isEmpty(errMsg)) {
-            Toast.makeText(this, errMsg, Toast.LENGTH_SHORT).show();
+
+
+
+        Intent intent = getIntent();
+        if (intent == null || intent.getData() == null) {
+            Toast.makeText(this, "缺少参数", Toast.LENGTH_SHORT).show();
             finish();
             return;
         }
 
+        Uri uri = intent.getData();
+
+        String path = uri.getPath();
+        packageName = path.substring(1, path.lastIndexOf('.'));
+        Log.i("test", "packageName:" + packageName);
+        if (TextUtils.isEmpty(packageName)) {
+            Toast.makeText(this, "未指定插件名", Toast.LENGTH_SHORT).show();
+            finish();
+            return;
+        }
+
+        className = path.substring(path.lastIndexOf('.') + 1, path.length());
+        Log.i("test", "className:" + className);
+        if (TextUtils.isEmpty(className)) {
+            className = "MainFragment";
+        }
+
+        version = uri.getQueryParameter("version");
+        if (TextUtils.isEmpty(version)) {
+            version = PluginConfig.pluginVersion;
+        }
+
+        animType = uri.getQueryParameter("animType");
+        if (TextUtils.isEmpty(animType)) {
+            animType = PluginConfig.System;
+        }
 
         File pluginFile = new File(this.getFilesDir(),String.format("%s_%s.apk",new Object[]{packageName,version}));
         if (pluginFile==null || !pluginFile.exists()) {
@@ -479,7 +476,6 @@ public class PluginActivity extends Activity {
     }
 
     private void loadAnim(boolean isExit) {
-        Log.d("test","anim:" + animType);
         if (animType==null) {
             animType = PluginConfig.System;
         }

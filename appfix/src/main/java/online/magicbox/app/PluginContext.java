@@ -9,7 +9,6 @@ import android.content.res.Resources.Theme;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 
@@ -20,8 +19,6 @@ import java.io.FileOutputStream;
 import java.lang.reflect.Method;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
-
-import online.magicbox.app.PlugClassLoder;
 
 /**
  * 可直接加载插件布局和资源的自定义Context包装类
@@ -240,7 +237,7 @@ public class PluginContext extends ContextWrapper {
 	}
 
 	@Override
-	public Resources.Theme getTheme() {
+	public Theme getTheme() {
 		if(mTheme == null){
 			mTheme = mResources.newTheme();
 			mTheme.applyStyle(android.R.style.Theme_DeviceDefault_Light_NoActionBar,true);

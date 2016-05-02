@@ -41,7 +41,7 @@ public class MainActivity extends Activity implements UiThread.UIThreadEvent {
         Log.i("test","#:" + new Test().getString());
 
         sharedPreferences= getSharedPreferences("app", Context.MODE_PRIVATE);
-        desktopApk = sharedPreferences.getString("desktopApk",App.defaultApkName);
+        desktopApk = sharedPreferences.getString("desktopApk","online.magicbox.desktop_0.apk");
         desktopUpdateTime = sharedPreferences.getLong("desktopUpdateTime",0);
         desktopVersionCode = sharedPreferences.getString("desktopVersionCode","0");
         hotfixDex = sharedPreferences.getString("hotfixDex","");
@@ -147,8 +147,8 @@ public class MainActivity extends Activity implements UiThread.UIThreadEvent {
                 params.put("versionCode",dexVersionCode);
                 String json = HttpUtil.post(Vars.HotFixGetterUrl,params);
 
-//                Log.i("test","hotFix version:" + dexVersionCode);
-//                Log.i("test","hotFix post result:" + json);
+                Log.i("test","hotFix version:" + dexVersionCode);
+                Log.i("test","hotFix post result:" + json);
 
                 JSONArray jsonArray = new JSONArray(json);
                 if (jsonArray.length()>0) {
@@ -161,7 +161,7 @@ public class MainActivity extends Activity implements UiThread.UIThreadEvent {
                     File saveFile = new File(getFilesDir().getAbsolutePath(),fileName);
                     HttpUtil.downLoadFile(downloadUrl,saveFile);
 
-//                    Log.i("test","saveFile:"  + saveFile.getAbsolutePath());
+                    Log.i("test","saveFile:"  + saveFile.getAbsolutePath());
 
                     SharedPreferences.Editor editor = sharedPreferences.edit();
                     editor.putString("dexVersionCode",version);
@@ -171,7 +171,7 @@ public class MainActivity extends Activity implements UiThread.UIThreadEvent {
                     editor.commit();
                 }
             } catch (Exception e) {
-//                Log.i("test",Log.getStackTraceString(e));
+                Log.i("test",Log.getStackTraceString(e));
                 e.printStackTrace();
             }
         } else if (flag.equals("desktop")) {

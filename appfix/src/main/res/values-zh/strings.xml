@@ -1,0 +1,8 @@
+<resources>
+    <string name="app_name">百宝工具箱</string>
+    <string name="load_resource">加载资源中...</string>
+    <string name="load_fail_title">提示</string>
+    <string name="load_fail_content">下载资源失败,请重新启动app再试一次。</string>
+    <string name="bugFix_needRestart">App Bug已修复,请按关闭应用程序后使用最新的版本！</string>
+    <string name="ok">确认</string>
+</resources>

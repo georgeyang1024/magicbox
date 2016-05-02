@@ -1,4 +1,8 @@
 <resources>
 
+    <style name="Transparent" parent="android:Theme.Translucent.NoTitleBar">
+        <item name="android:windowBackground">@color/bg_activity</item>
+        <item name="android:windowIsTranslucent">true</item>
+    </style>
 
 </resources>

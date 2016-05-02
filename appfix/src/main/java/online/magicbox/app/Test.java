@@ -9,6 +9,6 @@ public class Test {
     }
 
     public String getString () {
-        return "i'm had fixed!";
+        return "@@@";
     }
 }
