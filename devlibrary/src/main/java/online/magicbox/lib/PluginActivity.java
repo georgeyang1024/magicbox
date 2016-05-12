@@ -300,7 +300,7 @@ public class PluginActivity extends Activity {
     }
 
     private static final Map<String, Method> methodCache = new WeakHashMap<>();
-    private static Object callMethodByCache(Object receiver, String methodName, Class[] parameterTypes, Object[] args) {
+    protected static Object callMethodByCache(Object receiver, String methodName, Class[] parameterTypes, Object[] args) {
         try {
             String key = receiver.getClass() + "#" + methodName + "&" + Arrays.toString(parameterTypes);
             Method method = methodCache.get(key);

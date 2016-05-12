@@ -157,6 +157,11 @@ public class PluginActivity extends Activity {
         });
     }
 
+
+    public Object getSlice() {
+        return mSlice;
+    }
+
     private static final List<PluginActivity> allActivity = new ArrayList<>();
 
     public static void pushMessage(int type, Object object) {
