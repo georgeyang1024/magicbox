@@ -155,6 +155,7 @@
             android:label="test"
             android:name=".PluginActivity"
             android:theme="@android:style/Theme.Holo.Light.NoActionBar"
+            android:windowSoftInputMode="stateAlwaysHidden"
             >
             <intent-filter>
                 <action android:name="online.magicbox.plugin" />

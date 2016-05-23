@@ -18,7 +18,7 @@ import javax.crypto.spec.SecretKeySpec;
  。
  注意：DES加密和解密过程中，密钥长度都必须是8的倍数
  */
-public class DES {
+public class DES_ {
     private static byte[] iv = {1,2,3,4,5,6,7,8};
     public static String encryptDES(String encryptString, String encryptKey) throws Exception {
 //      IvParameterSpec zeroIv = new IvParameterSpec(new byte[8]);

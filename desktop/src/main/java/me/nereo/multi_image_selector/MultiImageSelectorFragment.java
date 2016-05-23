@@ -43,6 +43,7 @@ import me.nereo.multi_image_selector.bean.Image;
 import me.nereo.multi_image_selector.utils.FileUtils;
 import me.nereo.multi_image_selector.utils.TimeUtils;
 import online.magicbox.desktop.R;
+import online.magicbox.lib.PluginFragment;
 import online.magicbox.lib.Slice;
 
 
@@ -50,7 +51,7 @@ import online.magicbox.lib.Slice;
  * 图片选择Fragment
  * Created by Nereo on 2015/4/7.
  */
-public class MultiImageSelectorFragment extends Fragment {
+public class MultiImageSelectorFragment extends PluginFragment {
 
     private static final String TAG = "MultiImageSelector";
 
@@ -117,7 +118,7 @@ public class MultiImageSelectorFragment extends Fragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_multi_image, container, false);
+        return getPluginLayoutInflater().inflate(R.layout.fragment_multi_image, container, false);
     }
 
     @Override
@@ -149,7 +150,7 @@ public class MultiImageSelectorFragment extends Fragment {
 
         // 是否显示照相机
         mIsShowCamera = getArguments().getBoolean(EXTRA_SHOW_CAMERA, true);
-        mImageAdapter = new ImageGridAdapter(getActivity(), mIsShowCamera);
+        mImageAdapter = new ImageGridAdapter(getPluginContext(), mIsShowCamera);
         // 是否显示选择指示器
         mImageAdapter.showSelectIndicator(mode == MODE_MULTI);
 
@@ -236,9 +237,9 @@ public class MultiImageSelectorFragment extends Fragment {
                 mGridWidth = width;
                 mGridHeight = height;
 
-                final int desireSize = getResources().getDimensionPixelOffset(R.dimen.image_size);
+                final int desireSize = getPluginResources().getDimensionPixelOffset(R.dimen.image_size);
                 final int numCount = width / desireSize;
-                final int columnSpace = getResources().getDimensionPixelOffset(R.dimen.space_size);
+                final int columnSpace = getPluginResources().getDimensionPixelOffset(R.dimen.space_size);
                 int columnWidth = (width - columnSpace*(numCount-1)) / numCount;
                 mImageAdapter.setItemSize(columnWidth);
 
@@ -269,14 +270,14 @@ public class MultiImageSelectorFragment extends Fragment {
             }
         });
 
-        mFolderAdapter = new FolderAdapter(getActivity());
+        mFolderAdapter = new FolderAdapter(getPluginContext());
     }
 
     /**
      * 创建弹出的ListView
      */
     private void createPopupFolderList(int width, int height) {
-        mFolderPopupWindow = new ListPopupWindow(getActivity());
+        mFolderPopupWindow = new ListPopupWindow(getPluginContext());
         mFolderPopupWindow.setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
         mFolderPopupWindow.setAdapter(mFolderAdapter);
         mFolderPopupWindow.setContentWidth(width);
@@ -372,12 +373,12 @@ public class MultiImageSelectorFragment extends Fragment {
 
                 final int height = mGridView.getHeight();
 
-                final int desireSize = getResources().getDimensionPixelOffset(R.dimen.image_size);
+                final int desireSize = getPluginResources().getDimensionPixelOffset(R.dimen.image_size);
                 Log.d(TAG, "Desire Size = " + desireSize);
                 final int numCount = mGridView.getWidth() / desireSize;
                 Log.d(TAG, "Grid Size = " + mGridView.getWidth());
                 Log.d(TAG, "num count = " + numCount);
-                final int columnSpace = getResources().getDimensionPixelOffset(R.dimen.space_size);
+                final int columnSpace = getPluginResources().getDimensionPixelOffset(R.dimen.space_size);
                 int columnWidth = (mGridView.getWidth() - columnSpace * (numCount - 1)) / numCount;
                 mImageAdapter.setItemSize(columnWidth);
 
@@ -410,7 +411,7 @@ public class MultiImageSelectorFragment extends Fragment {
             cameraIntent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(mTmpFile));
             startActivityForResult(cameraIntent, REQUEST_CAMERA);
         }else{
-            Toast.makeText(getActivity(), R.string.msg_no_camera, Toast.LENGTH_SHORT).show();
+            Toast.makeText(getPluginContext(), R.string.msg_no_camera, Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -426,7 +427,7 @@ public class MultiImageSelectorFragment extends Fragment {
                     resultList.remove(image.path);
                     if(resultList.size() != 0) {
                         mPreviewBtn.setEnabled(true);
-                        mPreviewBtn.setText(getResources().getString(R.string.preview) + "(" + resultList.size() + ")");
+                        mPreviewBtn.setText(getPluginResources().getString(R.string.preview) + "(" + resultList.size() + ")");
                     }else{
                         mPreviewBtn.setEnabled(false);
                         mPreviewBtn.setText(R.string.preview);
@@ -437,13 +438,13 @@ public class MultiImageSelectorFragment extends Fragment {
                 } else {
                     // 判断选择数量问题
                     if(mDesireImageCount == resultList.size()){
-                        Toast.makeText(getActivity(), R.string.msg_amount_limit, Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getPluginContext(), R.string.msg_amount_limit, Toast.LENGTH_SHORT).show();
                         return;
                     }
 
                     resultList.add(image.path);
                     mPreviewBtn.setEnabled(true);
-                    mPreviewBtn.setText(getResources().getString(R.string.preview) + "(" + resultList.size() + ")");
+                    mPreviewBtn.setText(getPluginResources().getString(R.string.preview) + "(" + resultList.size() + ")");
                     if (mCallback != null) {
                         mCallback.onImageSelected(image.path);
                     }

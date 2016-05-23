@@ -19,7 +19,7 @@ import online.magicbox.bugfix.BundlePathLoader;
  * Created by george.yang on 2016-3-24.
  */
 public class App extends Application {
-    public static final String defaultApkName = "online.magicbox.desktop_0.apk";//默认桌面
+    public static final String defaultApkName = "online.magicbox.desktop_1.apk";//默认桌面
 
     @Override
     protected void attachBaseContext(Context base) {

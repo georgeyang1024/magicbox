@@ -17,8 +17,8 @@
             <option value="$PROJECT_DIR$/devlibrary" />
             <option value="$PROJECT_DIR$/flashlight" />
             <option value="$PROJECT_DIR$/gifgenerate" />
-            <option value="$PROJECT_DIR$/qrcode" />
             <option value="$PROJECT_DIR$/hashever" />
+            <option value="$PROJECT_DIR$/qrcode" />
             <option value="$PROJECT_DIR$/recognizer" />
             <option value="$PROJECT_DIR$/seewifipwd" />
             <option value="$PROJECT_DIR$/tetris" />
@@ -38,11 +38,8 @@
             <option value="$PROJECT_DIR$/devlibrary" />
             <option value="$PROJECT_DIR$/flashlight" />
             <option value="$PROJECT_DIR$/gifgenerate" />
-
-            <option value="$PROJECT_DIR$/qrcode" />
-
             <option value="$PROJECT_DIR$/hashever" />
-
+            <option value="$PROJECT_DIR$/qrcode" />
             <option value="$PROJECT_DIR$/recognizer" />
             <option value="$PROJECT_DIR$/seewifipwd" />
             <option value="$PROJECT_DIR$/tetris" />

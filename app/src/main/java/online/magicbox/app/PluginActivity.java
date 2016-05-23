@@ -417,6 +417,12 @@ public class PluginActivity extends Activity {
         callMethodByCache(mSlice, "onResume", new Class[]{}, new Object[]{});
     }
 
+    @Override
+    protected void onPause() {
+        super.onPause();
+        callMethodByCache(mSlice, "onPause", new Class[]{}, new Object[]{});
+    }
+
     private static final Map<String, Method> methodCache = new WeakHashMap<>();
     private static Object callMethodByCache(Object receiver, String methodName, Class[] parameterTypes, Object[] args) {
         try {

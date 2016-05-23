@@ -42,7 +42,7 @@ public class MainActivity extends Activity implements UiThread.UIThreadEvent {
         sharedPreferences= getSharedPreferences("app", Context.MODE_PRIVATE);
         desktopApk = sharedPreferences.getString("desktopApk",App.defaultApkName);
         desktopUpdateTime = sharedPreferences.getLong("desktopUpdateTime",0);
-        desktopVersionCode = sharedPreferences.getString("desktopVersionCode","0");
+        desktopVersionCode = sharedPreferences.getString("desktopVersionCode","1");
         hotfixDex = sharedPreferences.getString("hotfixDex","");
         hotfixUpdateTime = sharedPreferences.getLong("hotfixUpdateTime",0);
         int versionCode = 0;

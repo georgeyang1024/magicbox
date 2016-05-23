@@ -2,6 +2,7 @@ package online.magicbox.lib;
 
 import android.app.Fragment;
 import android.content.Context;
+import android.content.res.Resources;
 import android.util.Log;
 import android.view.LayoutInflater;
 
@@ -34,5 +35,9 @@ public class PluginFragment extends Fragment {
             }
         }
         return slice;
+    }
+
+    public Resources getPluginResources() {
+        return getPluginContext().getResources();
     }
 }

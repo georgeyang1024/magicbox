@@ -124,6 +124,10 @@ public abstract class Slice extends ContextWrapper {
 
     }
 
+    public void onPause () {
+
+    }
+
     public boolean onCreateOptionsMenu(Menu menu) {
         return false;
     }

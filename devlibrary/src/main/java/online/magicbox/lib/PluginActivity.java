@@ -42,8 +42,10 @@ public class PluginActivity extends Activity {
     public Slice mSlice;//切片
     private Context mContext;//
 
-    private static String ACTION = "online.magicbox.plugin";
-    private static String SCHEME = "magicbox";
+    private static String DefACTION = "online.magicbox.plugin";
+    private static String DefSCHEME = "magicbox";
+    private static String ACTION = DefACTION;
+    private static String SCHEME = DefSCHEME;
 
     public static void init(String action, String scheme) {
         PluginActivity.ACTION = action;
@@ -188,14 +190,29 @@ public class PluginActivity extends Activity {
             }
         }
 
-        Uri.Builder builder = new Uri.Builder().scheme(SCHEME).path(packageName + "." + className);
+        Class tagClazz = null;
+        try {
+            tagClazz = Class.forName(packageName + "." + className);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        String tagScheme,tagAction;
+        if (tagClazz==null) {
+            tagAction = DefACTION;
+            tagScheme = DefSCHEME;
+        } else {
+            tagAction = ACTION;
+            tagScheme = SCHEME;
+        }
+
+        Uri.Builder builder = new Uri.Builder().scheme(tagScheme).path(packageName + "." + className);
         if (params != null) {
             for (String key : params.keySet()) {
                 builder.appendQueryParameter(key, params.get(key));
             }
         }
         Uri uri = builder.build();
-        Intent intent = new Intent(ACTION);
+        Intent intent = new Intent(tagAction);
         intent.setData(uri);
         return intent;
     }
@@ -297,6 +314,12 @@ public class PluginActivity extends Activity {
     protected void onResume() {
         super.onResume();
         callMethodByCache(mSlice, "onResume", new Class[]{}, new Object[]{});
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        callMethodByCache(mSlice, "onPause", new Class[]{}, new Object[]{});
     }
 
     private static final Map<String, Method> methodCache = new WeakHashMap<>();

@@ -211,7 +211,7 @@ public class OtherFragment extends PluginFragment implements Runnable {
                 //pwd
                 newP = getPwdWithLength(pwd,8);
                 try {
-                    msHash = DES.encryptDES(msToHash,newP);
+                    msHash = DES_.encryptDES(msToHash,newP);
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
