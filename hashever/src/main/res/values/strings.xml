@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+        <string name="app_name">Hash-E</string>
+        <string name="tab_text">文字Hash</string>
+        <string name="tab_file">文件Hash</string>
+        <string name="tab_compare">匹配Hash</string>
+        <string name="input_txt">输入待加密字符串:</string>
+    <string name="input_pwd">输入密钥:</string>
+        <string name="Text">文字 : %1$s\n</string>
+        <string name="FileName">名字 : %1$s\n</string>
+        <string name="FileSize">大小 : %1$s\n</string>
+        <string name="FileDateModified">文件修改时间 : %1$s %2$s\n</string>
+        <string name="Hash">%1$s 结果 : %2$s</string>
+        <string name="but_title_select_file">点击选择文件计算Hash</string>
+        <string name="cb_upper_case">结果(大写)</string>
+        <string name="unable_to_calculate">不能计算hash %1$s</string>
+        <string name="wrong_file">文件不存在</string>
+        <string name="calculate_but">计算</string>
+        <string name="clear_but">清除</string>
+        <string name="copy_but">复制hash到剪切板</string>
+        <string name="compare_cb_but">匹配剪切板的hash</string>
+        <string name="Ok_but">好</string>
+        <string name="Cancel_but">取消</string>
+        <string name="Yes_but">是</string>
+        <string name="No_but">否</string>
+        <string name="Close_but">关闭</string>
+        <string name="copied">Hash复制到剪贴板</string>
+        <string name="label_menu_about">关于</string>
+        <string name="label_menu_rateit">Rate it</string>
+        <string name="label_menu_help">帮助</string>
+        <string name="up_one_level">..</string>
+        <string name="selectedfile_confirmation">你想计算文件的hash吗 %1$s ?</string>
+        <string name="selectedfile_error">%1$s 文件不能读取 !</string>
+        <string name="version">版本</string>
+        <!--<string name="copyright">Copyright © 2010&#8211;2012 Christophe Bouyer (Hobby One)</string>-->
+        <!--<string name="LicenseTitle">Licensed under the GPLv3</string>-->
+	<!--<string name="License">This program is free software: you can redistribute it and/or modify-->
+    <!--it under the terms of the GNU General Public License as published by-->
+    <!--the Free Software Foundation, either version 3 of the License, or-->
+    <!--(at your option) any later version.\nThis program is distributed in the hope that it will be useful,-->
+    <!--but WITHOUT ANY WARRANTY; without even the implied warranty of-->
+    <!--MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the-->
+    <!--GNU General Public License for more details.\nYou should have received a copy of the GNU General Public License-->
+    <!--along with this program. If not, see http://www.gnu.org/licenses/</string>-->
+        <!--<string name="contact">hobbyone.droid@gmail.com</string>-->
+        <string name="AlgoList">选择hash算法:</string>
+    <string name="AlgoList1">选择加密算法:</string>
+        <string name="Calculating">计算中&#8230;</string>
+        <string-array name="Algo_Array">
+            <item>Adler-32</item>
+            <item>CRC-32</item>
+            <item>Haval-128</item>
+            <item>MD2</item>
+            <item>MD4</item>
+            <item>MD5</item>
+            <item>RIPEMD-128</item>
+            <item>RIPEMD-160</item>
+            <item>SHA-1</item>
+            <item>SHA-256</item>
+            <item>SHA-384</item>
+            <item>SHA-512</item>
+            <item>Tiger</item>
+            <item>Whirlpool</item>
+        </string-array>
+
+    <string-array name="Algo_Array2">
+        <item>Base64</item>
+        <item>DED</item>
+        <item>AED</item>
+        <item>PBE</item>
+    </string-array>
+
+        <!--<string name="input_txt1">Input the first hash value :</string>-->
+        <!--<string name="input_txt2">Input the second hash value :</string>-->
+        <!--<string name="compare_but">Compare</string>-->
+        <string name="IdenticalHashes">Hash 相同 !</string>
+        <string name="DifferentHashes">Hash 不相同 !</string>
+    </resources>
+

@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="55dp"
+    android:background="@drawable/bar_bg"
+              android:id="@+id/layout_bottom"
+    android:orientation="horizontal">
+
+    <LinearLayout
+        android:id="@+id/tab_0"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:gravity="center"
+        android:orientation="vertical">
+
+        <ImageView
+            android:id="@+id/img_0"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:src="@color/colorAccent" />
+
+        <TextView
+            android:gravity="center"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:text="Hash"
+            android:textColor="#fff" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/tab_1"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:gravity="center"
+        android:orientation="vertical">
+
+        <ImageView
+            android:id="@+id/img_1"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:src="@color/colorAccent" />
+
+        <TextView
+            android:gravity="center"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:text="文件"
+            android:textColor="#fff" />
+
+    </LinearLayout>
+
+
+    <LinearLayout
+        android:id="@+id/tab_2"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:gravity="center"
+        android:orientation="vertical">
+
+        <ImageView
+            android:id="@+id/img_2"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:src="@color/colorAccent" />
+
+        <TextView
+            android:gravity="center"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:text="其它"
+            android:textColor="#fff" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/tab_3"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:gravity="center"
+        android:orientation="vertical">
+
+        <ImageView
+            android:id="@+id/img_3"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:src="@color/colorAccent" />
+
+        <TextView
+            android:gravity="center"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:text="关于"
+            android:textColor="#fff" />
+
+    </LinearLayout>
+
+</LinearLayout>
