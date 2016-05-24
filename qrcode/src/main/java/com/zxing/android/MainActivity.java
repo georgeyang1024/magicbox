@@ -1,4 +1,4 @@
-package com.zijunlin.Zxing.Demo;
+package com.zxing.android;
 
 import android.app.Activity;
 import android.content.Intent;

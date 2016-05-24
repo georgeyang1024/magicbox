@@ -14,15 +14,15 @@
  * limitations under the License.
  */
 
-package com.zijunlin.Zxing.Demo.decoding;
+package com.zxing.android.decoding;
+
+import android.app.Activity;
+import android.os.Handler;
+import android.os.Looper;
 
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.DecodeHintType;
 import com.google.zxing.ResultPointCallback;
-import cn.georgeyang.qrcode.CaptureSlice;
-
-import android.os.Handler;
-import android.os.Looper;
 
 import java.util.Hashtable;
 import java.util.Vector;
@@ -37,17 +37,19 @@ final class DecodeThread extends Thread {
 
   public static final String BARCODE_BITMAP = "barcode_bitmap";
 
-  private final CaptureSlice activity;
+  private final Activity activity;
+    private final CaptureEvent captureEvent;
   private final Hashtable<DecodeHintType, Object> hints;
   private Handler handler;
   private final CountDownLatch handlerInitLatch;
 
-  DecodeThread(CaptureSlice activity,
+  DecodeThread(Activity activity,CaptureEvent captureEvent,
                Vector<BarcodeFormat> decodeFormats,
                String characterSet,
                ResultPointCallback resultPointCallback) {
 
     this.activity = activity;
+      this.captureEvent = captureEvent;
     handlerInitLatch = new CountDownLatch(1);
 
     hints = new Hashtable<DecodeHintType, Object>(3);
@@ -95,7 +97,7 @@ final class DecodeThread extends Thread {
   @Override
   public void run() {
     Looper.prepare();
-    handler = new DecodeHandler(activity, hints);
+    handler = new DecodeHandler(activity,captureEvent, hints);
     handlerInitLatch.countDown();
     Looper.loop();
   }

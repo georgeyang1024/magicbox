@@ -12,13 +12,11 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.zxing.Result;
-import com.zijunlin.Zxing.Demo.CreateQRImageTest;
+import com.zxing.android.CreateQRImageTest;
 
-import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.logging.SimpleFormatter;
 
 import online.magicbox.lib.PluginActivity;
 import online.magicbox.lib.Slice;
@@ -57,8 +55,8 @@ public class MainSlice extends Slice implements View.OnClickListener {
                 finish();
                 break;
             case R.id.scanCodeButton:
-                Intent scan = PluginActivity.buildIntent(getActivity(),CaptureSlice.class);
-                startActivity(scan);
+                Intent scan = PluginActivity.buildIntent(getActivity(),CaptureSlice2.class);
+                getActivity().startActivityForResult(scan,50);
                 break;
             case R.id.scanFileCodeButton:
                 Intent picker = PluginActivity.buildIntent(getActivity(),"online.magicbox.desktop","ImageSelectorSlice","1");
@@ -94,16 +92,29 @@ public class MainSlice extends Slice implements View.OnClickListener {
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         Log.d("test","onActivityResult:" + requestCode + " " + resultCode);
-        ArrayList<String> list = data.getStringArrayListExtra("select_result");
-        if (!(list==null || list.size()==0)) {
-            String path = list.get(0);
-            Log.i("test","path:" + path);
-            Result ret = CreateQRImageTest.scanningImage(path);
-            if (ret==null) {
-                Toast.makeText(this,"解析失败!",Toast.LENGTH_SHORT).show();
-            } else {
-                tv_result.setText(ret.getText());
+        if (requestCode==50) {
+            String result = data.getStringExtra("result");
+            Log.d("test",result);
+            tv_result.setTag(result);
+            tv_result.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    tv_result.setText(tv_result.getTag().toString());
+                }
+            },200);
+        } else if (requestCode==100) {
+            ArrayList<String> list = data.getStringArrayListExtra("select_result");
+            if (!(list==null || list.size()==0)) {
+                String path = list.get(0);
+                Log.i("test","path:" + path);
+                Result ret = CreateQRImageTest.scanningImage(path);
+                if (ret==null) {
+                    Toast.makeText(this,"解析失败!",Toast.LENGTH_SHORT).show();
+                } else {
+                    tv_result.setText(ret.getText());
+                }
             }
         }
+
     }
 }

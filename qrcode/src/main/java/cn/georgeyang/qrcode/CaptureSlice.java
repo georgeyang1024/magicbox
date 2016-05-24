@@ -3,7 +3,6 @@ package cn.georgeyang.qrcode;
 import java.io.IOException;
 import java.util.Vector;
 
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -25,12 +24,11 @@ import android.view.SurfaceView;
 
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.Result;
-import com.zijunlin.Zxing.Demo.camera.CameraManager;
-import com.zijunlin.Zxing.Demo.decoding.CaptureActivityHandler;
-import com.zijunlin.Zxing.Demo.decoding.InactivityTimer;
-import com.zijunlin.Zxing.Demo.view.ViewfinderView;
+import com.zxing.android.camera.CameraManager;
+import com.zxing.android.decoding.CaptureActivityHandler;
+import com.zxing.android.decoding.InactivityTimer;
+import com.zxing.android.view.ViewfinderView;
 
-import cn.georgeyang.qrcode.R;
 import online.magicbox.lib.Slice;
 
 public class CaptureSlice extends Slice implements Callback {
@@ -56,7 +54,7 @@ public class CaptureSlice extends Slice implements Callback {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.main);
 		// 初始化 CameraManager
-		CameraManager.init(getActivity());
+//		CameraManager.init(getActivity());
 		viewfinderView = (ViewfinderView) findViewById(R.id.viewfinder_view);
 		hasSurface = false;
 		inactivityTimer = new InactivityTimer(getActivity());
@@ -99,7 +97,7 @@ public class CaptureSlice extends Slice implements Callback {
 			handler.quitSynchronously();
 			handler = null;
 		}
-		CameraManager.get().closeDriver();
+//		CameraManager.get().closeDriver();
 	}
 
 	@Override
@@ -111,22 +109,22 @@ public class CaptureSlice extends Slice implements Callback {
 
 	private void initCamera(SurfaceHolder surfaceHolder)
 	{
-		try
-		{
-			CameraManager.get().openDriver(surfaceHolder);
-		}
-		catch (IOException ioe)
-		{
-			return;
-		}
-		catch (RuntimeException e)
-		{
-			return;
-		}
-		if (handler == null)
-		{
-			handler = new CaptureActivityHandler(this, decodeFormats, characterSet);
-		}
+//		try
+//		{
+//			CameraManager.get().openDriver(surfaceHolder);
+//		}
+//		catch (IOException ioe)
+//		{
+//			return;
+//		}
+//		catch (RuntimeException e)
+//		{
+//			return;
+//		}
+//		if (handler == null)
+//		{
+//			handler = new CaptureActivityHandler(this, decodeFormats, characterSet);
+//		}
 	}
 
 	@Override

@@ -1,4 +1,4 @@
-package com.zijunlin.Zxing.Demo;
+package com.zxing.android;
 
 import java.io.FileNotFoundException;
 

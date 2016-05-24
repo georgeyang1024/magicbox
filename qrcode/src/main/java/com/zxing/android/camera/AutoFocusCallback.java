@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.zijunlin.Zxing.Demo.camera;
+package com.zxing.android.camera;
 
 import android.hardware.Camera;
 import android.os.Handler;
@@ -35,6 +35,7 @@ final class AutoFocusCallback implements Camera.AutoFocusCallback {
     this.autoFocusMessage = autoFocusMessage;
   }
 
+  @Override
   public void onAutoFocus(boolean success, Camera camera) {
     if (autoFocusHandler != null) {
       Message message = autoFocusHandler.obtainMessage(autoFocusMessage, success);
