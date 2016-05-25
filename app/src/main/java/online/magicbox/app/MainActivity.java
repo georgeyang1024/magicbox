@@ -24,6 +24,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
+import cn.jpush.android.api.JPushInterface;
+
 
 public class MainActivity extends Activity implements UiThread.UIThreadEvent {
     private  LoadingView loadingView;
@@ -40,9 +42,10 @@ public class MainActivity extends Activity implements UiThread.UIThreadEvent {
         super.onCreate(savedInstanceState);
 
         sharedPreferences= getSharedPreferences("app", Context.MODE_PRIVATE);
-        desktopApk = sharedPreferences.getString("desktopApk",App.defaultApkName);
+//        desktopApk = sharedPreferences.getString("desktopApk",App.defaultApkName);
+        desktopApk = sharedPreferences.getString("desktopApk","");
         desktopUpdateTime = sharedPreferences.getLong("desktopUpdateTime",0);
-        desktopVersionCode = sharedPreferences.getString("desktopVersionCode","1");
+        desktopVersionCode = sharedPreferences.getString("desktopVersionCode","0");
         hotfixDex = sharedPreferences.getString("hotfixDex","");
         hotfixUpdateTime = sharedPreferences.getLong("hotfixUpdateTime",0);
         int versionCode = 0;

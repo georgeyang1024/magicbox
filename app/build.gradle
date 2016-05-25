@@ -90,7 +90,7 @@ task('processWithJavassist') << {
 
     String classPath = project(':app').buildDir.absolutePath + '/intermediates/classes/debug'//项目编译class所在目录
     String libPath = "$rootDir/transformClasses;$rootDir/transformClasses/buildLib" //AntilazyLoad.class所在目錄
-    String igonre = "*.App;*.BuildConfig;online.magicbox.bugfix.*;online.magicbox.app.R.*;"
+    String igonre = "*.App;*.BuildConfig;online.magicbox.bugfix.*;online.magicbox.app.R.*;cn.jpush.*"
     println classPath
     println libPath
     println igonre
@@ -118,4 +118,5 @@ dependencies {
     //    compile 'com.alibaba:fastjson:1.2.8'
     compile files('libs/AMap_Location_V2.2.0_20151222.jar')
     compile files('libs/jpush-android-2.1.3.jar')
+    compile files('libs/jpush-android-2.1.5.jar')
 }

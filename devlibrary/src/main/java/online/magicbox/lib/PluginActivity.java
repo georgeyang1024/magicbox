@@ -44,12 +44,21 @@ public class PluginActivity extends Activity {
 
     private static String DefACTION = "online.magicbox.plugin";
     private static String DefSCHEME = "magicbox";
+    private static String DefVersion = "1";
     private static String ACTION = DefACTION;
     private static String SCHEME = DefSCHEME;
+    private static String VERSION = DefVersion;
+
 
     public static void init(String action, String scheme) {
         PluginActivity.ACTION = action;
         PluginActivity.SCHEME = scheme;
+    }
+
+    public static void init(String action, String scheme,String version) {
+        PluginActivity.ACTION = action;
+        PluginActivity.SCHEME = scheme;
+        PluginActivity.VERSION = version;
     }
 
 
@@ -116,7 +125,7 @@ public class PluginActivity extends Activity {
 
 
     public static Intent buildIntent(Context context,Class clazz) {
-        return buildIntent(context,clazz.getPackage().getName(), clazz.getSimpleName(), PluginConfig.pluginVersion);
+        return buildIntent(context,clazz.getPackage().getName(), clazz.getSimpleName(), PluginActivity.VERSION);
     }
 
     public static Intent buildIntent(Context context,Class clazz, String animType) {
@@ -151,7 +160,7 @@ public class PluginActivity extends Activity {
             params.put("animType",PluginConfig.System);
         }
         if (!params.containsKey("version")) {
-            params.put("version",PluginConfig.pluginVersion);
+            params.put("version",PluginActivity.VERSION);
         }
 
 
@@ -266,7 +275,7 @@ public class PluginActivity extends Activity {
 
             version = uri.getQueryParameter("version");
             if (TextUtils.isEmpty(version)) {
-                version = PluginConfig.pluginVersion;
+                version = PluginActivity.VERSION;
             }
 
             animType = uri.getQueryParameter("animType");

@@ -1,10 +1,12 @@
 package cn.georgeyang.database;
 
+import cn.georgeyang.csdnblog.bean.ParcelableEntity;
+
 /**
  *
  * Created by george.yang on 2015/9/16.
  */
-public abstract class Model {
+public abstract class Model extends ParcelableEntity {
     public int _id;
     public long _addTime;
     public long _updateTime;

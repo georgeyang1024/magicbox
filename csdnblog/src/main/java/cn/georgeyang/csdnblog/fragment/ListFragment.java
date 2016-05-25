@@ -11,6 +11,8 @@ import android.widget.AdapterView;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 
+import com.alibaba.fastjson.JSONObject;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -111,7 +113,6 @@ public class ListFragment extends BaseFragment implements NetCallback<String>,IX
                 mReLoadImageView.setVisibility(View.VISIBLE);
             }
         }
-
     }
 
     @Override
@@ -135,7 +136,7 @@ public class ListFragment extends BaseFragment implements NetCallback<String>,IX
         Intent i = PluginActivity.buildIntent(getActivity(), BlogContentSlice.class);
 //        Intent i = new Intent();
 //        i.setClass(HotListActivity.this, BlogContentActivity.class);
-        i.putExtra("blogItem", item);
+        i.putExtra("blogItem", JSONObject.toJSONString(item));
         startActivity(i);
     }
 

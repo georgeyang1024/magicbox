@@ -31,6 +31,8 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.ToggleButton;
 
+import com.alibaba.fastjson.JSONObject;
+
 import cn.georgeyang.csdnblog.bean.BlogHtml;
 import cn.georgeyang.csdnblog.bean.BlogItem;
 import cn.georgeyang.csdnblog.util.JsoupUtil;
@@ -95,7 +97,8 @@ public class BlogContentSlice extends Slice implements OnClickListener,OnChecked
 //		mBlogCollectDao = DaoFactory.getInstance().getBlogCollectDao(this);
 		mHistoryUrlList = new ArrayList<String>();
 
-		mBlogItem = (BlogItem) getIntent().getSerializableExtra("blogItem");
+		String extra = getIntent().getStringExtra("blogItem");
+		mBlogItem = JSONObject.parseObject(extra,BlogItem.class);
 		if (mBlogItem != null) {
 			mUrl = mBlogItem.getLink();
 			mTitle = mBlogItem.getTitle();

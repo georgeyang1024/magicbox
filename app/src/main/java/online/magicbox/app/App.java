@@ -12,6 +12,7 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 
+import cn.jpush.android.api.JPushInterface;
 import online.magicbox.bugfix.AssetUtils;
 import online.magicbox.bugfix.BundlePathLoader;
 
@@ -19,7 +20,7 @@ import online.magicbox.bugfix.BundlePathLoader;
  * Created by george.yang on 2016-3-24.
  */
 public class App extends Application {
-    public static final String defaultApkName = "online.magicbox.desktop_1.apk";//默认桌面
+//    public static final String defaultApkName = "online.magicbox.desktop_1.apk";//默认桌面
 
     @Override
     protected void attachBaseContext(Context base) {
@@ -32,7 +33,7 @@ public class App extends Application {
             baseDexPath = AssetUtils.copyAsset(base, baseDexPath, base.getFilesDir().getAbsoluteFile());
             dexFiles.add(new File(baseDexPath));
 
-            AssetUtils.copyAsset(base, defaultApkName, base.getFilesDir().getAbsoluteFile());
+//            AssetUtils.copyAsset(base, defaultApkName, base.getFilesDir().getAbsoluteFile());
 
             SharedPreferences sp = getSharedPreferences("app", Context.MODE_PRIVATE);
             baseDexPath = sp.getString("hotfixDex","");
@@ -54,6 +55,8 @@ public class App extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
+        JPushInterface.setDebugMode(true); 	// 设置开启日志,发布时请关闭日志
+        JPushInterface.init(this);     		// 初始化 JPush
         try {
             Class crashClass = Class.forName("online.magicbox.app.CrashHandler");
             Method getInstance = crashClass.getMethod("getInstance",new Class[]{});

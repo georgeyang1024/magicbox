@@ -9,7 +9,6 @@ package cn.georgeyang.csdnblog.bean;
  */
 public class BlogItem extends BaseEntity {
 
-	private static final long serialVersionUID = 3348273811892710379L;
 
 //	@Column(column = "title")
 	private String title; // 标题
