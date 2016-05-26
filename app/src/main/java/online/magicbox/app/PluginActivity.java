@@ -387,20 +387,11 @@ public class PluginActivity extends Activity {
                 return;
             }
 
-            if (ReflectUtil.getClass("com.android.internal.policy.PolicyManager") == null) {
-                new AlertDialog.Builder(mContext).setTitle("提示").setCancelable(false).setMessage("不支持的手机系统版本!请更换系统或更换手机以使用本软件~").setNegativeButton("确认", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        finish();
-                    }
-                }).create().show();
-            } else {
-                try {
-                    callMethodByCacheWithException(mSlice, "onCreate", new Class[]{Bundle.class}, new Object[]{obj});
-                    allActivity.add(PluginActivity.this);
-                } catch (Exception e){
-                    finishWithException(e);
-                }
+            try {
+                callMethodByCacheWithException(mSlice, "onCreate", new Class[]{Bundle.class}, new Object[]{obj});
+                allActivity.add(PluginActivity.this);
+            } catch (Exception e){
+                finishWithException(e);
             }
         }
     };

@@ -95,14 +95,14 @@ public class MainActivity extends Activity implements UiThread.UIThreadEvent {
         needCheck = needCheck || (desktopUpdateTime > System.currentTimeMillis());//系统时间变更
         needCheck = needCheck || (apkFile == null || !apkFile.exists());
         if (needCheck) {
-            if (!(apkFile==null || !apkFile.exists())){
-                //默认文件存在,上线专用
-                intoDesktop();
-            } else {
+//            if (!(apkFile==null || !apkFile.exists())){
+//                //默认文件存在,上线专用
+//                intoDesktop();
+//            } else {
                 setContentView(R.layout.activity_main);
                 loadingView = (LoadingView) findViewById(R.id.loadingView);
                 loadingView.setLoadingText(getString(R.string.load_resource));
-            }
+//            }
 
             SharedPreferences.Editor editor = sharedPreferences.edit();
             editor.putString("desktopApk","");
@@ -111,10 +111,11 @@ public class MainActivity extends Activity implements UiThread.UIThreadEvent {
             editor.commit();
 
             UiThread.init(this).setFlag("desktop").start(this);
-            return;
+        } else {
+            intoDesktop();
         }
 
-        intoDesktop();
+        //end
     }
 
     private boolean isIntoDesktop;

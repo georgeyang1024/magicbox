@@ -12,11 +12,14 @@ import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.Window;
 
 import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
@@ -207,17 +210,30 @@ public class PluginContext extends ContextWrapper {
 		if (LAYOUT_INFLATER_SERVICE.equals(name)) {
 			if (mLayoutInflater == null) {
 				try {
-					Class<?> cls = ReflectUtil.getClass("com.android.internal.policy.PolicyManager");
-					Method m = cls.getMethod("makeNewLayoutInflater",
-							Context.class);
-					//传入当前PluginProxyContext类实例，创建一个布局加载器
-					mLayoutInflater = (LayoutInflater) m.invoke(null, this);
+					Class<?> policyClass = ReflectUtil.getClass("com.android.internal.policy.PolicyManager");
+					if (policyClass==null) {
+						//https://android.googlesource.com/platform/frameworks/base/+/android-6.0.1_r25/core/java/com/android/internal/policy/PhoneWindow.java
+						policyClass = ReflectUtil.getClass("com.android.internal.policy.PhoneLayoutInflater");
+						if (policyClass==null) {
+							//https://android.googlesource.com/platform/frameworks/base/+/696cba573e651b0e4f18a4718627c8ccecb3bda0/policy/src/com/android/internal/policy/impl/PhoneLayoutInflater.java
+							policyClass = ReflectUtil.getClass("com.android.internal.policy.impl.PhoneLayoutInflater");
+						}
+						Constructor<?> localConstructor = policyClass.getConstructor(new Class[]{Context.class});
+						mLayoutInflater = (LayoutInflater) localConstructor.newInstance(new Object[]{this});
+					} else {
+						//com.android.internal.policy.Policy
+						Method m = policyClass.getMethod("makeNewLayoutInflater",
+								Context.class);
+						//传入当前PluginProxyContext类实例，创建一个布局加载器
+						mLayoutInflater = (LayoutInflater) m.invoke(null, this);
+					}
+
 				} catch (Throwable e) {
 					e.printStackTrace();
 				}
-			} else {
-				return mLayoutInflater;
 			}
+
+			return mLayoutInflater;
 		}
 		return super.getSystemService(name);
 	}
