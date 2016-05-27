@@ -39,7 +39,9 @@ public class ImageLoder {
 
                     String path = (String) imageView.getTag();
                     if (flag.equals(path)) {
-                        LruCache.getInstance().put(cachekey,bitmap);
+                        if (cachekey!=null && bitmap != null) {
+                            LruCache.getInstance().put(cachekey,bitmap);
+                        }
                     }
                 }
                 Thread.currentThread().interrupt();
@@ -82,7 +84,9 @@ public class ImageLoder {
                     return null;
                 }
             }
-            LruCache.getInstance().put(filePathCacheKey,cacheFile);
+            if (filePathCacheKey!=null && cacheFile!=null) {
+                LruCache.getInstance().put(filePathCacheKey,cacheFile);
+            }
         }
 
         //try getBitmap with width and height
@@ -90,7 +94,7 @@ public class ImageLoder {
         Bitmap bitmap = LruCache.getInstance().getFast(cacheKey);
         if (bitmap == null) {
             bitmap = BitmapCompressor.decodeSampledBitmapFromFile(cacheFile.getAbsolutePath(), maxWidth, maxHeight);
-            if (bitmap!=null) {
+            if (cacheKey !=null & bitmap!=null) {
                 LruCache.getInstance().put(cacheKey,bitmap);
             }
         }

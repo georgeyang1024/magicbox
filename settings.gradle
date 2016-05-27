@@ -1,5 +1,3 @@
-
-
-include ':app', ':desktop', ':appfix', ':flashlight', ':devlibrary', ':calculator', ':wificonnect', ':seewifipwd', ':gifgenerate', ':csdnblog', ':xlistview', ':traintecket', ':tetris', ':recognizer', ':hashever', ':qrcode'
+include ':app', ':desktop', ':flashlight', ':devlibrary', ':calculator', ':wificonnect', ':seewifipwd', ':gifgenerate', ':csdnblog', ':xlistview', ':traintecket', ':tetris', ':recognizer', ':hashever', ':qrcode'
 
 

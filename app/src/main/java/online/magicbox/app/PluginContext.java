@@ -132,7 +132,7 @@ public class PluginContext extends ContextWrapper {
 				while ((zipEntry = zipIn.getNextEntry()) != null) {
 					String name = zipEntry.getName();
 					if (!TextUtils.isEmpty(name)) {
-						if (name.startsWith("lib/" + Build.CPU_ABI)) {
+						if (name.startsWith("lib/" + Build.CPU_ABI + "/")) {
 							String fileName = name.substring(name.lastIndexOf("/")+1,name.length());
 							try {
 								FileOutputStream fileOut = new FileOutputStream(new File(libPath,fileName));

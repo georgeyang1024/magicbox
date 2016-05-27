@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.view.View;
 import android.widget.Button;
@@ -67,7 +68,10 @@ public class ImageSelectorSlice extends Slice implements MultiImageSelectorFragm
             if (ContextCompat.checkSelfPermission(this,
                     Manifest.permission.READ_EXTERNAL_STORAGE)
                     != PackageManager.PERMISSION_GRANTED) {
-                Toast.makeText(this,"no permission",Toast.LENGTH_SHORT).show();
+//                Toast.makeText(this,"no permission",Toast.LENGTH_SHORT).show();
+//                finish();
+                ActivityCompat.requestPermissions(getActivity(),
+                        new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, 123);
                 finish();
             }
         }
