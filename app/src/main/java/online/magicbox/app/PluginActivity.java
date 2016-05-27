@@ -2,6 +2,7 @@ package online.magicbox.app;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.FragmentManager;
 import android.app.LoaderManager;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -340,10 +341,36 @@ public class PluginActivity extends Activity {
 
         File pluginFile = new File(this.getFilesDir(),String.format("%s_%s.apk",new Object[]{packageName,version}));
         if (pluginFile==null || !pluginFile.exists()) {
+            //try resetVersion
+            File[] files = getFilesDir().listFiles();
+            if (!(files==null || files.length==0)) {
+                int maxVersion = 0;
+                for (File mFile:files) {
+                    String name = mFile.getName();
+                    String start_ = packageName+"_";
+                    String end_ = ".apk";
+                    if (name.startsWith(start_) && name.endsWith(end_)) {
+                        String existVersion = name.substring(start_.length(),name.length()-end_.length());
+                        try {
+                            int temVersion = Integer.valueOf(existVersion);
+                            if (temVersion>maxVersion) {
+                                maxVersion = temVersion;
+                            }
+                        } catch (Exception e) {
+
+                        }
+                    }
+                }
+                version = maxVersion+"";
+            }
+        }
+        pluginFile = new File(this.getFilesDir(),String.format("%s_%s.apk",new Object[]{packageName,version}));
+        if (pluginFile==null || !pluginFile.exists()) {
             Toast.makeText(this, "插件已被删除，请重新下载！", Toast.LENGTH_SHORT).show();
             finish();
             return;
         }
+
         String pluginPath = pluginFile.getAbsolutePath();
         ClassLoader plugClassLoder = PlugClassLoder.plugClassLoderCache.get(pluginPath);
         float mb = ((float) pluginFile.length() / (float) (1024 * 1024));
@@ -661,7 +688,7 @@ public class PluginActivity extends Activity {
 
     @Override
     protected void onSaveInstanceState(Bundle outState) {
-        super.onSaveInstanceState(outState);
+//        super.onSaveInstanceState(outState);//bug append here
         callMethodByCache(mSlice, "onSaveInstanceState", new Class[]{Bundle.class}, new Object[]{outState});
     }
 
@@ -675,5 +702,21 @@ public class PluginActivity extends Activity {
     public void onStop() {
         super.onStop();
         callMethodByCache(mSlice, "onStop", new Class[]{}, new Object[]{});
+    }
+
+    @Override
+    public Intent getIntent() {
+        return super.getIntent();
+    }
+
+    @Override
+    public FragmentManager getFragmentManager() {
+        return super.getFragmentManager();
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        callMethodByCache(mSlice, "onActivityResult", new Class[]{int.class,int.class,Intent.class}, new Object[]{requestCode,resultCode,data});
     }
 }

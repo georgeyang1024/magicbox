@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+
+    android:orientation="vertical">
+
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="400dp"
+        android:minWidth="300dp"
+        android:minHeight="300dp"
+        android:orientation="vertical">
+
+        <ImageView
+            android:id="@+id/indication"
+            android:layout_width="match_parent"
+            android:layout_height="5dp"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="82dp"
+            android:layout_alignParentBottom="true"
+            android:src="@drawable/shadow" />
+
+        <com.mingle.widget.ShapeLoadingView
+            android:id="@+id/shapeLoadingView"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="10dp" />
+
+        <TextView
+            android:id="@+id/promptTV"
+            android:layout_alignParentBottom="true"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:textColor="@android:color/white"
+            android:textStyle="bold"
+            android:textSize="20sp"
+            />
+
+    </RelativeLayout>
+</RelativeLayout><!-- From: file:/Users/touch_ping/Code/android/MagicBox/appfix/src/main/res/layout/load_view.xml -->

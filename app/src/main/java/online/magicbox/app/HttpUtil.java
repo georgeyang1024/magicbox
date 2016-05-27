@@ -248,6 +248,7 @@ public class HttpUtil {
 
     private static final int BUFFER_SIZE = 1024 * 10;// 10k缓存
     public static void downLoadFile (String urlString,File file) throws Exception {
+        Log.i("test","startDownLoad:" + urlString);
         // 重置开始点
         long startPosition = file.length();
         int filesize;
@@ -263,43 +264,50 @@ public class HttpUtil {
         if (!dir.exists()) {
             dir.mkdirs();
         }
-            if (!file.exists()) {
-                file.createNewFile();
-            }
+        if (!file.exists()) {
+            file.createNewFile();
+        }
 
-            con = url.openConnection();
-            con.setRequestProperty("Connection", "Keep-Alive");
-             con.setRequestProperty("Charset", "UTF-8");
+        con = url.openConnection();
+        con.setRequestProperty("Connection", "Keep-Alive");
+        con.setRequestProperty("Charset", "UTF-8");
         con.setRequestProperty("Content-Type", "text/xml; charset=UTF-8");
 
-            testcon = url.openConnection();
-            filesize = testcon.getContentLength();
+        testcon = url.openConnection();
+        filesize = testcon.getContentLength();
         Log.i("test","filezie:" + filesize);
-            if (con.getReadTimeout() == 5) {
-                // 网络错误(超时)
-                throw new TimeoutException("connect timeout");
-            }
+        if (con.getReadTimeout() == 5) {
+            // 网络错误(超时)
+            throw new TimeoutException("connect timeout");
+        }
 
-            con.setAllowUserInteraction(true);
-            // 设置当前线程下载的起点，终点
-            con.setRequestProperty("Range", "bytes=" + startPosition + "-");
+        con.setAllowUserInteraction(true);
+        // 设置当前线程下载的起点，终点
+        con.setRequestProperty("Range", "bytes=" + startPosition + "-");
 
-            if (startPosition >= filesize) {
-                //下载完成
-                return;
+        if (filesize==-1) {
+            //服务器返回未知长度
+            startPosition = 0;
+            if (file.exists()) {
+                file.delete();
+                file.createNewFile();
             }
+        } else if (startPosition >= filesize) {
+            //下载完成
+            return;
+        }
 
 //            Log.i(TAG, "con.getContentLength() =" + con.getContentLength()
 //                    + " filesize;" + filesize + " startPosition;"
 //                    + startPosition);
 
-            // 使用java中的RandomAccessFile 对文件进行随机读写操作
-            fos = new RandomAccessFile(file, "rw");
+        // 使用java中的RandomAccessFile 对文件进行随机读写操作
+        fos = new RandomAccessFile(file, "rw");
 
-            // 设置开始写文件的位置
-            fos.seek(startPosition);
-            bis = new BufferedInputStream(con.getInputStream());
-            // 开始循环以流的形式读写文件
+        // 设置开始写文件的位置
+        fos.seek(startPosition);
+        bis = new BufferedInputStream(con.getInputStream());
+        // 开始循环以流的形式读写文件
         int len = 0;
         while ((len = bis.read(buf, 0, BUFFER_SIZE)) != -1) {
 //            while (curPosition < filesize) {

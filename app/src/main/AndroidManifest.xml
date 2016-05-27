@@ -204,11 +204,11 @@
 
         </activity>
 
-        <activity
-            android:name=".ProxyActivity"
-            android:theme="@android:style/Theme.Holo.Light.NoActionBar"
-            android:label="proxy"
-            />
+        <!--<activity-->
+            <!--android:name=".ProxyActivity"-->
+            <!--android:theme="@android:style/Theme.Holo.Light.NoActionBar"-->
+            <!--android:label="proxy"-->
+            <!--/>-->
 
 
 

@@ -1,8 +1,0 @@
-<resources>
-    <string name="app_name">Magic Box</string>
-    <string name="load_resource">resource loading...</string>
-    <string name="load_fail_title">Alert</string>
-    <string name="load_fail_content">loading fail,please restart app and try again.</string>
-    <string name="bugFix_needRestart">app bug had fix,please restart to use newest version.</string>
-    <string name="ok">ok</string>
-</resources>

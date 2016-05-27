@@ -151,7 +151,7 @@ public class MainActivity extends Activity implements UiThread.UIThreadEvent {
                 String json = HttpUtil.post(Vars.HotFixGetterUrl,params);
 
 //                Log.i("test","hotFix version:" + dexVersionCode);
-//                Log.i("test","hotFix post result:" + json);
+                Log.i("test","hotFix post result:" + json);
 
                 JSONArray jsonArray = new JSONArray(json);
                 if (jsonArray.length()>0) {
@@ -174,7 +174,7 @@ public class MainActivity extends Activity implements UiThread.UIThreadEvent {
                     editor.commit();
                 }
             } catch (Exception e) {
-//                Log.i("test",Log.getStackTraceString(e));
+                Log.i("test",Log.getStackTraceString(e));
                 e.printStackTrace();
             }
         } else if (flag.equals("desktop")) {
@@ -185,13 +185,13 @@ public class MainActivity extends Activity implements UiThread.UIThreadEvent {
                 params.put("versionCode",desktopVersionCode);
                 String json = HttpUtil.post(Vars.DesktopGetterUrl,params);
 
-//                Log.i("test","desktop post result:" + json);
+                Log.i("test","desktop post result:" + json);
 
                 JSONArray jsonArray = new JSONArray(json);
                 if (jsonArray.length()>0) {
                     JSONObject jsonObject = jsonArray.getJSONObject(0);
                     String packageName = jsonObject.optString("packageName","");
-                    String versionCode = jsonObject.optInt("version",1)+"";
+                    String versionCode = jsonObject.optInt("versionCode",1)+"";
                     String fileName = packageName + "_" + versionCode + ".apk";
 
                     String downloadUrl = jsonObject.optString("downloadUrl");
