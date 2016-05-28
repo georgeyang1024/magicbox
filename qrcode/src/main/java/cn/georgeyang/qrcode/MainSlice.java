@@ -1,5 +1,6 @@
 package cn.georgeyang.qrcode;
 
+import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -55,13 +56,10 @@ public class MainSlice extends Slice implements View.OnClickListener {
                 finish();
                 break;
             case R.id.scanCodeButton:
-                Intent scan = PluginActivity.buildIntent(getActivity(),CaptureSlice2.class);
-                getActivity().startActivityForResult(scan,50);
+                requestPermission(123,Manifest.permission.CAMERA);
                 break;
             case R.id.scanFileCodeButton:
-                Intent picker = PluginActivity.buildIntent(getActivity(),"online.magicbox.desktop","ImageSelectorSlice","1");
-                picker.putExtra("select_count_mode",0);
-                getActivity().startActivityForResult(picker,100);
+                requestPermission(234,Manifest.permission.READ_EXTERNAL_STORAGE);
                 break;
             case R.id.greanlCodeButton:
                 bitmap = CreateQRImageTest.createQRImage(tv_result.getText().toString());
@@ -88,6 +86,21 @@ public class MainSlice extends Slice implements View.OnClickListener {
         }
     }
 
+
+    @Override
+    public void onPermissionGiven(int code,String permission) {
+        super.onPermissionGiven(code,permission);
+        if (code == 123) {
+            Intent scan = PluginActivity.buildIntent(getActivity(), CaptureSlice2.class);
+            getActivity().startActivityForResult(scan, 50);
+        }
+        if (code==234) {
+            Intent picker = PluginActivity.buildIntent(getActivity(),"online.magicbox.desktop","ImageSelectorSlice","1");
+            picker.putExtra("select_count_mode",0);
+            getActivity().startActivityForResult(picker,100);
+        }
+    }
+
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -103,16 +116,20 @@ public class MainSlice extends Slice implements View.OnClickListener {
                 }
             },200);
         } else if (requestCode==100) {
-            ArrayList<String> list = data.getStringArrayListExtra("select_result");
-            if (!(list==null || list.size()==0)) {
-                String path = list.get(0);
-                Log.i("test","path:" + path);
-                Result ret = CreateQRImageTest.scanningImage(path);
-                if (ret==null) {
-                    Toast.makeText(this,"解析失败!",Toast.LENGTH_SHORT).show();
-                } else {
-                    tv_result.setText(ret.getText());
+            if (resultCode==RESULT_OK) {
+                ArrayList<String> list = data.getStringArrayListExtra("select_result");
+                if (!(list==null || list.size()==0)) {
+                    String path = list.get(0);
+                    Log.i("test","path:" + path);
+                    Result ret = CreateQRImageTest.scanningImage(path);
+                    if (ret==null) {
+                        Toast.makeText(this,"解析失败!",Toast.LENGTH_SHORT).show();
+                    } else {
+                        tv_result.setText(ret.getText());
+                    }
                 }
+            } else {
+                Toast.makeText(getActivity(),"图片选择器在desktop里面，没有正常安装，不能启动图片选择器",Toast.LENGTH_SHORT).show();
             }
         }
 

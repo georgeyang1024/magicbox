@@ -1,5 +1,6 @@
 package online.magicbox.desktop;
 
+import android.Manifest;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
@@ -7,6 +8,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Bundle;
+import android.os.SystemClock;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -21,6 +23,7 @@ import com.google.gson.reflect.TypeToken;
 
 import java.io.File;
 import java.lang.reflect.Type;
+import java.security.Permission;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -72,15 +75,21 @@ public class MainSlice extends Slice implements View.OnClickListener, UiThread.U
         setContentView(R.layout.fragment_main);
         UiThread.init(this).setFlag("init").start(this);
         UiThread.init(this).setFlag("cache").start(this);
+
+
     }
+
 
     @Override
     public boolean onBackPressed() {
+        boolean ret;
         if (multiDirectionSlidingDrawer.isOpened()) {
             multiDirectionSlidingDrawer.animateClose();
-            return true;
+            ret =  true;
+        } else {
+            ret = false;
         }
-        return super.onBackPressed();
+        return ret;
     }
 
     @Override
@@ -279,6 +288,7 @@ public class MainSlice extends Slice implements View.OnClickListener, UiThread.U
                         dialog.dismiss();
                     }
                 }
+
                 break;
             case "cache":
                 UiThread.init(this).setFlag("initMenu").start(this);
@@ -364,6 +374,7 @@ public class MainSlice extends Slice implements View.OnClickListener, UiThread.U
 
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
+        Log.d("test","onKeyDown:" + keyCode);
         if (keyCode == KeyEvent.KEYCODE_MENU) {
             if (!multiDirectionSlidingDrawer.isOpened()) {
                 multiDirectionSlidingDrawer.animateOpen();

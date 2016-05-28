@@ -1,5 +1,7 @@
 package online.magicbox.app;
 
+import android.annotation.SuppressLint;
+import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.FragmentManager;
@@ -7,9 +9,14 @@ import android.app.LoaderManager;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
+import android.os.Process;
+import android.provider.Settings;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.ContextMenu;
@@ -444,22 +451,43 @@ public class PluginActivity extends Activity {
     private static final Map<String, Method> methodCache = new WeakHashMap<>();
     private static Object callMethodByCache(Object receiver, String methodName, Class[] parameterTypes, Object[] args) {
         try {
-            callMethodByCacheWithException(receiver,methodName,parameterTypes,args);
+            return callMethodByCacheWithException(receiver,methodName,parameterTypes,args);
         } catch (Exception e) {
-//            e.printStackTrace();
+            e.printStackTrace();
         }
         return null;
     }
 
     private static Object callMethodByCacheWithException(Object receiver, String methodName, Class[] parameterTypes, Object[] args) throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
-            String key = receiver.getClass() + "#" + methodName + "&" + Arrays.toString(parameterTypes);
-            Method method = methodCache.get(key);
-            if (method == null) {
-                method = receiver.getClass().getMethod(methodName, parameterTypes);
-                methodCache.put(key, method);
-            } else {
+        String key = receiver.getClass().getName() + "#" + methodName + "&" + Arrays.toString(parameterTypes);
+        Method method = methodCache.get(key);
+        if (method == null) {
+            Class currClass = receiver.getClass();
+            while (method==null) {
+                try {
+                    method = currClass.getMethod(methodName,parameterTypes);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+                if (method==null) {
+                    try {
+                        method = receiver.getClass().getDeclaredMethod(methodName, parameterTypes);
+                        method.setAccessible(true);
+                    } catch (Exception e) {
+
+                    }
+                }
+                currClass = currClass.getSuperclass();
+                if (currClass==null) {
+                    break;
+                }
             }
-            return method.invoke(receiver, args);
+
+            if (method!=null) {
+                methodCache.put(key,method);
+            }
+        }
+        return method.invoke(receiver, args);
     }
 
     private static Class findClass(Class clazz,Class tagClass) {
@@ -718,5 +746,65 @@ public class PluginActivity extends Activity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         callMethodByCache(mSlice, "onActivityResult", new Class[]{int.class,int.class,Intent.class}, new Object[]{requestCode,resultCode,data});
+    }
+
+    public final void requestPermission (String permission,int requestCode) {
+        if (permission == null) {
+            throw new IllegalArgumentException("permission is null");
+        }
+
+        boolean hasPermission = false;
+        boolean shouldShow = false;
+        int cheResult = this.checkPermission(permission, android.os.Process.myPid(), Process.myUid());
+        if (cheResult != PackageManager.PERMISSION_GRANTED) {
+            if (Build.VERSION.SDK_INT >= 23) {
+                shouldShow = shouldShowRequestPermissionRationale(permission);
+            }
+            if (shouldShow) {
+                Intent intent = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
+                intent.setData(Uri.parse("package:" + getPackageName()));
+                startActivity(intent);
+            } else {
+                //申请权限
+                if (Build.VERSION.SDK_INT >= 23) {
+                    requestPermissions(new String[]{permission}, requestCode);
+                    return;
+                }
+            }
+        } else {
+            hasPermission = true;
+        }
+
+        if (hasPermission) {
+            onPermissionGiven(permission,requestCode);
+        } else {
+            String pName = TextUtils.isEmpty(permission)?"error":permission.substring(permission.lastIndexOf('.')+1,permission.length());
+            String tip;
+            if (shouldShow) {
+                tip = Strings.get(this,"openPermission",new Object[]{pName});
+            } else {
+                tip = Strings.get(this,"noPermission",new Object[]{pName});
+            }
+            Toast.makeText(this,tip,Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    public void onPermissionGiven (String permission,int requestCode) {
+        callMethodByCache(mSlice, "onPermissionGiven", new Class[]{String.class,int.class}, new Object[]{permission,requestCode});
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if (grantResults.length > 0 ){
+            for (int i=0;i<permissions.length;i++) {
+                if (grantResults[i]== PackageManager.PERMISSION_GRANTED) {
+                    onPermissionGiven(permissions[i],requestCode);
+                } else {
+                    String pName = TextUtils.isEmpty(permissions[i])?"error":permissions[i].substring(permissions[i].lastIndexOf('.')+1,permissions[i].length());
+                    Toast.makeText(this,Strings.get(this,"openPermission",new Object[]{pName}),Toast.LENGTH_SHORT).show();
+                }
+            }
+        }
     }
 }

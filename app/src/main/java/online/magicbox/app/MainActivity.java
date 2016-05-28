@@ -41,6 +41,8 @@ public class MainActivity extends Activity implements UiThread.UIThreadEvent {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        Log.d("bugfix","i'm 123");
+
         sharedPreferences= getSharedPreferences("app", Context.MODE_PRIVATE);
 //        desktopApk = sharedPreferences.getString("desktopApk",App.defaultApkName);
         desktopApk = sharedPreferences.getString("desktopApk","");

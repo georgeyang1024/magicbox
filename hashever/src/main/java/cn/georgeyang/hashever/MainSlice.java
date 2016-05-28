@@ -85,4 +85,6 @@ public class MainSlice extends Slice implements View.OnClickListener {
         transaction.show(fragments[index]);
         transaction.commitAllowingStateLoss();
     }
+
+
 }

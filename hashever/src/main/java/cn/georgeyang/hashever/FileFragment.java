@@ -1,5 +1,6 @@
 package cn.georgeyang.hashever;
 
+import android.Manifest;
 import android.app.Activity;
 import android.app.Fragment;
 import android.app.ProgressDialog;
@@ -109,10 +110,7 @@ public class FileFragment extends PluginFragment implements Runnable {
         mSelectFileButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // Perform action on clicks
-               Intent intent = PluginActivity.buildIntent(getPluginContext(),FileBrowser.class);
-                intent.putExtra(FileBrowser.PATH_FILE_IN_ID, msFilePath);
-                startActivityForResult(intent, SELECT_FILE_REQUEST);
+                requestPermission(123, Manifest.permission.READ_EXTERNAL_STORAGE);
             }
         });
 
@@ -203,6 +201,15 @@ public class FileFragment extends PluginFragment implements Runnable {
         return view;
     }
 
+    @Override
+    public void onPermissionGiven(int requestCode, String permission) {
+        super.onPermissionGiven(requestCode, permission);
+        if (requestCode==123) {
+            Intent intent = PluginActivity.buildIntent(getPluginContext(),FileBrowser.class);
+            intent.putExtra(FileBrowser.PATH_FILE_IN_ID, msFilePath);
+            startActivityForResult(intent, SELECT_FILE_REQUEST);
+        }
+    }
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {

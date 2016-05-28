@@ -1,13 +1,17 @@
 package online.magicbox.lib;
 
 import android.app.Activity;
+import android.app.Fragment;
 import android.app.FragmentManager;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.location.Location;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Process;
+import android.provider.Settings;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.ContextMenu;
@@ -21,6 +25,7 @@ import java.io.File;
 import java.lang.ref.WeakReference;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -334,32 +339,44 @@ public class PluginActivity extends Activity {
     private static final Map<String, Method> methodCache = new WeakHashMap<>();
     protected static Object callMethodByCache(Object receiver, String methodName, Class[] parameterTypes, Object[] args) {
         try {
-            String key = receiver.getClass() + "#" + methodName + "&" + Arrays.toString(parameterTypes);
-            Method method = methodCache.get(key);
-            if (method==null) {
-                Class currClass = receiver.getClass();
-                while (method==null) {
-                    try {
-                        method = currClass.getMethod(methodName,parameterTypes);
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-                    currClass = currClass.getSuperclass();
-                    if (currClass==null) {
-                        break;
-                    }
-                }
-
-                if (method!=null) {
-                    methodCache.put(key,method);
-                }
-            }
-            return method.invoke(receiver,args);
+            return callMethodByCacheWithException(receiver,methodName,parameterTypes,args);
         } catch (Exception e) {
             Log.d("test",Log.getStackTraceString(e));
             e.printStackTrace();
         }
         return null;
+    }
+
+    private static Object callMethodByCacheWithException(Object receiver, String methodName, Class[] parameterTypes, Object[] args) throws InvocationTargetException, IllegalAccessException {
+        String key = receiver.getClass() + "#" + methodName + "&" + Arrays.toString(parameterTypes);
+        Method method = methodCache.get(key);
+        if (method==null) {
+            Class currClass = receiver.getClass();
+            while (method==null) {
+                try {
+                    method = currClass.getMethod(methodName,parameterTypes);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+                if (method==null) {
+                    try {
+                        method = receiver.getClass().getDeclaredMethod(methodName, parameterTypes);
+                        method.setAccessible(true);
+                    } catch (Exception e) {
+
+                    }
+                }
+                currClass = currClass.getSuperclass();
+                if (currClass==null) {
+                    break;
+                }
+            }
+
+            if (method!=null) {
+                methodCache.put(key,method);
+            }
+        }
+        return method.invoke(receiver,args);
     }
 
     private static Class findClass(Class clazz,Class tagClass) {
@@ -586,7 +603,8 @@ public class PluginActivity extends Activity {
 
     @Override
     protected void onSaveInstanceState(Bundle outState) {
-        super.onSaveInstanceState(outState);
+        Log.d("test","onSaveInstanceState");
+//        super.onSaveInstanceState(outState);
         callMethodByCache(mSlice, "onSaveInstanceState", new Class[]{Bundle.class}, new Object[]{outState});
     }
 
@@ -618,5 +636,87 @@ public class PluginActivity extends Activity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         callMethodByCache(mSlice, "onActivityResult", new Class[]{int.class,int.class,Intent.class}, new Object[]{requestCode,resultCode,data});
+    }
+
+    public final void requestPermission (int requestCode,String permission) {
+        Log.d("test","requestPermission in Activity:" + permission);
+        if (permission == null) {
+            throw new IllegalArgumentException("permission is null");
+        }
+
+        boolean hasPermission = false;
+        boolean shouldShow = false;
+        int cheResult = this.checkPermission(permission, android.os.Process.myPid(), Process.myUid());
+        if (cheResult != PackageManager.PERMISSION_GRANTED) {
+            if (Build.VERSION.SDK_INT >= 23) {
+                shouldShow = this.shouldShowRequestPermissionRationale(permission);
+            }
+            if (shouldShow) {
+                Intent intent = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
+                intent.setData(Uri.parse("package:" + getPackageName()));
+                this.startActivity(intent);
+            } else {
+                if (Build.VERSION.SDK_INT >= 23) {
+                    super.requestPermissions(new String[]{permission}, requestCode);
+                    return;
+                }
+            }
+        } else {
+            hasPermission = true;
+        }
+
+
+
+        if (hasPermission) {
+            onPermissionGiven(requestCode,permission);
+        } else {
+            String pName = TextUtils.isEmpty(permission)?"error":permission.substring(permission.lastIndexOf('.')+1,permission.length());
+            String tip;
+            if (shouldShow) {
+                tip = Strings.get(this,"openPermission",new Object[]{pName});
+            } else {
+                tip = Strings.get(this,"noPermission",new Object[]{pName});
+            }
+            Toast.makeText(this,tip,Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    public void onPermissionGiven (int requestCode,String permission) {
+        callMethodByCache(mSlice, "onPermissionGiven", new Class[]{int.class,String.class}, new Object[]{requestCode,permission});
+
+        List<Fragment> fragmentList = getFragments(getFragmentManager());
+        if (!(fragmentList == null || fragmentList.size()==0)) {
+            for (Fragment fragment:fragmentList) {
+                if (!(fragment==null || !fragment.isAdded())) {
+                    callMethodByCache(fragment, "onPermissionGiven", new Class[]{int.class,String.class}, new Object[]{requestCode,permission});
+                }
+            }
+        }
+    }
+
+    public List<Fragment> getFragments(FragmentManager fragmentManager) {
+        try {
+            Field field = fragmentManager.getClass().getDeclaredField("mAdded");
+            field.setAccessible(true);
+            return (List<Fragment>) field.get(fragmentManager);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if (grantResults.length > 0 ){
+            for (int i=0;i<permissions.length;i++) {
+                if (grantResults[i]== PackageManager.PERMISSION_GRANTED) {
+                    onPermissionGiven(requestCode,permissions[i]);
+                } else {
+                    String pName = TextUtils.isEmpty(permissions[i])?"error":permissions[i].substring(permissions[i].lastIndexOf('.')+1,permissions[i].length());
+                    Toast.makeText(this,Strings.get(this,"openPermission",new Object[]{pName}),Toast.LENGTH_SHORT).show();
+                }
+            }
+        }
     }
 }

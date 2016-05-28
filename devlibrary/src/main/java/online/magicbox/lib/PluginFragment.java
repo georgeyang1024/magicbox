@@ -37,6 +37,21 @@ public class PluginFragment extends Fragment {
         return slice;
     }
 
+    public void onPermissionGiven (int requestCode,String permission) {
+
+    }
+
+    public final void requestPermission (int requestCode,String permission) {
+        Log.i("test","getPluginContext:" + getPluginContext());
+
+        try {
+            ((Slice) getPluginContext()).requestPermission(requestCode,permission);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+    }
+
     public Resources getPluginResources() {
         return getPluginContext().getResources();
     }

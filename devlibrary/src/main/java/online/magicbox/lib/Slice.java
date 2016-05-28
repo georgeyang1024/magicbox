@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.ContextWrapper;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.ContextMenu;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
@@ -276,7 +277,12 @@ public abstract class Slice extends ContextWrapper {
     }
 
 
+    //请求权限
+    public final void requestPermission (int requestCode,String permission) {
+        Log.d("test","requestPermission:" + permission);
+        callMethodByCache(mHolder,"requestPermission",new Class[]{int.class,String.class},new Object[]{requestCode,permission});
+    }
 
-
-
+    public void onPermissionGiven (int requestCode,String permission) {
+    }
 }

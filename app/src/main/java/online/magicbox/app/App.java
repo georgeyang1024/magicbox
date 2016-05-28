@@ -36,7 +36,7 @@ public class App extends Application {
 //            AssetUtils.copyAsset(base, defaultApkName, base.getFilesDir().getAbsoluteFile());
 
             SharedPreferences sp = getSharedPreferences("app", Context.MODE_PRIVATE);
-            baseDexPath = sp.getString("hotfixDex","");
+            baseDexPath = sp.getString("hotfixDex","bugfix.apk");//默认的bugfixAPK
             Log.d("test","bug fix file:" + baseDexPath);
             if (!TextUtils.isEmpty(baseDexPath)) {
                 baseDexPath = AssetUtils.copyAsset(base, baseDexPath, base.getFilesDir().getAbsoluteFile());
@@ -45,26 +45,47 @@ public class App extends Application {
 
             BundlePathLoader.installBundleDexs(this,getClassLoader(),base.getCacheDir().getAbsoluteFile(),dexFiles,"AntilazyLoad",true);
 
-            Log.d("test","app had loaded!!");
+            Log.d("bugfix","app had loaded!!");
         } catch (Exception e) {
             e.printStackTrace();
-            Log.d("test",Log.getStackTraceString(e));
+            Log.d("bugfix",Log.getStackTraceString(e));
         }
     }
 
     @Override
     public void onCreate() {
         super.onCreate();
-        JPushInterface.setDebugMode(true); 	// 设置开启日志,发布时请关闭日志
-        JPushInterface.init(this);     		// 初始化 JPush
+
+        //如果直接使用下面代码，出现:java.lang.IllegalAccessError: Class ref in pre-verified class resolved to unexpected implementation
+//        JPushInterface.setDebugMode(true); 	// 设置开启日志,发布时请关闭日志
+//        JPushInterface.init(this);     		// 初始化 JPush
+
+        //使用Class.forName加载
+        try {
+            Class jpushClass = Class.forName("cn.jpush.android.api.JPushInterface");
+            Method initMethod = jpushClass.getMethod("init",new Class[]{Context.class});
+            initMethod.invoke(null,new Object[]{this});
+
+            Method setDebugModeMethod = jpushClass.getMethod("setDebugMode",new Class[]{boolean.class});
+            setDebugModeMethod.invoke(null,new Object[]{false});
+
+            Log.d("bugfix","success");
+        } catch (Exception e) {
+            Log.d("bugfix",Log.getStackTraceString(e));
+            e.printStackTrace();
+        }
+
         try {
             Class crashClass = Class.forName("online.magicbox.app.CrashHandler");
             Method getInstance = crashClass.getMethod("getInstance",new Class[]{});
             Object instance = getInstance.invoke(null,new Object[]{});
             Method initMethod = crashClass.getMethod("init",new Class[]{Context.class});
             initMethod.invoke(instance,new Object[]{this});
-        } catch (Exception e) {
 
+            Log.d("bugfix","success2");
+        } catch (Exception e) {
+            Log.d("bugfix",Log.getStackTraceString(e));
+            e.printStackTrace();
         }
     }
 
@@ -78,7 +99,7 @@ public class App extends Application {
         } catch (Exception e) {
 
         }
-        Log.i("test","getAssets!");
+        Log.i("bugfix","getAssets!");
         return assetManager;
     }
 }
