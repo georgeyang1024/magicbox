@@ -2,7 +2,6 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/MagicBox.iml" filepath="$PROJECT_DIR$/MagicBox.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
       <module fileurl="file://$PROJECT_DIR$/calculator/calculator.iml" filepath="$PROJECT_DIR$/calculator/calculator.iml" />
       <module fileurl="file://$PROJECT_DIR$/csdnblog/csdnblog.iml" filepath="$PROJECT_DIR$/csdnblog/csdnblog.iml" />
@@ -11,6 +10,7 @@
       <module fileurl="file://$PROJECT_DIR$/flashlight/flashlight.iml" filepath="$PROJECT_DIR$/flashlight/flashlight.iml" />
       <module fileurl="file://$PROJECT_DIR$/gifgenerate/gifgenerate.iml" filepath="$PROJECT_DIR$/gifgenerate/gifgenerate.iml" />
       <module fileurl="file://$PROJECT_DIR$/hashever/hashever.iml" filepath="$PROJECT_DIR$/hashever/hashever.iml" />
+      <module fileurl="file://$PROJECT_DIR$/magicbox.iml" filepath="$PROJECT_DIR$/magicbox.iml" />
       <module fileurl="file://$PROJECT_DIR$/qrcode/qrcode.iml" filepath="$PROJECT_DIR$/qrcode/qrcode.iml" />
       <module fileurl="file://$PROJECT_DIR$/recognizer/recognizer.iml" filepath="$PROJECT_DIR$/recognizer/recognizer.iml" />
       <module fileurl="file://$PROJECT_DIR$/seewifipwd/seewifipwd.iml" filepath="$PROJECT_DIR$/seewifipwd/seewifipwd.iml" />

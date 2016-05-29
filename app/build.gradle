@@ -60,9 +60,9 @@ android {
 android.applicationVariants.all { variant ->
     variant.dex.dependsOn << processWithJavassist //在执行dx命令之前将代码打入到class中
 
-    variant.mergeResources.doLast {
-        println "==========處理資源2222========="
-    }
+//    variant.mergeResources.doLast {
+//        println "==========處理資源2222========="
+//    }
 //    if (variant.buildType.applicationIdSuffix) {
 //        println "==========處理資源========="
 //        variant.mergeResources.doLast {
@@ -86,19 +86,19 @@ android.applicationVariants.all { variant ->
 
 
 task('processWithJavassist') << {
-    println '-----------開始往class插入代碼-----------------'
+    println '-----------开始往class插入代码-----------------'
 
     String classPath = project(':app').buildDir.absolutePath + '/intermediates/classes/debug'//项目编译class所在目录
-    String libPath = "$rootDir/transformClasses;$rootDir/transformClasses/buildLib" //AntilazyLoad.class所在目錄
-    String igonre = "*.App;*.BuildConfig;online.magicbox.bugfix.*;online.magicbox.app.R.*;cn.jpush.*"
+    String libPath = "$rootDir/transformClasses;$rootDir/transformClasses/buildLib" //AntilazyLoad.class所在目录
+    String ignore = "*.App;*.BuildConfig;online.magicbox.bugfix.*;online.magicbox.app.R.*;cn.jpush.*"
     println classPath
     println libPath
-    println igonre
+    println ignore
 
     javaexec {
         classpath "$rootDir/transformClasses/transformClasses.jar"
         main = 'cn.georgeyang.TransformClasses'
-        args classPath,libPath,igonre
+        args classPath,libPath,ignore
     }
 }
 
