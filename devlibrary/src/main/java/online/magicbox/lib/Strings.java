@@ -13,7 +13,7 @@ import java.util.Map;
 public class Strings {
     public static final Map<String,String[]> localeMap = new HashMap<>();
     static {
-        localeMap.put("openPermission",new String[]{"please give me permission:%s","请给应用开通％s权限以继续"});
+        localeMap.put("openPermission",new String[]{"please give me permission:%s","请给应用开通%s权限以继续"});
         localeMap.put("noPermission",new String[]{"no permission given:%s","没有权限:%s"});
     }
 

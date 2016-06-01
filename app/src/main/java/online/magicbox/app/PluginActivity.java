@@ -748,35 +748,37 @@ public class PluginActivity extends Activity {
         callMethodByCache(mSlice, "onActivityResult", new Class[]{int.class,int.class,Intent.class}, new Object[]{requestCode,resultCode,data});
     }
 
-    public final void requestPermission (String permission,int requestCode) {
+    public final void requestPermission (int requestCode,String permission) {
+        Log.d("test","requestPermission in Activity:" + permission);
         if (permission == null) {
             throw new IllegalArgumentException("permission is null");
         }
 
         boolean hasPermission = false;
         boolean shouldShow = false;
-        int cheResult = this.checkPermission(permission, android.os.Process.myPid(), Process.myUid());
-        if (cheResult != PackageManager.PERMISSION_GRANTED) {
-            if (Build.VERSION.SDK_INT >= 23) {
-                shouldShow = shouldShowRequestPermissionRationale(permission);
-            }
-            if (shouldShow) {
-                Intent intent = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
-                intent.setData(Uri.parse("package:" + getPackageName()));
-                startActivity(intent);
-            } else {
-                //申请权限
-                if (Build.VERSION.SDK_INT >= 23) {
-                    requestPermissions(new String[]{permission}, requestCode);
+        if (Build.VERSION.SDK_INT >= 23) {
+            int cheResult = super.checkPermission(permission, android.os.Process.myPid(), Process.myUid());
+            if (cheResult != PackageManager.PERMISSION_GRANTED) {
+                shouldShow = super.shouldShowRequestPermissionRationale(permission);
+                if (shouldShow) {
+                    Intent intent = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
+                    intent.setData(Uri.parse("package:" + getPackageName()));
+                    this.startActivity(intent);
+                } else {
+                    super.requestPermissions(new String[]{permission}, requestCode);
                     return;
                 }
+            } else {
+                hasPermission = true;
             }
         } else {
             hasPermission = true;
         }
 
+
+
         if (hasPermission) {
-            onPermissionGiven(permission,requestCode);
+            onPermissionGiven(requestCode,permission);
         } else {
             String pName = TextUtils.isEmpty(permission)?"error":permission.substring(permission.lastIndexOf('.')+1,permission.length());
             String tip;
@@ -789,8 +791,8 @@ public class PluginActivity extends Activity {
         }
     }
 
-    public void onPermissionGiven (String permission,int requestCode) {
-        callMethodByCache(mSlice, "onPermissionGiven", new Class[]{String.class,int.class}, new Object[]{permission,requestCode});
+    public void onPermissionGiven (int requestCode,String permission) {
+        callMethodByCache(mSlice, "onPermissionGiven", new Class[]{int.class,String.class}, new Object[]{permission,requestCode});
     }
 
     @Override
@@ -799,7 +801,7 @@ public class PluginActivity extends Activity {
         if (grantResults.length > 0 ){
             for (int i=0;i<permissions.length;i++) {
                 if (grantResults[i]== PackageManager.PERMISSION_GRANTED) {
-                    onPermissionGiven(permissions[i],requestCode);
+                    onPermissionGiven(requestCode,permissions[i]);
                 } else {
                     String pName = TextUtils.isEmpty(permissions[i])?"error":permissions[i].substring(permissions[i].lastIndexOf('.')+1,permissions[i].length());
                     Toast.makeText(this,Strings.get(this,"openPermission",new Object[]{pName}),Toast.LENGTH_SHORT).show();

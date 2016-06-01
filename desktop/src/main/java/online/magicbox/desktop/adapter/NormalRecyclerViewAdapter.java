@@ -167,7 +167,7 @@ public class NormalRecyclerViewAdapter extends RecyclerView.Adapter<NormalRecycl
                         holder.img_download[i].setTag(infoBean);
                         holder.progressBars[i].setVisibility(View.GONE);
                         holder.img_download[i].setVisibility(View.VISIBLE);
-                        holder.img_download[i].setOnClickListener(downLoadOnClickListener);
+                        holder.img_download[i].setOnClickListener(layoutOnClickListener);
                     }
                     holder.layout[i].setVisibility(View.VISIBLE);
                     holder.layout[i].setTag(infoBean);
@@ -178,51 +178,6 @@ public class NormalRecyclerViewAdapter extends RecyclerView.Adapter<NormalRecycl
         }
     }
 
-    private class LazyRunable implements Runnable {
-        private AppInfoBean infoBean;
-        private NormalTextViewHolder holder;
-        private int index;
-        public LazyRunable (NormalTextViewHolder holder,int index,AppInfoBean infoBean) {
-            this.holder = holder;
-            this.infoBean = infoBean;
-            this.index = index;
-        }
-        @Override
-        public void run() {
-            int i =index;
-            holder.tv_name[i].setText(infoBean.name);
-            if (infoBean.icon!=null) {
-                holder.img_icon[i].setImageDrawable(infoBean.icon);
-            } else if (!TextUtils.isEmpty(infoBean.imageUrl)){
-                ImageLoder.loadImage(holder.img_icon[i],infoBean.imageUrl,600,600,R.mipmap.ic_launcher);
-            } else {
-                holder.img_icon[i].setImageResource(R.mipmap.ic_launcher);
-            }
-
-            if (infoBean.isInstall && infoBean.lastVersionCode!=infoBean.installVersionCode) {
-                holder.img_hasUpdate[i].setVisibility(View.VISIBLE);
-            } else {
-                holder.img_hasUpdate[i].setVisibility(View.GONE);
-            }
-
-            if (infoBean.downloading) {
-                holder.progressBars[i].setVisibility(View.VISIBLE);
-                holder.img_download[i].setVisibility(View.GONE);
-            } else if (infoBean.isInstall) {
-                holder.progressBars[i].setVisibility(View.GONE);
-                holder.img_download[i].setVisibility(View.GONE);
-            } else {
-                holder.img_download[i].setTag(infoBean);
-                holder.progressBars[i].setVisibility(View.GONE);
-                holder.img_download[i].setVisibility(View.VISIBLE);
-                holder.img_download[i].setOnClickListener(downLoadOnClickListener);
-            }
-            holder.layout[i].setVisibility(View.VISIBLE);
-            holder.layout[i].setTag(infoBean);
-            holder.layout[i].setOnClickListener(layoutOnClickListener);
-            holder.layout[i].setOnLongClickListener(longClickListener);
-        }
-    }
 
     private static final String SCHEME = "package";
     private View.OnLongClickListener longClickListener = new View.OnLongClickListener() {
@@ -323,20 +278,6 @@ public class NormalRecyclerViewAdapter extends RecyclerView.Adapter<NormalRecycl
         }
     };
 
-    private View.OnClickListener downLoadOnClickListener = new View.OnClickListener() {
-        @Override
-        public void onClick(View v) {
-            final AppInfoBean infoBean = (AppInfoBean) v.getTag();
-
-            String infoMsg = String.format("确认要安装这个程序吗(大小:%sM)?",new Object[]{infoBean.size+""});
-            new AlertDialog.Builder(mContext).setTitle("提示").setMessage(infoMsg).setNegativeButton("确认", new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-                    startDownload(infoBean);
-                }
-            }).setPositiveButton("取消",null).create().show();
-        }
-    };
 
     private void startDownload(final AppInfoBean infoBean) {
         infoBean.downloading = true;
@@ -396,8 +337,18 @@ public class NormalRecyclerViewAdapter extends RecyclerView.Adapter<NormalRecycl
     private View.OnClickListener layoutOnClickListener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            AppInfoBean appInfoBean = (AppInfoBean) v.getTag();
-            v.getContext().startActivity(appInfoBean.intent);
+            final AppInfoBean appInfoBean = (AppInfoBean) v.getTag();
+            if (appInfoBean.isInstall) {
+                v.getContext().startActivity(appInfoBean.intent);
+            } else if (!appInfoBean.downloading) {
+                String infoMsg = String.format("确认要安装这个程序吗(大小:%sM)?",new Object[]{appInfoBean.size+""});
+                new AlertDialog.Builder(mContext).setTitle("提示").setMessage(infoMsg).setNegativeButton("确认", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        startDownload(appInfoBean);
+                    }
+                }).setPositiveButton("取消",null).create().show();
+            }
         }
     };
 

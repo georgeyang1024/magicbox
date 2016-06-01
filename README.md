@@ -28,18 +28,24 @@
 
 10.二维码
 
+
+特点
+===
+- 依赖devlibrary开发插件，写出的app既可以独立运行，也可以作为插件运行
+
+
 热修复
 ===
 - 代码动态修复
  [原理](https://mp.weixin.qq.com/s?__biz=MzI1MTA1MzM2Nw==&mid=400118620&idx=1&sn=b4fdd5055731290eef12ad0d17f39d4a&scene=1&srcid=1106Imu9ZgwybID13e7y2nEi#wechat_redirect)
 
 
-Android | version | Status
----|---
-Android | 6.0 |	tested
-Android | 5.0 |	tested
-Android |< 5.0 | tested
-YunOs   | unknow | no test
+|Android | version | Status
+|---|---
+|Android | 6.0 |	tested
+|Android | 5.0 |	tested
+|Android |< 5.0 | tested
+
 
 详情请看:online.magicbox.bugfix.BundlePathLoader
 
@@ -56,11 +62,12 @@ ignore:忽略注入代码的类,如: *.APP   packageName.*  packageName.classNam
 
 
 //在build.gradle插入以下代码
+//gradle1.4以下使用这段
 task('processWithJavassist') << {
     println '-----------開始往class插入代碼-----------------'
 
     String classPath = project(':app').buildDir.absolutePath + '/intermediates/classes/debug'//项目编译class所在目录
-    String libPath = "$rootDir/transformClasses;$rootDir/transformClasses/buildLib" //AntilazyLoad.class所在目錄
+    String libPath = "$rootDir/transformClasses;$rootDir/transformClasses/androidClass" //AntilazyLoad.class及android.jar解压后的class所在目录
     String ignore = "*.App;*.BuildConfig;online.magicbox.bugfix.*;online.magicbox.app.R.*;cn.jpush.*"
     println classPath
     println libPath
@@ -72,12 +79,75 @@ task('processWithJavassist') << {
         args classPath,libPath,ignore
     }
 }
+
+//gradle1.5及以上使用这段:
+gradle.taskGraph.beforeTask { Task task ->
+    println "beforeTask:" + task.name + "," + task.group + "," + task.getProject().name
+        if (task.name.equals("preBuild") && task.getProject().name.equals("app")) {
+            String rootPath = project.rootDir.absolutePath
+            String jarPath = rootPath + "/transformClasses/transformClasses.jar"
+            String classPath = project.buildDir.absolutePath + '/intermediates/classes/debug'//项目编译class所在目录
+            String libPath = rootPath + "/transformClasses;" +  rootPath+ "/transformClasses/androidClass" //AntilazyLoad.class及android.jar解压后的class所在目录
+            String ignore = "*.App;*.BuildConfig;online.magicbox.bugfix.*;online.magicbox.app.R.*;cn.jpush.*"
+            project.javaexec {
+                classpath jarPath
+                main = 'cn.georgeyang.TransformClasses'
+                args classPath,libPath,ignore
+            }
+    }
+}
+
+//gradle1.5及以上，自定义gradlePlugIn写法:
+apply plugin: CodeInsert
+class CodeInsert implements Plugin<Project> {
+    @Override
+    void apply(Project project) {
+        project.afterEvaluate {
+            project.android.applicationVariants.each { variant ->
+                def dexTaskName = "transformClassesWithDexFor${variant.name.capitalize()}"
+                def dexTask = project.tasks.findByName(dexTaskName)
+                if (dexTask) {
+                    String rootPath = project.rootDir.absolutePath
+                    String jarPath = rootPath + "/transformClasses/transformClasses.jar"
+                    String classPath = project.buildDir.absolutePath + '/intermediates/classes/debug'//项目编译class所在目录
+                    String libPath = rootPath + "/transformClasses;" +  rootPath+ "/transformClasses/androidClass" //AntilazyLoad.class及android.jar解压后的class所在目录
+                    String ignore = "*.App;*.BuildConfig;online.magicbox.bugfix.*;online.magicbox.app.R.*;cn.jpush.*"
+                    project.javaexec {
+                        classpath jarPath
+                        main = 'cn.georgeyang.TransformClasses'
+                        args classPath,libPath,ignore
+                    }
+                }
+            }
+        }
+    }
+}
 ```
+> 进过transformClasses.jar处理后，如何知道哪些类可以热修复？
+
+查看gradle console，会有如下结果
+
+```
+成功插入AntilazyLoad代码的会显示:
++ transform success:	***.class
+
+失败会显示:
+# transform fail:	 fail reasion - ***.class
+
+R文件不能热修复，所以被忽略:
+# ingroe resoure:   ***.class
+
+指定忽略的会显示:
+~ transform ignore by match:  ignoreType - ***.class
+```
+只有transform success的类才能热更新
+
+
 
 插件
 ===
-###### 加载插件代码原理: 重写classloder
-###### 加载插件View,[参考](https://github.com/jiangyinbin/PluginTheme)
+###### 加载插件代码原理: [重写classloder](http://www.trinea.cn/android/android-plugin/)
+###### 加载插件View实现:[参考](https://github.com/jiangyinbin/PluginTheme)
 
 
 
@@ -141,6 +211,11 @@ requestPermission(123,Manifest.permission.CAMERA);
     }
 ```
 
+> 本项目中插件的缺点：
+
+- 目前没有写service,receiver的支持
+- Slice继承的是Context，而不是activity，很多方法要谨慎使用
+- 大量使用反射调用app宿主程序，效率减低
 
 参考链接
 ---
@@ -166,7 +241,9 @@ http://blog.csdn.net/innost/article/details/48228651
 
 同一个项目下生成的补丁，兼容不同的签名，debug生成的补丁也可以给release版本打补丁。
 
+[自定义gradle插件，让AndHotFix支持gradle1.5+](https://github.com/Livyli/AndHotFix)
 
+[自定义gradle插件](http://unclechen.github.io/2015/11/17/%E8%87%AA%E5%AE%9A%E4%B9%89Android-Gradle%E6%8F%92%E4%BB%B6/)
 
 gradle知識:
 

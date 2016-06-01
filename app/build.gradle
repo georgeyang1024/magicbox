@@ -2,7 +2,7 @@ apply plugin: 'com.android.application'
 
 android {
     compileSdkVersion 23
-    buildToolsVersion "23.0.2"
+    buildToolsVersion '23.0.3'
 
     defaultConfig {
         applicationId "online.magicbox.app"
@@ -28,95 +28,83 @@ android {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
+    }
 
-//        applicationVariants.all { variant ->
-//            variant.dex.dependsOn << processDebugResources2 //在执行dx命令之前将代码打入到class中
-//            variant.dex.dependsOn << processWithJavassist //在执行dx命令之前将代码打入到class中
-//        }
+}
 
-//        applicationVariants.all { variant ->
-//            println 'variant:' + variant.buildType.name
+
+////transformClasses for gradle 1.4
+//android.applicationVariants.all { variant ->
+//    variant.dex.dependsOn << processWithJavassist //在执行dx命令之前将代码打入到class中
+//}
 //
-//            if (variant.buildType.isDebuggable()) {
-//                //在执行dx命令之前将代码打入到class中
-//                String classPath = project(':app').buildDir.absolutePath + '/intermediates/classes/debug'
-//                //项目编译class所在目录
-//                String libPath = "$rootDir/transformClasses" //AntilazyLoad.class所在目錄
-//                String igonre = "*.BuildConfig;*.MainActivity"
-//                println classPath
-//                println libPath
-//                println igonre
+//task('processWithJavassist') << {
+//    println '-----------开始往class插入代码-----------------'
 //
-//                javaexec {
-//                    classpath "$rootDir/transformClasses/transformClasses.jar"
-//                    main = 'cn.georgeyang.TransformClasses'
-//                    args classPath, libPath, igonre
-//                }
+//    String classPath = project(':app').buildDir.absolutePath + '/intermediates/classes/debug'//项目编译class所在目录
+//    String libPath = "$rootDir/transformClasses;$rootDir/transformClasses/buildLib" //AntilazyLoad.class所在目录
+//    String ignore = "*.App;*.BuildConfig;online.magicbox.bugfix.*;online.magicbox.app.R.*;cn.jpush.*"
+//    println classPath
+//    println libPath
+//    println ignore
+//
+//    javaexec {
+//        classpath "$rootDir/transformClasses/transformClasses.jar"
+//        main = 'cn.georgeyang.TransformClasses'
+//        args classPath,libPath,ignore
+//    }
+//}
+
+
+
+
+
+
+//gradle.taskGraph.beforeTask { Task task ->
+//    println "beforeTask:" + task.name + "," + task.group + "," + task.getProject().name
+//        if (task.name.equals("preBuild") && task.getProject().name.equals("app")) {
+//            String rootPath = project.rootDir.absolutePath
+//            String jarPath = rootPath + "/transformClasses/transformClasses.jar"
+//            String classPath = project.buildDir.absolutePath + '/intermediates/classes/debug'//项目编译class所在目录
+//            String libPath = rootPath + "/transformClasses;" +  rootPath+ "/transformClasses/androidClass" //AntilazyLoad.class及android.jar解压后的class所在目录
+//            String ignore = "*.App;*.BuildConfig;online.magicbox.bugfix.*;online.magicbox.app.R.*;cn.jpush.*"
+//            project.javaexec {
+//                classpath jarPath
+//                main = 'cn.georgeyang.TransformClasses'
+//                args classPath,libPath,ignore
 //            }
-//        }
-    }
-}
-
-android.applicationVariants.all { variant ->
-    variant.dex.dependsOn << processWithJavassist //在执行dx命令之前将代码打入到class中
-
-//    variant.mergeResources.doLast {
-//        println "==========處理資源2222========="
 //    }
-//    if (variant.buildType.applicationIdSuffix) {
-//        println "==========處理資源========="
-//        variant.mergeResources.doLast {
-//            println "==========處理資源2222========="
-//        }
-//    }
+//}
 
-//    variant.mergeResources.doLast {
-////        def f = file("${buildDir}/intermediates/res/${variant.dirName}/values/values.xml")
-////        String content = f.getText(encoding)
-////        content = content.replaceAll('来往','来往Beta')
-////        f.write(content,encoding)
-//
-//        def buildType = variant.buildType
-//        def encoding = java.nio.charset.Charset.defaultCharset().toString()
-//        if (buildType.applicationIdSuffix) {
-//
-//
-//    }
-}
-
-
-task('processWithJavassist') << {
-    println '-----------开始往class插入代码-----------------'
-
-    String classPath = project(':app').buildDir.absolutePath + '/intermediates/classes/debug'//项目编译class所在目录
-    String libPath = "$rootDir/transformClasses;$rootDir/transformClasses/buildLib" //AntilazyLoad.class所在目录
-    String ignore = "*.App;*.BuildConfig;online.magicbox.bugfix.*;online.magicbox.app.R.*;cn.jpush.*"
-    println classPath
-    println libPath
-    println ignore
-
-    javaexec {
-        classpath "$rootDir/transformClasses/transformClasses.jar"
-        main = 'cn.georgeyang.TransformClasses'
-        args classPath,libPath,ignore
-    }
-}
-
-
-
-
-
-
-//R path:D:\code\android\MagicBox\app\build\generated\source\r\debug\online\magicbox\app
-
-gradle.taskGraph.beforeTask { Task task ->
-//    println "name:" + task.name
-}
 dependencies {
-    //    compile files('src/main/libs/host.jar')
-    //    compile files('src/main/jni/fastjson-1.1.37-leancloud.jar')
-    //    compile 'com.alibaba:fastjson:1.2.8'
-    compile files('libs/AMap_Location_V2.2.0_20151222.jar')
-    compile files('libs/jpush-android-2.1.3.jar')
-    compile files('libs/jpush-android-2.1.5.jar')
+    compile files('src/main/jniLibs/jpush-android-2.1.5.jar')
+    compile files('src/main/jniLibs/AMap_Location_V2.2.0_20151222.jar')
+}
+
+
+//transformClasses for gradle 1.5+
+apply plugin: CodeInsert
+class CodeInsert implements Plugin<Project> {
+    @Override
+    void apply(Project project) {
+        project.afterEvaluate {
+            project.android.applicationVariants.each { variant ->
+                def dexTaskName = "transformClassesWithDexFor${variant.name.capitalize()}"
+                def dexTask = project.tasks.findByName(dexTaskName)
+                if (dexTask) {
+                    String rootPath = project.rootDir.absolutePath
+                    String jarPath = rootPath + "/transformClasses/transformClasses.jar"
+                    String classPath = project.buildDir.absolutePath + '/intermediates/classes/debug'//项目编译class所在目录
+                    String libPath = rootPath + "/transformClasses;" +  rootPath+ "/transformClasses/androidClass" //AntilazyLoad.class所在目录
+                    String ignore = "*.App;*.BuildConfig;online.magicbox.bugfix.*;online.magicbox.app.R.*;cn.jpush.*"
+                    project.javaexec {
+                        classpath jarPath
+                        main = 'cn.georgeyang.TransformClasses'
+                        args classPath,libPath,ignore
+                    }
+
+                }
+            }
+        }
+    }
 }

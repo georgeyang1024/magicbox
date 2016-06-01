@@ -91,6 +91,7 @@ public class PluginActivity extends Activity {
 
 
     public void startLocation () {
+        //模拟定位，以插件运行的时候是真实位置
         Object location = "ampLocation Object";
         String[] info = new String[]{"0","0.0","0.0","广东省珠海市",""};
         callMethodByCache(mSlice, "onReceiveLocation", new Class[]{Object.class,String[].class}, new Object[]{location,info});
@@ -646,20 +647,20 @@ public class PluginActivity extends Activity {
 
         boolean hasPermission = false;
         boolean shouldShow = false;
-        int cheResult = this.checkPermission(permission, android.os.Process.myPid(), Process.myUid());
-        if (cheResult != PackageManager.PERMISSION_GRANTED) {
-            if (Build.VERSION.SDK_INT >= 23) {
-                shouldShow = this.shouldShowRequestPermissionRationale(permission);
-            }
-            if (shouldShow) {
-                Intent intent = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
-                intent.setData(Uri.parse("package:" + getPackageName()));
-                this.startActivity(intent);
-            } else {
-                if (Build.VERSION.SDK_INT >= 23) {
+        if (Build.VERSION.SDK_INT >= 23) {
+            int cheResult = super.checkPermission(permission, android.os.Process.myPid(), Process.myUid());
+            if (cheResult != PackageManager.PERMISSION_GRANTED) {
+                shouldShow = super.shouldShowRequestPermissionRationale(permission);
+                if (shouldShow) {
+                    Intent intent = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
+                    intent.setData(Uri.parse("package:" + getPackageName()));
+                    this.startActivity(intent);
+                } else {
                     super.requestPermissions(new String[]{permission}, requestCode);
                     return;
                 }
+            } else {
+                hasPermission = true;
             }
         } else {
             hasPermission = true;

@@ -30,8 +30,8 @@ public class App extends Application {
             List<File> dexFiles = new ArrayList<>();
 
             String baseDexPath = "AntilazyLoad_dex.jar";
-            baseDexPath = AssetUtils.copyAsset(base, baseDexPath, base.getFilesDir().getAbsoluteFile());
-            dexFiles.add(new File(baseDexPath));
+//            baseDexPath = AssetUtils.copyAsset(base, baseDexPath, base.getFilesDir().getAbsoluteFile());
+//            dexFiles.add(new File(baseDexPath));
 
 //            AssetUtils.copyAsset(base, defaultApkName, base.getFilesDir().getAbsoluteFile());
 
