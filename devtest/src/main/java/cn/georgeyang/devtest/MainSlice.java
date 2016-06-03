@@ -4,13 +4,20 @@ import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.TextUtils;
+import android.util.ArraySet;
 import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 
+import cn.georgeyang.database.Mdb;
+import cn.georgeyang.devtest.entity.DesktopSettingEntity;
+import cn.georgeyang.devtest.entity.PluginItemEntity;
 import online.magicbox.lib.PluginActivity;
 import online.magicbox.lib.Slice;
 
@@ -32,6 +39,7 @@ public class MainSlice extends Slice implements View.OnClickListener {
         findViewById(R.id.location).setOnClickListener(this);
         findViewById(R.id.picSelect).setOnClickListener(this);
         findViewById(R.id.listPlugin).setOnClickListener(this);
+        findViewById(R.id.cancel_autoUpdate).setOnClickListener(this);
     }
 
     @Override
@@ -57,9 +65,37 @@ public class MainSlice extends Slice implements View.OnClickListener {
                 startLocation();
                 break;
             case R.id.picSelect:
-                Intent picker = PluginActivity.buildIntent(getActivity(),"online.magicbox.desktop","ImageSelectorSlice","1");
-                picker.putExtra("select_count_mode",0);
-                getActivity().startActivityForResult(picker,100);
+                try {
+                    Intent picker = PluginActivity.buildIntent(getActivity(),"online.magicbox.desktop","ImageSelectorSlice","1");
+                    picker.putExtra("select_count_mode",0);
+                    getActivity().startActivityForResult(picker,100);
+                } catch (Exception e) {
+                    showMsg("未安装desktop(独立运行模式)");
+                }
+                break;
+            case R.id.listPlugin:
+                Mdb.init(this);
+                List<PluginItemEntity> list = Mdb.getInstance().findAll(PluginItemEntity.class);
+                if (list==null || list.size()==0) {
+                    showMsg("未安装任何插件!");
+                } else {
+                    List<String> names = new ArrayList<>();
+                    for (PluginItemEntity entity:list) {
+                        String name = String.format("%s - %s",new Object[]{entity.name,entity.packageName});
+                        names.add(name);
+                    }
+                    showMsg(TextUtils.join("\n",names));
+                }
+                break;
+            case R.id.cancel_autoUpdate:
+                Mdb.init(this);
+                DesktopSettingEntity settingEntity = Mdb.getInstance().findOne(DesktopSettingEntity.class);
+                if (settingEntity==null) {
+                    settingEntity = new DesktopSettingEntity();
+                }
+                settingEntity.autoUpdate = false;
+                settingEntity.save();
+                showMsg("修改成功");
                 break;
         }
     }

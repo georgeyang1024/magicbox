@@ -7,9 +7,10 @@ import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Parcelable;
+import android.support.annotation.DrawableRes;
 import android.widget.Toast;
 
-import online.magicbox.desktop.R;
+
 
 /**
  * Created by george.yang on 2016-4-15.
@@ -18,14 +19,14 @@ public class ShortCutUtil {
     /**
      * 创建快捷图标
      */
-    public static void createShortCut(Context context,String name,Intent actionIntent) {
+    public static void createShortCut(Context context,String name,Intent actionIntent,@DrawableRes int iconId) {
         // 先判断该快捷是否存在
         if (!isShortCutExist(context)) {
             Intent intent = new Intent();
             // 指定动作名称
             intent.setAction("com.android.launcher.action.INSTALL_SHORTCUT");
             // 指定快捷方式的图标
-            Intent.ShortcutIconResource icon = Intent.ShortcutIconResource.fromContext(context, R.mipmap.ic_launcher);
+            Intent.ShortcutIconResource icon = Intent.ShortcutIconResource.fromContext(context,iconId);
             //icon >> online.magicbox.desktop:mipmap/ic_launcher
             intent.putExtra(Intent.EXTRA_SHORTCUT_ICON_RESOURCE, icon);
             // 指定快捷方式的名称

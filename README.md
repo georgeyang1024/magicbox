@@ -40,11 +40,13 @@
  [原理](https://mp.weixin.qq.com/s?__biz=MzI1MTA1MzM2Nw==&mid=400118620&idx=1&sn=b4fdd5055731290eef12ad0d17f39d4a&scene=1&srcid=1106Imu9ZgwybID13e7y2nEi#wechat_redirect)
 
 
-|Android | version | Status
-|---|---
-|Android | 6.0 |	tested
-|Android | 5.0 |	tested
-|Android |< 5.0 | tested
+# Android Support
+
+| Android version        | Status           | 
+| ------------- |:-------------:| 
+| Android 6.0      | tested | 
+| Android 5.0     | tested      |   
+| Android < 5.0 | tested     |   
 
 
 详情请看:online.magicbox.bugfix.BundlePathLoader

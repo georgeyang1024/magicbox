@@ -43,6 +43,7 @@
         android:layout_height="wrap_content"/>
 
     <Button
+        android:id="@+id/cancel_autoUpdate"
         android:text="取消desktop的插件自动更新功能"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"/>

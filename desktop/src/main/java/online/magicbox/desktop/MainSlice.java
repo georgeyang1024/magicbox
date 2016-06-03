@@ -1,6 +1,5 @@
 package online.magicbox.desktop;
 
-import android.Manifest;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
@@ -8,7 +7,6 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Bundle;
-import android.os.SystemClock;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -23,7 +21,6 @@ import com.google.gson.reflect.TypeToken;
 
 import java.io.File;
 import java.lang.reflect.Type;
-import java.security.Permission;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
