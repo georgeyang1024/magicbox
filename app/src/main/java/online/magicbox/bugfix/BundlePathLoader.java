@@ -46,6 +46,10 @@ public class BundlePathLoader {
 
     public static void installBundleDexs(Context context,ClassLoader loader, File dexDir, List<File> files,String patchClassName,boolean isHotFix)
             throws Exception {
+        Log.d(TAG,"installBundleDexs:loder:" + loader);
+        Log.d(TAG,"installBundleDexs:dexDir:" + dexDir);
+        Log.d(TAG,"installBundleDexs:files:" + Arrays.toString(files.toArray()));
+        Log.d(TAG,"installBundleDexs:patchClassName:" + patchClassName);
         if (!files.isEmpty()) {
             if (hasLexClassLoader()) {
                 Log.d(TAG,"installBundleDexs-YunOs");
@@ -267,14 +271,20 @@ public class BundlePathLoader {
 
             Field pathListField = findField(loader, "pathList");
             Object dexPathList = pathListField.get(loader);
+
             Field dexElement = findField(dexPathList, "dexElements");
             Class<?> elementType = dexElement.getType().getComponentType();
+
             Method loadDex = findMethod(dexPathList, "loadDexFile", File.class, File.class);
-            Object dex = loadDex.invoke(dexPathList, additionalClassPathEntries.get(0), optimizedDirectory);
-            Constructor<?> constructor = elementType.getConstructor(File.class, boolean.class, File.class, DexFile.class);
-            Object element = constructor.newInstance(new File(""), false, additionalClassPathEntries.get(0), dex);
-            Object[] newEles=new Object[1];
-            newEles[0]=element;
+
+            Object[] newEles=new Object[additionalClassPathEntries.size()];
+            for (int i=0;i<additionalClassPathEntries.size();i++) {
+                File bugFixFile = additionalClassPathEntries.get(i);
+                Object dex = loadDex.invoke(dexPathList, bugFixFile, optimizedDirectory);//No original dex files found for dex location /
+                Constructor<?> constructor = elementType.getConstructor(File.class, boolean.class, File.class, DexFile.class);
+                Object element = constructor.newInstance(new File(""), false,bugFixFile, dex);
+                newEles[i] = element;
+            }
             expandFieldArray(dexPathList, "dexElements",newEles,isHotFix);
         }
 

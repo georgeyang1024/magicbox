@@ -12,6 +12,11 @@
         android:layout_height="wrap_content"
         android:text="Dev Test"/>
 
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="magicbox 开源地址:\nhttps://github.com/qq179157977/magicbox"/>
+
     <Button
         android:id="@+id/runAsPlugin"
         android:text="是否以插件运行"

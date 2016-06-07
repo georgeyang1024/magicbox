@@ -8,8 +8,8 @@ android {
         applicationId "online.magicbox.app"
         minSdkVersion 13//8主題太差
         targetSdkVersion 23
-        versionCode 7
-        versionName "1.7"
+        versionCode 8
+        versionName "1.8"
     }
 
     signingConfigs {

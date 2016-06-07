@@ -235,7 +235,7 @@ public class NormalRecyclerViewAdapter extends RecyclerView.Adapter<NormalRecycl
                                             Bitmap icon = (Bitmap) obj;
                                             ShortCutUtil.createShortCutWithBitmap(mContext,infoBean.name,infoBean.intent,icon);
                                         } else {
-                                            ShortCutUtil.createShortCut(mContext,infoBean.name,infoBean.intent);
+                                            ShortCutUtil.createShortCut(mContext,infoBean.name,infoBean.intent,R.mipmap.ic_launcher);
                                         }
                                     }
                                 });
@@ -305,7 +305,7 @@ public class NormalRecyclerViewAdapter extends RecyclerView.Adapter<NormalRecycl
                         if (MainSlice.settingEntity.autoCreateShortCut) {
                             Bitmap bitmap = ImageLoder.loadImage(mContext,infoBean.imageUrl,500,500);
                             if (bitmap==null) {
-                                ShortCutUtil.createShortCut(mContext,infoBean.name,newIntent);
+                                ShortCutUtil.createShortCut(mContext,infoBean.name,newIntent,R.mipmap.ic_launcher);
                             } else {
                                 ShortCutUtil.createShortCutWithBitmap(mContext,infoBean.name,newIntent,bitmap);
                             }

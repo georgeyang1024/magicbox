@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageInfo;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
@@ -41,7 +42,7 @@ public class MainActivity extends Activity implements UiThread.UIThreadEvent {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        Log.d("bugfix","i'm 123");
+        Log.d("bugfix","i'm bug");
 
         sharedPreferences= getSharedPreferences("app", Context.MODE_PRIVATE);
 //        desktopApk = sharedPreferences.getString("desktopApk",App.defaultApkName);
@@ -51,10 +52,14 @@ public class MainActivity extends Activity implements UiThread.UIThreadEvent {
         hotfixDex = sharedPreferences.getString("hotfixDex","");
         hotfixUpdateTime = sharedPreferences.getLong("hotfixUpdateTime",0);
         int versionCode = 0;
+        String versionName = "";
         try {
-            versionCode = getPackageManager().getPackageInfo(getPackageName(),0).versionCode;
+            PackageInfo packageInfo = getPackageManager().getPackageInfo(getPackageName(),0);
+            versionCode = packageInfo.versionCode;
+            versionName = packageInfo.versionName;
         } catch (Exception e) {}
         dexVersionCode = sharedPreferences.getString("dexVersionCode",versionCode+"");
+        Log.d("bugfix","versionName:" + versionName);
 
         boolean needRestart = sharedPreferences.getBoolean("needRestart",false);
         if (needRestart) {

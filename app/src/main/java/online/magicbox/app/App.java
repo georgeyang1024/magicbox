@@ -10,6 +10,8 @@ import android.util.Log;
 import java.io.File;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import cn.jpush.android.api.JPushInterface;
@@ -30,22 +32,19 @@ public class App extends Application {
             List<File> dexFiles = new ArrayList<>();
 
             String baseDexPath = "AntilazyLoad_dex.jar";
-//            baseDexPath = AssetUtils.copyAsset(base, baseDexPath, base.getFilesDir().getAbsoluteFile());
-//            dexFiles.add(new File(baseDexPath));
+            baseDexPath = AssetUtils.copyAsset(base, baseDexPath, base.getFilesDir().getAbsoluteFile());
+            dexFiles.add(new File(baseDexPath));
 
 //            AssetUtils.copyAsset(base, defaultApkName, base.getFilesDir().getAbsoluteFile());
 
             SharedPreferences sp = getSharedPreferences("app", Context.MODE_PRIVATE);
-            baseDexPath = sp.getString("hotfixDex","bugfix.apk");//默认的bugfixAPK
-            Log.d("test","bug fix file:" + baseDexPath);
+            baseDexPath = sp.getString("hotfixDex","bugfix.apk");//默认的bugfixAPK,打包上线改成空字符串
             if (!TextUtils.isEmpty(baseDexPath)) {
                 baseDexPath = AssetUtils.copyAsset(base, baseDexPath, base.getFilesDir().getAbsoluteFile());
                 dexFiles.add(new File(baseDexPath));
             }
 
             BundlePathLoader.installBundleDexs(this,getClassLoader(),base.getCacheDir().getAbsoluteFile(),dexFiles,"AntilazyLoad",true);
-
-            Log.d("bugfix","app had loaded!!");
         } catch (Exception e) {
             e.printStackTrace();
             Log.d("bugfix",Log.getStackTraceString(e));

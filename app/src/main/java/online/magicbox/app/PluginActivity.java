@@ -748,6 +748,12 @@ public class PluginActivity extends Activity {
         callMethodByCache(mSlice, "onActivityResult", new Class[]{int.class,int.class,Intent.class}, new Object[]{requestCode,resultCode,data});
     }
 
+    public final void requestPermission (String permission,int requestCode) {
+        requestPermission(requestCode,permission);
+    }
+    public void onPermissionGiven (String permission,int requestCode) {
+        onPermissionGiven(requestCode,permission);
+    }
     public final void requestPermission (int requestCode,String permission) {
         Log.d("test","requestPermission in Activity:" + permission);
         if (permission == null) {
@@ -792,7 +798,7 @@ public class PluginActivity extends Activity {
     }
 
     public void onPermissionGiven (int requestCode,String permission) {
-        callMethodByCache(mSlice, "onPermissionGiven", new Class[]{int.class,String.class}, new Object[]{permission,requestCode});
+        callMethodByCache(mSlice, "onPermissionGiven", new Class[]{int.class,String.class}, new Object[]{requestCode,permission});
     }
 
     @Override

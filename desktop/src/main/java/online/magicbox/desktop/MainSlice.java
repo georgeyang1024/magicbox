@@ -245,7 +245,7 @@ public class MainSlice extends Slice implements View.OnClickListener, UiThread.U
                                     if (MainSlice.settingEntity.autoCreateShortCut) {
                                         Bitmap bitmap = ImageLoder.loadImage(MainSlice.this,infoBean.imageUrl,300,300);
                                         if (bitmap==null) {
-                                            ShortCutUtil.createShortCut(MainSlice.this,infoBean.name,newIntent);
+                                            ShortCutUtil.createShortCut(MainSlice.this,infoBean.name,newIntent,R.mipmap.ic_launcher);
                                         } else {
                                             ShortCutUtil.createShortCutWithBitmap(MainSlice.this,infoBean.name,newIntent,bitmap);
                                         }

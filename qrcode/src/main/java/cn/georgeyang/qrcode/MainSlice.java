@@ -87,6 +87,7 @@ public class MainSlice extends Slice implements View.OnClickListener {
     }
 
 
+
     @Override
     public void onPermissionGiven(int code,String permission) {
         super.onPermissionGiven(code,permission);
